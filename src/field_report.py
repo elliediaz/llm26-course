@@ -79,7 +79,7 @@ def main() -> None:
     table = utils.print_table(rows, cols)
     m = res.get("metrics", {})
     print(f"\nJSON 성공률 {m.get('json_success')} · Task Accuracy {m.get('task_accuracy')}")
-    print("해석: 분류 필드가 약하면 7회차 LoRA(판단·형식), 추출 필드가 약하면 6회차 RAG(근거 문서) 쪽 효과를 기대함")
+    print("해석: 분류 필드가 약하면 7회차 LoRA(판단·형식), 추출 필드가 약하면 6회차 RAG(근거 문서), 회귀(숫자) 필드가 약하면 8회차 계산 Tool 쪽 효과를 기대함")
     path = utils.result_path(f"field_report_{a.name}.md")
     path.write_text(f"# 필드별 점수: {a.name}\n\n{table}\n", encoding="utf-8")
     print(f"저장: {path}")

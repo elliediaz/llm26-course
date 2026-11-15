@@ -1,0 +1,337 @@
+{
+ "domain": "L",
+ "allocation": {
+  "K": 8,
+  "R": 7,
+  "F": 5
+ },
+ "rules": [
+  "K(지식형): 입력에는 한빛로 사업장 이름만 쓰고 시급·직원 수는 쓰지 않는다. gold_doc_ids에 사업장 문서(ws01~ws14)와 그해 최저임금 문서(mw_2026 또는 mw_2027)를 반드시 적는다",
+  "R(추론형): 판단에 필요한 숫자(근무 기간·요일·시간·시급·직원 수·그해 최저시급)를 입력에 모두 쓴다. 곱셈·합산만으로 답이 나와야 한다",
+  "F(형식·판단형): 15시간 미만 주휴 없음, 40시간 상한, 5인 미만 가산 미적용, 정보 부족 시 판단불가, 쟁점 순서 중 하나를 반드시 건드린다",
+  "gold는 손으로 계산하지 않고 `python data/L/build/wage_rules.py --year … --weeks … --days … --hours … --wage … --size …`의 출력을 그대로 붙인다",
+  "근무 기간은 한 해(2026년 또는 2027년) 안에서만 쓰고, 하루 근무는 8시간 이하로 한다",
+  "사업장은 평가용 ws01~ws14만 쓴다(ws15~ws24는 학습용). 시드 문항과 같은 조건을 다시 쓰지 않는다",
+  "실존 상호·실명·개인정보를 넣지 않는다. 본인이나 지인의 실제 근로 정보도 쓰지 않는다"
+ ],
+ "example": {
+  "id": "L-S-01",
+  "type": "K",
+  "input": "한빛로 '모퉁이분식'에서 2027년 1월 4일부터 4주 동안 월·수·금요일마다 하루 6시간씩 일했어요. 시급은 가게에서 정한 금액 그대로 받았고 주휴수당은 따로 없었어요. 덜 받은 돈이 있나요?",
+  "gold": {
+   "issue": "최저임금미달",
+   "small_workplace": true,
+   "weekly_hours": 18,
+   "min_wage": 10700,
+   "weekly_holiday_pay": 38520,
+   "unpaid_krw": 168480,
+   "law_article": "최저임금법 제6조"
+  },
+  "gold_doc_ids": [
+   "ws01",
+   "mw_2027"
+  ]
+ },
+ "items": [
+  {
+   "id": "L-T-01",
+   "type": "K",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-02",
+   "type": "K",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-03",
+   "type": "K",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-04",
+   "type": "K",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-05",
+   "type": "K",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-06",
+   "type": "K",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-07",
+   "type": "K",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-08",
+   "type": "K",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-09",
+   "type": "R",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-10",
+   "type": "R",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-11",
+   "type": "R",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-12",
+   "type": "R",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-13",
+   "type": "R",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-14",
+   "type": "R",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-15",
+   "type": "R",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-16",
+   "type": "F",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-17",
+   "type": "F",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-18",
+   "type": "F",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-19",
+   "type": "F",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "L-T-20",
+   "type": "F",
+   "input": "",
+   "gold": {
+    "issue": null,
+    "small_workplace": null,
+    "weekly_hours": null,
+    "min_wage": null,
+    "weekly_holiday_pay": null,
+    "unpaid_krw": null,
+    "law_article": null
+   },
+   "gold_doc_ids": []
+  }
+ ]
+}

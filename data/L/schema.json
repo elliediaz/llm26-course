@@ -1,60 +1,70 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "L 알바·자취 생활법률 판단",
-  "description": "아르바이트·자취 상황(가상 사례)을 읽고 쟁점·위반 여부·근거 조문·금액을 판단한 JSON 하나를 만든다. 정보가 부족하면 판단불가로 두고 부족한 정보를 적는다. 법률 자문이 아님.",
+  "title": "L 알바 급여 정산",
+  "description": "가상 상권 '한빛로'의 아르바이트 근무 상황을 읽고 급여 정산 결과를 JSON 하나로 만든다. 금액은 원 단위 정수(원 미만 버림). 판단에 필요한 정보가 없으면 issue를 판단불가로, 수치 필드를 null로 둔다. 법률 자문이 아님.",
   "type": "object",
   "properties": {
     "issue": {
       "enum": [
-        "최저임금",
-        "주휴수당",
-        "가산수당",
-        "퇴직금",
-        "근로계약서",
-        "해고예고",
-        "보증금",
-        "계약갱신",
-        "차임증액",
-        "기타"
-      ],
-      "description": "핵심 쟁점"
-    },
-    "violation": {
-      "enum": [
-        "위반",
-        "위반아님",
+        "최저임금미달",
+        "주휴미지급",
+        "가산미지급",
+        "정상지급",
         "판단불가"
       ],
-      "description": "법 위반 여부"
+      "description": "대표 쟁점. 여럿이면 최저임금미달 > 주휴미지급 > 가산미지급 순서로 하나"
+    },
+    "small_workplace": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "상시근로자(사업주 제외) 5인 미만이면 true, 5인 이상이면 false, 모르면 null"
+    },
+    "weekly_hours": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "1주 소정근로시간. 1주 실제 근로시간과 40 중 작은 값"
+    },
+    "min_wage": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "근무한 해에 적용되는 최저시급(원)"
+    },
+    "weekly_holiday_pay": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "1주에 받아야 할 주휴수당(원). 15시간 미만이면 0"
+    },
+    "unpaid_krw": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "근무 기간 전체의 미지급액 합계(원). 없으면 0"
     },
     "law_article": {
       "type": [
         "string",
         "null"
       ],
-      "description": "근거 조문(예: '근로기준법 제55조'). 없으면 null"
-    },
-    "amount_krw": {
-      "type": [
-        "integer",
-        "null"
-      ],
-      "description": "미지급액 등 계산 금액(원). 해당 없으면 null"
-    },
-    "missing_info": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "판단에 필요한데 빠진 정보 목록. 없으면 빈 배열"
+      "description": "대표 쟁점의 근거 조문(예: '근로기준법 제55조'). 정상지급·판단불가는 null"
     }
   },
   "required": [
     "issue",
-    "violation",
-    "law_article",
-    "amount_krw",
-    "missing_info"
+    "small_workplace",
+    "weekly_hours",
+    "min_wage",
+    "weekly_holiday_pay",
+    "unpaid_krw",
+    "law_article"
   ],
   "additionalProperties": false
 }

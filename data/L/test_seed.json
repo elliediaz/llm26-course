@@ -1,0 +1,178 @@
+[
+ {
+  "id": "L-S-01",
+  "type": "K",
+  "input": "한빛로 '모퉁이분식'에서 2027년 1월 4일부터 4주 동안 월·수·금요일마다 하루 6시간씩 일했어요. 시급은 가게에서 정한 금액 그대로 받았고 주휴수당은 따로 없었어요. 덜 받은 돈이 있나요?",
+  "gold": {
+   "issue": "최저임금미달",
+   "small_workplace": true,
+   "weekly_hours": 18,
+   "min_wage": 10700,
+   "weekly_holiday_pay": 38520,
+   "unpaid_krw": 168480,
+   "law_article": "최저임금법 제6조"
+  },
+  "gold_doc_ids": [
+   "ws01",
+   "mw_2027"
+  ]
+ },
+ {
+  "id": "L-S-02",
+  "type": "K",
+  "input": "2027년 2월 5일부터 3주 동안 한빛로에 있는 '소나무치킨'에서 알바를 했습니다. 근무는 금·토·일요일 18시부터 24시까지였고, 시급은 사장님이 정한 대로 받았어요. 주휴수당은 받았어요. 밤늦게 일한 시간도 다른 시간과 같은 시급으로만 받았어요. 덜 받은 돈이 있나요?",
+  "gold": {
+   "issue": "가산미지급",
+   "small_workplace": false,
+   "weekly_hours": 18,
+   "min_wage": 10700,
+   "weekly_holiday_pay": 38880,
+   "unpaid_krw": 97200,
+   "law_article": "근로기준법 제56조"
+  },
+  "gold_doc_ids": [
+   "ws07",
+   "mw_2027"
+  ]
+ },
+ {
+  "id": "L-S-03",
+  "type": "K",
+  "input": "'오름카페'(한빛로) 알바생이에요. 2026년 9월 7일부터 4주 동안 월·화·수·목·금요일에 하루 4시간씩 근무했어요. 시급은 처음 정한 그대로였고 주휴수당 얘기는 아예 없었어요. 제가 더 받아야 할 돈이 있으면 얼마인지 알려 주세요.",
+  "gold": {
+   "issue": "주휴미지급",
+   "small_workplace": false,
+   "weekly_hours": 20,
+   "min_wage": 10320,
+   "weekly_holiday_pay": 42000,
+   "unpaid_krw": 168000,
+   "law_article": "근로기준법 제55조"
+  },
+  "gold_doc_ids": [
+   "ws05",
+   "mw_2026"
+  ]
+ },
+ {
+  "id": "L-S-04",
+  "type": "K",
+  "input": "한빛로 '햇살코인노래방'에서 2027년 3월 6일부터 2주 동안 토·일요일마다 20시부터 다음 날 2시까지 일했어요. 시급은 가게에서 정한 금액 그대로 받았고 주휴수당은 따로 없었어요. 밤늦게 일한 시간도 다른 시간과 같은 시급으로만 받았어요. 제가 더 받아야 할 돈이 있으면 얼마인지 알려 주세요.",
+  "gold": {
+   "issue": "최저임금미달",
+   "small_workplace": true,
+   "weekly_hours": 12,
+   "min_wage": 10700,
+   "weekly_holiday_pay": 0,
+   "unpaid_krw": 1200,
+   "law_article": "최저임금법 제6조"
+  },
+  "gold_doc_ids": [
+   "ws12",
+   "mw_2027"
+  ]
+ },
+ {
+  "id": "L-S-05",
+  "type": "R",
+  "input": "편의점에서 2026년 10월 6일부터 3주 동안 화·목·토요일마다 하루 5시간씩 일했어요. 시급은 10,000원이었고 주휴수당 얘기는 아예 없었어요. 사장님을 빼고 직원은 6명이에요. 그해 최저시급은 10,320원이라고 알고 있어요. 정산이 제대로 된 건지 확인하고 싶어요.",
+  "gold": {
+   "issue": "최저임금미달",
+   "small_workplace": false,
+   "weekly_hours": 15,
+   "min_wage": 10320,
+   "weekly_holiday_pay": 30960,
+   "unpaid_krw": 107280,
+   "law_article": "최저임금법 제6조"
+  },
+  "gold_doc_ids": []
+ },
+ {
+  "id": "L-S-06",
+  "type": "R",
+  "input": "2027년 1월 11일부터 4주 동안 카페 알바를 했어요. 일한 요일은 월·화·수·목·금, 하루 6시간씩이었고 시급 11,000원을 받았어요. 주휴수당은 받았어요. 사장님을 빼고 직원은 9명이에요. 그해 최저시급은 10,700원이라고 알고 있어요. 제가 더 받아야 할 돈이 있으면 얼마인지 알려 주세요.",
+  "gold": {
+   "issue": "정상지급",
+   "small_workplace": false,
+   "weekly_hours": 30,
+   "min_wage": 10700,
+   "weekly_holiday_pay": 66000,
+   "unpaid_krw": 0,
+   "law_article": null
+  },
+  "gold_doc_ids": []
+ },
+ {
+  "id": "L-S-07",
+  "type": "R",
+  "input": "고깃집 아르바이트 정산 문의입니다. 2026년 8월 3일부터 2주 동안 수·목·금·토요일에 17시부터 24시까지 근무했고 시급은 10,320원이었어요. 주휴수당도 따로 받았어요. 밤늦게 일한 시간도 다른 시간과 같은 시급으로만 받았어요. 사장님을 빼고 직원은 5명이에요. 그해 최저시급은 10,320원이라고 알고 있어요. 덜 받은 돈이 있나요?",
+  "gold": {
+   "issue": "가산미지급",
+   "small_workplace": false,
+   "weekly_hours": 28,
+   "min_wage": 10320,
+   "weekly_holiday_pay": 57792,
+   "unpaid_krw": 82560,
+   "law_article": "근로기준법 제56조"
+  },
+  "gold_doc_ids": [
+   "rule_premium",
+   "rule_small"
+  ]
+ },
+ {
+  "id": "L-S-08",
+  "type": "F",
+  "input": "학원에서 2026년 9월 1일부터 4주 동안 화·목요일마다 하루 7시간씩 일했어요. 시급은 10,400원이었고 주휴수당 얘기는 아예 없었어요. 사장님을 빼고 직원은 4명이에요. 그해 최저시급은 10,320원이라고 알고 있어요. 덜 받은 돈이 있나요?",
+  "gold": {
+   "issue": "정상지급",
+   "small_workplace": true,
+   "weekly_hours": 14,
+   "min_wage": 10320,
+   "weekly_holiday_pay": 0,
+   "unpaid_krw": 0,
+   "law_article": null
+  },
+  "gold_doc_ids": [
+   "rule_holiday",
+   "rule_hours"
+  ]
+ },
+ {
+  "id": "L-S-09",
+  "type": "F",
+  "input": "2026년 11월 2일부터 2주 동안 물류센터 알바를 했어요. 일한 요일은 월·화·수·목·금·토, 하루 8시간씩이었고 시급 10,500원을 받았어요. 주휴수당은 받았어요. 주 40시간을 넘긴 시간도 다른 시간과 같은 시급으로만 받았어요. 사장님을 빼고 직원은 12명이에요. 그해 최저시급은 10,320원이라고 알고 있어요. 제가 더 받아야 할 돈이 있으면 얼마인지 알려 주세요.",
+  "gold": {
+   "issue": "가산미지급",
+   "small_workplace": false,
+   "weekly_hours": 40,
+   "min_wage": 10320,
+   "weekly_holiday_pay": 84000,
+   "unpaid_krw": 84000,
+   "law_article": "근로기준법 제56조"
+  },
+  "gold_doc_ids": [
+   "rule_holiday",
+   "rule_hours",
+   "rule_premium",
+   "rule_small"
+  ]
+ },
+ {
+  "id": "L-S-10",
+  "type": "F",
+  "input": "동네 PC방 아르바이트 정산 문의입니다. 2027년 1월 18일부터 3주 동안 월·화·수요일에 22시부터 다음 날 4시까지 근무했고 시급은 10,700원이었어요. 주휴수당은 받았어요. 밤늦게 일한 시간도 다른 시간과 같은 시급으로만 받았어요. 사장님을 빼고 직원은 3명이에요. 그해 최저시급은 10,700원이라고 알고 있어요. 이대로 받은 게 맞는지 궁금해요.",
+  "gold": {
+   "issue": "정상지급",
+   "small_workplace": true,
+   "weekly_hours": 18,
+   "min_wage": 10700,
+   "weekly_holiday_pay": 38520,
+   "unpaid_krw": 0,
+   "law_article": null
+  },
+  "gold_doc_ids": [
+   "rule_premium",
+   "rule_small"
+  ]
+ }
+]

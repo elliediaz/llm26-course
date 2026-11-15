@@ -1,0 +1,290 @@
+[
+ {
+  "doc_id": "ws01",
+  "title": "모퉁이분식(가상 사업장)",
+  "file": "corpus/ws01.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 266
+ },
+ {
+  "doc_id": "ws02",
+  "title": "한빛베이커리(가상 사업장)",
+  "file": "corpus/ws02.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 262
+ },
+ {
+  "doc_id": "ws03",
+  "title": "달빛편의점(가상 사업장)",
+  "file": "corpus/ws03.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 273
+ },
+ {
+  "doc_id": "ws04",
+  "title": "새벽PC방(가상 사업장)",
+  "file": "corpus/ws04.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 263
+ },
+ {
+  "doc_id": "ws05",
+  "title": "오름카페(가상 사업장)",
+  "file": "corpus/ws05.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 260
+ },
+ {
+  "doc_id": "ws06",
+  "title": "바람세탁소(가상 사업장)",
+  "file": "corpus/ws06.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 260
+ },
+ {
+  "doc_id": "ws07",
+  "title": "소나무치킨(가상 사업장)",
+  "file": "corpus/ws07.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 263
+ },
+ {
+  "doc_id": "ws08",
+  "title": "별마루스터디카페(가상 사업장)",
+  "file": "corpus/ws08.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 270
+ },
+ {
+  "doc_id": "ws09",
+  "title": "하늘서점(가상 사업장)",
+  "file": "corpus/ws09.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 257
+ },
+ {
+  "doc_id": "ws10",
+  "title": "다온김밥(가상 사업장)",
+  "file": "corpus/ws10.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 259
+ },
+ {
+  "doc_id": "ws11",
+  "title": "나래꽃집(가상 사업장)",
+  "file": "corpus/ws11.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 254
+ },
+ {
+  "doc_id": "ws12",
+  "title": "햇살코인노래방(가상 사업장)",
+  "file": "corpus/ws12.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 269
+ },
+ {
+  "doc_id": "ws13",
+  "title": "푸른정육점(가상 사업장)",
+  "file": "corpus/ws13.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 260
+ },
+ {
+  "doc_id": "ws14",
+  "title": "미소도시락(가상 사업장)",
+  "file": "corpus/ws14.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 270
+ },
+ {
+  "doc_id": "ws15",
+  "title": "봄날떡집(가상 사업장)",
+  "file": "corpus/ws15.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 257
+ },
+ {
+  "doc_id": "ws16",
+  "title": "한결헬스장(가상 사업장)",
+  "file": "corpus/ws16.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 266
+ },
+ {
+  "doc_id": "ws17",
+  "title": "유리안경점(가상 사업장)",
+  "file": "corpus/ws17.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 257
+ },
+ {
+  "doc_id": "ws18",
+  "title": "동그라미문구(가상 사업장)",
+  "file": "corpus/ws18.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 261
+ },
+ {
+  "doc_id": "ws19",
+  "title": "단비빙수(가상 사업장)",
+  "file": "corpus/ws19.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 262
+ },
+ {
+  "doc_id": "ws20",
+  "title": "가람순대국(가상 사업장)",
+  "file": "corpus/ws20.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 258
+ },
+ {
+  "doc_id": "ws21",
+  "title": "노을횟집(가상 사업장)",
+  "file": "corpus/ws21.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 259
+ },
+ {
+  "doc_id": "ws22",
+  "title": "솔방울베이글(가상 사업장)",
+  "file": "corpus/ws22.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 269
+ },
+ {
+  "doc_id": "ws23",
+  "title": "은하수볼링장(가상 사업장)",
+  "file": "corpus/ws23.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 267
+ },
+ {
+  "doc_id": "ws24",
+  "title": "초록채소가게(가상 사업장)",
+  "file": "corpus/ws24.md",
+  "source": "강사 제작 가상 상권 DB",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 265
+ },
+ {
+  "doc_id": "mw_2026",
+  "title": "2026년 적용 최저임금",
+  "file": "corpus/mw_2026.md",
+  "source": "최저임금 고시 요약(공공정보)",
+  "license": "공공누리 제1유형 요약",
+  "as_of": "2026-11-01",
+  "chars": 171
+ },
+ {
+  "doc_id": "mw_2027",
+  "title": "2027년 적용 최저임금",
+  "file": "corpus/mw_2027.md",
+  "source": "최저임금 고시 요약(공공정보)",
+  "license": "공공누리 제1유형 요약",
+  "as_of": "2026-11-01",
+  "chars": 180
+ },
+ {
+  "doc_id": "rule_minwage",
+  "title": "최저임금 미달 판단",
+  "file": "corpus/rule_minwage.md",
+  "source": "강사 작성 해설",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 189
+ },
+ {
+  "doc_id": "rule_holiday",
+  "title": "주휴수당 계산",
+  "file": "corpus/rule_holiday.md",
+  "source": "강사 작성 해설",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 280
+ },
+ {
+  "doc_id": "rule_premium",
+  "title": "연장·야간 가산수당",
+  "file": "corpus/rule_premium.md",
+  "source": "강사 작성 해설",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 208
+ },
+ {
+  "doc_id": "rule_small",
+  "title": "5인 미만 사업장",
+  "file": "corpus/rule_small.md",
+  "source": "강사 작성 해설",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 167
+ },
+ {
+  "doc_id": "rule_hours",
+  "title": "1주 소정근로시간",
+  "file": "corpus/rule_hours.md",
+  "source": "강사 작성 해설",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 186
+ },
+ {
+  "doc_id": "rule_format",
+  "title": "정산 JSON 작성 규약",
+  "file": "corpus/rule_format.md",
+  "source": "강사 작성 해설",
+  "license": "CC BY 4.0",
+  "as_of": "2026-11-01",
+  "chars": 365
+ }
+]

@@ -1,7 +1,13 @@
-# L 도메인 채점 규칙: scorer.py가 읽음(가중치는 5회차 전 확정)
+# L 도메인 채점 규칙: scorer.py가 읽음
+# match: exact(정규화 후 일치) · enum · bool · numeric(허용오차 tol)
+# 정답이 null 이면 출력도 null(또는 빈 값)이어야 정답
+# core: true 인 필드가 모두 맞으면 Exact Match(보조 지표)
+# 수치 필드 가중치 합 6/10: 점수의 60%가 회귀(숫자) 출력에서 나오는 회귀형 과제
 fields:
-  issue:        {match: enum,    weight: 2, core: true}
-  violation:    {match: enum,    weight: 2, core: true}
-  law_article:  {match: exact,   weight: 1}
-  amount_krw:   {match: numeric, weight: 2, tol: 0}
-  missing_info: {match: set_f1,  weight: 1}
+  issue:              {match: enum,    weight: 2, core: true}
+  small_workplace:    {match: bool,    weight: 1}
+  weekly_hours:       {match: numeric, weight: 1, tol: 0}
+  min_wage:           {match: numeric, weight: 1, tol: 0}
+  weekly_holiday_pay: {match: numeric, weight: 1, tol: 10}
+  unpaid_krw:         {match: numeric, weight: 3, tol: 10, core: true}
+  law_article:        {match: exact,   weight: 1}
