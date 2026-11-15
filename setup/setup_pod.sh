@@ -24,9 +24,12 @@ fi
   --env PATH "$VENV/bin:$PATH" --env HF_HOME /workspace/.cache/huggingface --env PIP_CACHE_DIR /workspace/.cache/pip
 
 # 3) 터미널용 활성화 스크립트
+#    수업 저장소 갱신(빨리 감기만)도 여기서 함. 볼륨을 다른 서버로 옮기면 소유자가 달라 safe.directory 가 필요함
 cat > /workspace/activate.sh <<'EOS'
 source /workspace/venv/bin/activate
 export HF_HOME=/workspace/.cache/huggingface PIP_CACHE_DIR=/workspace/.cache/pip
+git config --global --add safe.directory /workspace/course 2>/dev/null
+git -C /workspace/course pull -q --ff-only 2>/dev/null || true
 cd /workspace/course 2>/dev/null || true
 EOS
 

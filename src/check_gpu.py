@@ -2,7 +2,7 @@
 
 실행: python src/check_gpu.py
 확인할 것
-  - CUDA 사용 가능 여부와 GPU 이름(팀 서버는 A100 80GB, 개인 실습 서버는 CPU)
+  - CUDA 사용 가능 여부와 GPU 이름(개인 실습 서버는 CPU, 팀 서버는 회차에 따라 24~32GB급 → A100 80GB)
   - 전체·가용 VRAM, BF16 지원 여부
   - 사전 시딩된 모델이 캐시에 있는지(setup/models.txt 기준)
   - 간단한 행렬곱 속도(TFLOPS): 같은 GPU인지 대략 확인하는 용도
@@ -112,12 +112,13 @@ def main() -> None:
         print(f"  {'사전 시딩 모델':20s} {len(env['models']) - len(miss)}/{len(env['models'])}"
               + (f"  (없음: {', '.join(miss)})" if miss else ""))
     models_ok = bool(env["models"]) and all(m["cached"] for m in env["models"])
-    if env.get("cuda_available") and (env.get("vram_total_gb") or 0) >= 40 and models_ok:
-        verdict = "통과"
+    vram = env.get("vram_total_gb") or 0
+    if env.get("cuda_available") and vram >= 70 and models_ok:
+        verdict = "통과(A100급 80GB: 큰 모델 학습·서비스 단계)"
     elif env.get("cuda_available") and models_ok:
-        verdict = "통과(개인 GPU 서버: LLM 실행·학습은 팀 A100 서버에서)"
+        verdict = f"통과(GPU {round(vram)}GB: 7~8B 모델 추론·4비트 학습 단계)"
     elif models_ok:
-        verdict = "통과(개인 CPU 실습 서버: LLM 실행·학습은 팀 A100 서버에서)"
+        verdict = "통과(개인 CPU 실습 서버: 소형 모델 단계, LLM 실행은 팀 GPU 서버에서)"
     else:
         verdict = "확인 필요: 강사·TA에게 알릴 것"
     env["verdict"] = verdict
