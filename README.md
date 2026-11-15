@@ -1,5 +1,6 @@
 # GPU 기반 오픈소스 LLM·AI Agent 서비스 개발 PBL: 실습 저장소
 
+> **실습 접속 주소: [ACCESS.md](ACCESS.md)** (비밀번호는 접속 안내 카드)
 > Pod 경로: `/workspace/course` · 커널: **LLM-PBL (course)** · 터미널: `source /workspace/activate.sh`
 > 모델·버전 기준일 2026-10. 설정은 `src/config.py` 한 곳에서만 바꿈
 

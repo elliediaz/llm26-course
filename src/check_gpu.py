@@ -2,7 +2,7 @@
 
 실행: python src/check_gpu.py
 확인할 것
-  - CUDA 사용 가능 여부와 GPU 이름(A100 80GB)
+  - CUDA 사용 가능 여부와 GPU 이름(기준 A100 80GB. 재고 사정으로 대체 GPU 또는 CPU 실습 서버일 수 있음)
   - 전체·가용 VRAM, BF16 지원 여부
   - 사전 시딩된 모델이 캐시에 있는지(setup/models.txt 기준)
   - 간단한 행렬곱 속도(TFLOPS): 같은 GPU인지 대략 확인하는 용도
@@ -111,8 +111,17 @@ def main() -> None:
         miss = [m["repo"] for m in env["models"] if not m["cached"]]
         print(f"  {'사전 시딩 모델':20s} {len(env['models']) - len(miss)}/{len(env['models'])}"
               + (f"  (없음: {', '.join(miss)})" if miss else ""))
-    ok = env.get("cuda_available") and (env.get("vram_total_gb") or 0) >= 40
-    print("\n판정:", "통과" if ok else "확인 필요: 강사·TA에게 알릴 것")
+    models_ok = bool(env["models"]) and all(m["cached"] for m in env["models"])
+    if env.get("cuda_available") and (env.get("vram_total_gb") or 0) >= 40 and models_ok:
+        verdict = "통과"
+    elif env.get("cuda_available") and models_ok:
+        verdict = "통과(대체 GPU: 1·2·5·6회차 실습 가능, 7회차 학습 전 A100으로 바꿈)"
+    elif models_ok:
+        verdict = "통과(CPU 실습 서버: 1·2회차 실습은 그대로 가능, GPU 배정은 TA가 안내)"
+    else:
+        verdict = "확인 필요: 강사·TA에게 알릴 것"
+    env["verdict"] = verdict
+    print("\n판정:", verdict)
     out = utils.write_json(utils.result_path("env_check.json"), env)
     print(f"저장: {out}")
 
