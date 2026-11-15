@@ -2,7 +2,7 @@
 
 실행: python src/check_gpu.py
 확인할 것
-  - CUDA 사용 가능 여부와 GPU 이름(기준 A100 80GB. 재고 사정으로 대체 GPU 또는 CPU 실습 서버일 수 있음)
+  - CUDA 사용 가능 여부와 GPU 이름(팀 서버는 A100 80GB, 개인 실습 서버는 CPU)
   - 전체·가용 VRAM, BF16 지원 여부
   - 사전 시딩된 모델이 캐시에 있는지(setup/models.txt 기준)
   - 간단한 행렬곱 속도(TFLOPS): 같은 GPU인지 대략 확인하는 용도
@@ -115,9 +115,9 @@ def main() -> None:
     if env.get("cuda_available") and (env.get("vram_total_gb") or 0) >= 40 and models_ok:
         verdict = "통과"
     elif env.get("cuda_available") and models_ok:
-        verdict = "통과(대체 GPU: 1·2·5·6회차 실습 가능, 7회차 학습 전 A100으로 바꿈)"
+        verdict = "통과(개인 GPU 서버: LLM 실행·학습은 팀 A100 서버에서)"
     elif models_ok:
-        verdict = "통과(CPU 실습 서버: 1·2회차 실습은 그대로 가능, GPU 배정은 TA가 안내)"
+        verdict = "통과(개인 CPU 실습 서버: LLM 실행·학습은 팀 A100 서버에서)"
     else:
         verdict = "확인 필요: 강사·TA에게 알릴 것"
     env["verdict"] = verdict
