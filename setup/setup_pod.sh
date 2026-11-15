@@ -19,7 +19,9 @@ fi
 
 # 2) Jupyter 커널: 컨테이너 디스크(~/.local)가 아니라 볼륨 안에 등록 → 정지·재생성 후에도 유지
 #    Pod 생성 시 env JUPYTER_PATH=/workspace/venv/share/jupyter 로 이 위치를 Jupyter 가 찾게 한다(pods.py)
-"$VENV/bin/python" -m ipykernel install --prefix "$VENV" --name llm-pbl --display-name "LLM-PBL (course)"
+#    노트북의 !python·!pip 도 venv 를 쓰도록 커널 환경변수에 PATH·HF_HOME 을 넣는다(2026-11-15 점검에서 확인한 문제)
+"$VENV/bin/python" -m ipykernel install --prefix "$VENV" --name llm-pbl --display-name "LLM-PBL (course)" \
+  --env PATH "$VENV/bin:$PATH" --env HF_HOME /workspace/.cache/huggingface --env PIP_CACHE_DIR /workspace/.cache/pip
 
 # 3) 터미널용 활성화 스크립트
 cat > /workspace/activate.sh <<'EOS'
