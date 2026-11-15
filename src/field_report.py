@@ -58,7 +58,7 @@ def main() -> None:
         clf = utils.read_json(a.clf)
         clf_by_id = {p["id"]: p for p in clf.get("test_predictions", [])}
     except FileNotFoundError:
-        print(f"[알림] {a.clf} 파일이 없어 1회차 분류기 비교는 건너뜀(1회차 실습 2 ⑥ 결과)")
+        print(f"[알림] {a.clf} 파일이 없어 1회차 분류기 비교는 건너뜀(1회차 해보기 E 결과)")
 
     rows = []
     for f, rule in rules.items():

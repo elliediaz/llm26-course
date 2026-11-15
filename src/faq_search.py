@@ -1,4 +1,4 @@
-"""1회차 실습 1: FAQ 의미 검색기. Encoder로 문장을 벡터로 바꾸고 코사인 유사도로 가장 가까운 FAQ를 찾는다.
+"""1회차 실습 D·해보기 D: FAQ 의미 검색기. Encoder로 문장을 벡터로 바꾸고 코사인 유사도로 가장 가까운 FAQ를 찾는다.
 
   python src/faq_search.py                          # 시험 질의 10건 정확도(임베딩)
   python src/faq_search.py --method tfidf           # 비교: 글자 단위 TF-IDF(키워드 겹침 기반)

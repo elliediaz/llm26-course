@@ -1,0 +1,66 @@
+{
+  "args": {
+    "task": "sentiment",
+    "cell": "both",
+    "hidden": 128,
+    "max_len": 100,
+    "window": 48,
+    "epochs": 2,
+    "lr": 0.002,
+    "batch": 128,
+    "limit": null,
+    "predict": null
+  },
+  "result": {
+    "rnn": {
+      "params": 153218,
+      "final_acc": 0.7344,
+      "train_sec": 12.0,
+      "by_length": {
+        "1~20자": 0.761,
+        "21~40자": 0.727,
+        "41~80자": 0.734,
+        "81~자": 0.656
+      },
+      "history": [
+        {
+          "epoch": 1,
+          "loss": 0.6477,
+          "sec": 5.9,
+          "acc": 0.6372
+        },
+        {
+          "epoch": 2,
+          "loss": 0.5837,
+          "sec": 12.0,
+          "acc": 0.7344
+        }
+      ]
+    },
+    "lstm": {
+      "params": 227714,
+      "final_acc": 0.8001,
+      "train_sec": 17.1,
+      "by_length": {
+        "1~20자": 0.803,
+        "21~40자": 0.796,
+        "41~80자": 0.821,
+        "81~자": 0.762
+      },
+      "history": [
+        {
+          "epoch": 1,
+          "loss": 0.5585,
+          "sec": 8.2,
+          "acc": 0.7642
+        },
+        {
+          "epoch": 2,
+          "loss": 0.4423,
+          "sec": 17.1,
+          "acc": 0.8001
+        }
+      ]
+    }
+  }
+}
