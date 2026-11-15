@@ -1,0 +1,52 @@
+[
+ {
+  "variant": "표현 변형",
+  "query": "여기에 질문을 씀",
+  "gold_faq_id": "F__"
+ },
+ {
+  "variant": "표현 변형",
+  "query": "여기에 질문을 씀",
+  "gold_faq_id": "F__"
+ },
+ {
+  "variant": "표현 변형",
+  "query": "여기에 질문을 씀",
+  "gold_faq_id": "F__"
+ },
+ {
+  "variant": "표현 변형",
+  "query": "여기에 질문을 씀",
+  "gold_faq_id": "F__"
+ },
+ {
+  "variant": "표현 변형",
+  "query": "여기에 질문을 씀",
+  "gold_faq_id": "F__"
+ },
+ {
+  "variant": "오타",
+  "query": "여기에 질문을 씀",
+  "gold_faq_id": "F__"
+ },
+ {
+  "variant": "오타",
+  "query": "여기에 질문을 씀",
+  "gold_faq_id": "F__"
+ },
+ {
+  "variant": "은어",
+  "query": "여기에 질문을 씀",
+  "gold_faq_id": "F__"
+ },
+ {
+  "variant": "은어",
+  "query": "여기에 질문을 씀",
+  "gold_faq_id": "F__"
+ },
+ {
+  "variant": "무관 질문",
+  "query": "여기에 FAQ와 상관없는 질문을 씀",
+  "gold_faq_id": null
+ }
+]

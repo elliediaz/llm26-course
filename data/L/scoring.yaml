@@ -1,0 +1,7 @@
+# L 도메인 채점 규칙: scorer.py가 읽음(가중치는 5회차 전 확정)
+fields:
+  issue:        {match: enum,    weight: 2, core: true}
+  violation:    {match: enum,    weight: 2, core: true}
+  law_article:  {match: exact,   weight: 1}
+  amount_krw:   {match: numeric, weight: 2, tol: 0}
+  missing_info: {match: set_f1,  weight: 1}

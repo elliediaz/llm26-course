@@ -1,0 +1,174 @@
+[
+  {
+    "id": "G-S-01",
+    "type": "K",
+    "input": "지난 패치 이후로 서리칼날 공격력이 줄어든 것 같은데 버그 아닌가요? 보상해 주세요",
+    "gold": {
+      "category": "밸런스",
+      "entity": "서리칼날",
+      "patch": "v1.4",
+      "is_intended": true,
+      "fact": "공격력 120→105",
+      "action": "안내",
+      "priority": "P3"
+    },
+    "gold_doc_ids": [
+      "patch_v1.4"
+    ]
+  },
+  {
+    "id": "G-S-02",
+    "type": "K",
+    "input": "세라핀 너프 먹은 거 맞아요? 스킬 피해량이 확 달라졌어요",
+    "gold": {
+      "category": "밸런스",
+      "entity": "세라핀",
+      "patch": "v1.1",
+      "is_intended": true,
+      "fact": "계수 450%→420%",
+      "action": "안내",
+      "priority": "P3"
+    },
+    "gold_doc_ids": [
+      "patch_v1.1"
+    ]
+  },
+  {
+    "id": "G-S-03",
+    "type": "K",
+    "input": "녹스 궁 쿨이 40초라고 써 있는데 직접 재 보니 45초 걸려요",
+    "gold": {
+      "category": "버그",
+      "entity": "녹스",
+      "patch": "v1.5",
+      "is_intended": false,
+      "fact": "표시 40초, 실제 45초",
+      "action": "버그접수",
+      "priority": "P2"
+    },
+    "gold_doc_ids": [
+      "notice_known_issues",
+      "policy_pol-05"
+    ]
+  },
+  {
+    "id": "G-S-04",
+    "type": "K",
+    "input": "성좌 소환 72번 돌렸는데 SSR이 아직 안 나왔어요. 천장 몇 번이에요?",
+    "gold": {
+      "category": "기타",
+      "entity": "성좌 소환",
+      "patch": null,
+      "is_intended": null,
+      "fact": "천장 80회",
+      "action": "안내",
+      "priority": "P4"
+    },
+    "gold_doc_ids": [
+      "system_gacha",
+      "policy_pol-09"
+    ]
+  },
+  {
+    "id": "G-S-05",
+    "type": "R",
+    "input": "월간 성좌 패스 2번 결제됐는데 1번만 들어왔어요",
+    "gold": {
+      "category": "결제",
+      "entity": "월간 성좌 패스",
+      "patch": null,
+      "is_intended": null,
+      "fact": "결제 2회, 지급 1회",
+      "action": "결제확인",
+      "priority": "P1"
+    },
+    "gold_doc_ids": [
+      "policy_pol-01"
+    ]
+  },
+  {
+    "id": "G-S-06",
+    "type": "R",
+    "input": "보름달 송편 이벤트 매일 루멘석 50개 주는 거, 6일치가 안 들어왔어요",
+    "gold": {
+      "category": "이벤트",
+      "entity": "보름달 송편 이벤트",
+      "patch": null,
+      "is_intended": null,
+      "fact": "루멘석 300개",
+      "action": "이관",
+      "priority": "P2"
+    },
+    "gold_doc_ids": [
+      "policy_pol-07"
+    ]
+  },
+  {
+    "id": "G-S-07",
+    "type": "R",
+    "input": "미르 스킬만 쓰면 게임이 꺼져요",
+    "gold": {
+      "category": "버그",
+      "entity": "미르",
+      "patch": null,
+      "is_intended": false,
+      "fact": null,
+      "action": "버그접수",
+      "priority": "P1"
+    },
+    "gold_doc_ids": [
+      "policy_pol-05"
+    ]
+  },
+  {
+    "id": "G-S-08",
+    "type": "F",
+    "input": "10일 전에 산 루멘석 묶음(대)를 아직 안 썼는데 환불 가능할까요?",
+    "gold": {
+      "category": "결제",
+      "entity": "루멘석 묶음(대)",
+      "patch": null,
+      "is_intended": null,
+      "fact": "구매 10일 경과",
+      "action": "안내",
+      "priority": "P3"
+    },
+    "gold_doc_ids": [
+      "policy_pol-02"
+    ]
+  },
+  {
+    "id": "G-S-09",
+    "type": "F",
+    "input": "닉네임 달빛곰 유저가 매크로 돌리는 것 같아요. 하루 종일 같은 던전만 돌아요",
+    "gold": {
+      "category": "제재",
+      "entity": null,
+      "patch": null,
+      "is_intended": null,
+      "fact": null,
+      "action": "제재검토",
+      "priority": "P2"
+    },
+    "gold_doc_ids": [
+      "policy_pol-08"
+    ]
+  },
+  {
+    "id": "G-S-10",
+    "type": "F",
+    "input": "모르는 기기에서 로그인했다는 알림이 왔고 루멘석이 다 없어졌어요",
+    "gold": {
+      "category": "계정",
+      "entity": null,
+      "patch": null,
+      "is_intended": null,
+      "fact": null,
+      "action": "보안조치",
+      "priority": "P1"
+    },
+    "gold_doc_ids": [
+      "policy_pol-03"
+    ]
+  }
+]

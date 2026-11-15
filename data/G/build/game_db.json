@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "game": "프로젝트 루멘",
+    "note": "강사 제작 가상 수집형 RPG. 실존 게임과 무관함. 이름 충돌 여부는 확정 전 검색으로 점검",
+    "license": "CC BY 4.0 (강사 저작)",
+    "as_of": "2026-10-29",
+    "currency": {"premium": "루멘석", "basic": "골드"},
+    "maintenance": "매주 수요일 06:00~08:00(정기 점검)"
+  },
+  "heroes": [
+    {"id": "H01", "name": "아르덴", "role": "탱커", "element": "대지", "rarity": "SSR", "stats": {"공격력": 820, "방어력": 1450, "체력": 12800}, "skill": {"name": "대지의 맹세", "effect": "주변 적 도발, 피해 계수 150%", "계수": "150%", "쿨타임": "25초"}, "since": "v1.0"},
+    {"id": "H02", "name": "세라핀", "role": "딜러", "element": "빛", "rarity": "SSR", "stats": {"공격력": 1650, "방어력": 620, "체력": 7900}, "skill": {"name": "여명 일섬", "effect": "단일 대상 강타", "계수": "420%", "쿨타임": "30초"}, "since": "v1.0"},
+    {"id": "H03", "name": "카이로", "role": "딜러", "element": "바람", "rarity": "SR", "stats": {"공격력": 1380, "방어력": 540, "체력": 7100}, "skill": {"name": "질풍 연격", "effect": "3회 연속 베기", "계수": "310%", "쿨타임": "20초"}, "since": "v1.0"},
+    {"id": "H04", "name": "미르", "role": "서포터", "element": "물", "rarity": "SSR", "stats": {"공격력": 900, "방어력": 780, "체력": 9300}, "skill": {"name": "물결의 축복", "effect": "아군 전체 최대 체력 35% 회복", "계수": "35%", "쿨타임": "35초"}, "since": "v1.0"},
+    {"id": "H05", "name": "루가", "role": "딜러", "element": "불", "rarity": "SR", "stats": {"공격력": 1420, "방어력": 520, "체력": 6900}, "skill": {"name": "홍련 폭발", "effect": "범위 화염 피해", "계수": "360%", "쿨타임": "28초"}, "since": "v1.0"},
+    {"id": "H06", "name": "엘로디", "role": "서포터", "element": "빛", "rarity": "SR", "stats": {"공격력": 860, "방어력": 700, "체력": 8600}, "skill": {"name": "빛의 장막", "effect": "아군 전체에 최대 체력 25% 보호막", "계수": "25%", "쿨타임": "30초"}, "since": "v1.0"},
+    {"id": "H07", "name": "바스크", "role": "탱커", "element": "불", "rarity": "SR", "stats": {"공격력": 780, "방어력": 1320, "체력": 11900}, "skill": {"name": "불꽃 방벽", "effect": "전방 방벽 생성, 반사 피해", "계수": "130%", "쿨타임": "22초"}, "since": "v1.0"},
+    {"id": "H08", "name": "녹스", "role": "딜러", "element": "어둠", "rarity": "SSR", "stats": {"공격력": 1720, "방어력": 580, "체력": 7600}, "skill": {"name": "심연 강림", "effect": "전체 어둠 피해", "계수": "480%", "쿨타임": "40초"}, "since": "v1.0"},
+    {"id": "H09", "name": "하늘", "role": "서포터", "element": "바람", "rarity": "R", "stats": {"공격력": 720, "방어력": 640, "체력": 8100}, "skill": {"name": "순풍", "effect": "아군 공격 속도 20% 증가", "계수": "20%", "쿨타임": "25초"}, "since": "v1.0"},
+    {"id": "H10", "name": "테오", "role": "탱커", "element": "물", "rarity": "R", "stats": {"공격력": 690, "방어력": 1180, "체력": 11200}, "skill": {"name": "파도 방패", "effect": "피해 흡수 방패", "계수": "110%", "쿨타임": "20초"}, "since": "v1.0"},
+    {"id": "H11", "name": "이브렌", "role": "딜러", "element": "어둠", "rarity": "SR", "stats": {"공격력": 1460, "방어력": 560, "체력": 7300}, "skill": {"name": "그림자 사냥", "effect": "체력이 가장 낮은 적 추격", "계수": "340%", "쿨타임": "24초"}, "since": "v1.2"},
+    {"id": "H12", "name": "솔라", "role": "딜러", "element": "불", "rarity": "R", "stats": {"공격력": 1250, "방어력": 500, "체력": 6600}, "skill": {"name": "태양 화살", "effect": "관통 화살", "계수": "260%", "쿨타임": "18초"}, "since": "v1.3"}
+  ],
+  "equipment": [
+    {"id": "E01", "name": "서리칼날", "slot": "무기", "stats": {"공격력": 105}, "set": "겨울 왕국"},
+    {"id": "E02", "name": "화염의 지팡이", "slot": "무기", "stats": {"공격력": 115}, "set": null},
+    {"id": "E03", "name": "바람가르개 활", "slot": "무기", "stats": {"공격력": 110}, "set": null},
+    {"id": "E04", "name": "심연의 낫", "slot": "무기", "stats": {"공격력": 125}, "set": "심연"},
+    {"id": "E05", "name": "천둥 망치", "slot": "무기", "stats": {"공격력": 118}, "set": null},
+    {"id": "E06", "name": "독니 단검", "slot": "무기", "stats": {"공격력": 100, "치명 확률": "8%"}, "set": "심연"},
+    {"id": "E07", "name": "성채 방패", "slot": "방어구", "stats": {"방어력": 140}, "set": null},
+    {"id": "E08", "name": "은빛 갑옷", "slot": "방어구", "stats": {"방어력": 120}, "set": null},
+    {"id": "E09", "name": "용비늘 갑옷", "slot": "방어구", "stats": {"방어력": 150}, "set": null},
+    {"id": "E10", "name": "수호자의 투구", "slot": "방어구", "stats": {"방어력": 90}, "set": "겨울 왕국"},
+    {"id": "E11", "name": "별빛 반지", "slot": "장신구", "stats": {"치명 확률": "10%"}, "set": null},
+    {"id": "E12", "name": "여명의 목걸이", "slot": "장신구", "stats": {"공격력 증가": "8%"}, "set": null},
+    {"id": "E13", "name": "생명의 부적", "slot": "장신구", "stats": {"체력 증가": "12%"}, "set": null},
+    {"id": "E14", "name": "거인의 장갑", "slot": "장신구", "stats": {"방어력 증가": "10%"}, "set": null},
+    {"id": "E15", "name": "질풍 장화", "slot": "장신구", "stats": {"속도": 15}, "set": null},
+    {"id": "E16", "name": "달그림자 망토", "slot": "장신구", "stats": {"회피": "6%"}, "set": "심연"}
+  ],
+  "patches": [
+    {"version": "v1.0", "date": "2026-06-01", "title": "정식 출시", "changes": [
+      {"target": "성좌 소환", "type": "system", "field": "천장", "before": null, "after": "90회", "kind": "신규", "note": "SSR 1개 확정까지 최대 90회"},
+      {"target": "일일 던전", "type": "system", "field": "입장 횟수", "before": null, "after": "3회", "kind": "신규", "note": "매일 05:00 초기화"}
+    ]},
+    {"version": "v1.1", "date": "2026-06-24", "title": "첫 밸런스 조정", "changes": [
+      {"target": "세라핀", "type": "hero", "field": "계수", "before": "450%", "after": "420%", "kind": "너프", "note": "보스전 단일 피해가 다른 딜러 대비 과도해 조정"},
+      {"target": "테오", "type": "hero", "field": "체력", "before": "10500", "after": "11200", "kind": "버프", "note": "R 등급 탱커의 초반 생존력 보강"},
+      {"target": "바람가르개 활", "type": "equip", "field": "공격력", "before": "100", "after": "110", "kind": "버프", "note": "사용률이 낮은 활 계열 보강"},
+      {"target": "일일 던전", "type": "system", "field": "입장 횟수", "before": "3회", "after": "5회", "kind": "조정", "note": "성장 재화 수급 완화"},
+      {"target": "미르", "type": "hero", "field": "회복", "before": null, "after": null, "kind": "버그수정", "note": "물결의 축복 회복량이 보호막에 중복 적용되던 문제 수정"}
+    ]},
+    {"version": "v1.2", "date": "2026-07-22", "title": "여름 업데이트", "changes": [
+      {"target": "성좌 소환", "type": "system", "field": "천장", "before": "90회", "after": "80회", "kind": "조정", "note": "천장 하향. 이미 쌓인 횟수는 유지"},
+      {"target": "이브렌", "type": "hero", "field": "출시", "before": null, "after": null, "kind": "신규", "note": "어둠 속성 SR 딜러 출시"},
+      {"target": "루가", "type": "hero", "field": "쿨타임", "before": "32초", "after": "28초", "kind": "버프", "note": "범위 딜러 회전율 개선"},
+      {"target": "성채 방패", "type": "equip", "field": "방어력", "before": "160", "after": "140", "kind": "너프", "note": "방어 장비 간 격차 축소"},
+      {"target": "아르덴", "type": "hero", "field": "방어력", "before": "1500", "after": "1450", "kind": "너프", "note": "고난도 레이드 생존력 과다"}
+    ]},
+    {"version": "v1.3", "date": "2026-08-26", "title": "길드 레이드 업데이트", "changes": [
+      {"target": "솔라", "type": "hero", "field": "출시", "before": null, "after": null, "kind": "신규", "note": "불 속성 R 딜러 출시"},
+      {"target": "카이로", "type": "hero", "field": "계수", "before": "280%", "after": "310%", "kind": "버프", "note": "바람 속성 딜러 보강"},
+      {"target": "심연의 낫", "type": "equip", "field": "공격력", "before": "135", "after": "125", "kind": "너프", "note": "심연 세트 조합 효율 과다"},
+      {"target": "별빛 반지", "type": "equip", "field": "치명 확률", "before": "12%", "after": "10%", "kind": "너프", "note": "치명 확률 상한 도달 속도 조정"},
+      {"target": "잿빛 거인", "type": "system", "field": "길드 레이드", "before": null, "after": null, "kind": "신규", "note": "주간 길드 레이드 추가"}
+    ]},
+    {"version": "v1.4", "date": "2026-09-23", "title": "추석 업데이트", "changes": [
+      {"target": "서리칼날", "type": "equip", "field": "공격력", "before": "120", "after": "105", "kind": "너프", "note": "겨울 왕국 세트와 결합 시 피해량 과다"},
+      {"target": "녹스", "type": "hero", "field": "쿨타임", "before": "45초", "after": "40초", "kind": "버프", "note": "궁극기 회전율 개선"},
+      {"target": "엘로디", "type": "hero", "field": "보호막", "before": "20%", "after": "25%", "kind": "버프", "note": "서포터 선택 폭 확대"},
+      {"target": "바스크", "type": "hero", "field": "계수", "before": "150%", "after": "130%", "kind": "너프", "note": "반사 피해 비중 과다"},
+      {"target": "질풍 장화", "type": "equip", "field": "속도", "before": "12", "after": "15", "kind": "버프", "note": "속도 장신구 체감 개선"}
+    ]},
+    {"version": "v1.5", "date": "2026-10-21", "title": "할로윈 업데이트", "changes": [
+      {"target": "이브렌", "type": "hero", "field": "계수", "before": "380%", "after": "340%", "kind": "너프", "note": "추격 피해가 의도보다 높음"},
+      {"target": "미르", "type": "hero", "field": "쿨타임", "before": "40초", "after": "35초", "kind": "버프", "note": "회복 서포터 회전율 개선"},
+      {"target": "용비늘 갑옷", "type": "equip", "field": "방어력", "before": "135", "after": "150", "kind": "버프", "note": "최상위 방어구 위상 조정"},
+      {"target": "독니 단검", "type": "equip", "field": "치명 확률", "before": "10%", "after": "8%", "kind": "너프", "note": "별빛 반지와 중첩 시 치명 확률 과다"},
+      {"target": "호박등 축제", "type": "system", "field": "이벤트", "before": null, "after": null, "kind": "신규", "note": "할로윈 출석·교환 이벤트 시작"}
+    ]}
+  ],
+  "known_issues": [
+    {"id": "BUG-01", "version": "v1.5", "target": "녹스", "symptom": "심연 강림 쿨타임이 툴팁에는 40초로 표시되나 실제로는 45초로 적용됨", "fact": "표시 40초, 실제 45초", "blocking": false, "status": "11/4 정기 점검에서 수정 예정"},
+    {"id": "BUG-02", "version": "v1.5", "target": "잿빛 거인", "symptom": "길드 레이드 3페이즈 진입 시 간헐적으로 게임이 강제 종료됨", "fact": null, "blocking": true, "status": "원인 확인 중"},
+    {"id": "BUG-03", "version": "v1.3", "target": "일일 던전", "symptom": "보상 수령 버튼을 빠르게 두 번 누르면 보상이 지급되지 않는 경우가 있음", "fact": null, "blocking": false, "status": "재현 확인, 다음 업데이트에서 수정"},
+    {"id": "BUG-04", "version": "v1.5", "target": "호박등 축제", "symptom": "출석 7일차 보상(SSR 소환권 1장)이 지급되지 않음", "fact": "7일차 SSR 소환권 1장", "blocking": false, "status": "운영팀에서 일괄 지급 예정"}
+  ],
+  "events": [
+    {"id": "EV1", "name": "출시 기념 출석", "period": "2026-06-01~2026-06-14", "rewards": [["1일차", "루멘석 100"], ["3일차", "골드 30000"], ["7일차", "SR 영웅 선택권 1장"]], "daily": null, "note": "출석 보상은 우편함으로 지급되며 7일간 보관"},
+    {"id": "EV2", "name": "여름 해변 축제", "period": "2026-07-22~2026-08-11", "rewards": [["미션 보상", "바다의 조개"], ["교환 상점", "조개 300개 = 용비늘 갑옷 1개"]], "daily": null, "note": "조개는 이벤트 종료 후 골드로 자동 전환"},
+    {"id": "EV3", "name": "잿빛 거인 토벌전", "period": "2026-08-26~2026-09-08", "rewards": [["길드 랭킹 1~10위", "루멘석 3000"], ["참여 보상", "골드 50000"]], "daily": null, "note": "길드 단위 랭킹"},
+    {"id": "EV4", "name": "보름달 송편 이벤트", "period": "2026-09-23~2026-10-07", "rewards": [["매일 접속", "루멘석 50"], ["송편 10개 교환", "SR 소환권 1장"]], "daily": "루멘석 50", "note": "추석 기념 접속 이벤트"},
+    {"id": "EV5", "name": "호박등 축제", "period": "2026-10-21~2026-11-10", "rewards": [["1일차", "루멘석 100"], ["3일차", "SR 영웅 선택권 1장"], ["5일차", "골드 50000"], ["7일차", "SSR 소환권 1장"]], "daily": null, "note": "할로윈 출석 이벤트"},
+    {"id": "EV6", "name": "녹스 픽업 소환", "period": "2026-10-21~2026-11-03", "rewards": [["픽업 대상", "녹스 출현 확률 2배"]], "daily": null, "note": "픽업 소환 천장은 일반 성좌 소환과 별도로 계산"}
+  ],
+  "products": [
+    {"id": "P1", "name": "루멘석 묶음(소)", "price": 1200, "content": "루멘석 60개", "limit": null},
+    {"id": "P2", "name": "루멘석 묶음(중)", "price": 5900, "content": "루멘석 330개", "limit": null},
+    {"id": "P3", "name": "루멘석 묶음(대)", "price": 19000, "content": "루멘석 1200개", "limit": null},
+    {"id": "P4", "name": "월간 성좌 패스", "price": 9900, "content": "구매 즉시 루멘석 300개, 30일간 매일 루멘석 100개", "limit": "동시에 1개만 보유"},
+    {"id": "P5", "name": "초보 모험가 꾸러미", "price": 3300, "content": "SR 영웅 선택권 1장, 골드 100000", "limit": "계정당 1회"},
+    {"id": "P6", "name": "성장 지원 패키지", "price": 29000, "content": "계정 레벨 30·50 달성 시 루멘석 각 1500개", "limit": "계정당 1회"},
+    {"id": "P7", "name": "호박등 한정 꾸러미", "price": 12000, "content": "루멘석 600개, 할로윈 의상 1종", "limit": "2026-10-21~2026-11-10 판매, 계정당 2회"},
+    {"id": "P8", "name": "SSR 확정 소환권 꾸러미", "price": 49000, "content": "SSR 확정 소환권 1장, 루멘석 1500개", "limit": "계정당 월 1회"}
+  ],
+  "system": [
+    {"id": "gacha", "title": "성좌 소환 규칙", "body": ["성좌 소환 1회에 루멘석 150개, 10회 연속 소환에 1500개가 든다.", "등급별 확률은 SSR 1.5%, SR 12%, R 86.5%이다.", "천장: 80회 안에 SSR이 나오지 않으면 80회째에 SSR 1개가 확정 지급된다(v1.2부터. 그 전에는 90회).", "천장 횟수는 SSR을 얻으면 0으로 초기화된다.", "픽업 소환의 천장 횟수는 일반 성좌 소환과 따로 계산한다."]},
+    {"id": "growth", "title": "재화와 성장", "body": ["루멘석은 유료 재화이며 소환·상점에 쓴다. 이벤트로 받은 루멘석은 무료 루멘석으로 따로 집계한다.", "골드는 장비 강화와 영웅 레벨업에 쓴다.", "일일 던전은 하루 5회 입장할 수 있다(v1.1부터). 매일 05:00에 초기화된다.", "영웅 분해 시 등급별 영웅 조각을 돌려받으며, 분해는 되돌릴 수 없다."]}
+  ],
+  "policies": [
+    {"id": "POL-01", "title": "결제 후 미지급", "rule": "결제가 완료되었는데 상품이 지급되지 않은 문의", "category": "결제", "action": "결제확인", "priority": "P1", "detail": "영수증 번호를 받아 결제 내역을 확인하고 24시간 안에 처리한다. 중복 결제도 같은 절차로 처리한다."},
+    {"id": "POL-02", "title": "청약철회(환불)", "rule": "구매 후 7일 이내이고 사용하지 않은 상품의 환불 요청은 결제확인 P2. 7일이 지났거나 일부라도 사용한 상품은 환불 불가를 안내하고 P3", "category": "결제", "action": "결제확인 또는 안내", "priority": "P2 또는 P3", "detail": "월간 성좌 패스는 1일차 루멘석을 받으면 사용한 것으로 본다."},
+    {"id": "POL-03", "title": "계정 도용 의심", "rule": "본인이 하지 않은 로그인, 재화·영웅 소실, 비밀번호 변경 알림 등 도용이 의심되는 문의", "category": "계정", "action": "보안조치", "priority": "P1", "detail": "즉시 계정을 잠그고 접속 기록을 확인한다."},
+    {"id": "POL-04", "title": "계정 연동·복구 문의", "rule": "계정 연동 변경, 기기 변경, 닉네임 변경 등 단순 계정 문의", "category": "계정", "action": "안내", "priority": "P3", "detail": "고객센터 도움말 링크를 안내한다."},
+    {"id": "POL-05", "title": "버그 접수", "rule": "게임이 종료되거나 접속·진행이 불가능한 버그는 P1, 그 밖의 표시 오류·기능 오류는 P2. 모두 버그접수로 처리하고 is_intended 는 false", "category": "버그", "action": "버그접수", "priority": "P1 또는 P2", "detail": "알려진 문제 목록에 있는 버그도 버그접수로 처리해 영향 범위를 집계한다."},
+    {"id": "POL-06", "title": "밸런스 변경 문의", "rule": "패치노트에 공지된 수치 변경(너프·버프)에 대한 문의. 의도된 변경이므로 is_intended 는 true, 변경 내용을 fact 에 '항목 이전값→이후값' 형식으로 적는다", "category": "밸런스", "action": "안내", "priority": "P3", "detail": "변경으로 인한 보상 요청은 받지 않는다."},
+    {"id": "POL-07", "title": "이벤트 문의", "rule": "이벤트 보상 미지급·오류는 운영팀으로 이관하고 P2. 일정·보상 내용만 묻는 문의는 안내하고 P4", "category": "이벤트", "action": "이관 또는 안내", "priority": "P2 또는 P4", "detail": "알려진 이벤트 오류는 공지된 일괄 지급 일정을 함께 안내한다."},
+    {"id": "POL-08", "title": "부정행위·비매너 신고", "rule": "매크로·불법 프로그램·버그 악용 신고는 제재검토 P2. 욕설·비매너 채팅 신고는 제재검토 P3", "category": "제재", "action": "제재검토", "priority": "P2 또는 P3", "detail": "신고 대상 닉네임과 시각을 함께 받는다. 신고 대상 닉네임은 entity 에 적지 않는다."},
+    {"id": "POL-09", "title": "건의·기타 문의", "rule": "기능 건의, 소환 확률·규칙 문의, 그 밖의 일반 문의", "category": "기타", "action": "안내", "priority": "P4", "detail": "건의는 월 1회 개발팀에 전달한다."}
+  ],
+  "notices": [
+    {"id": "notice_maintenance", "title": "정기 점검 안내", "body": ["정기 점검은 매주 수요일 06:00~08:00에 진행한다.", "점검 중에는 접속할 수 없으며, 점검 보상으로 루멘석 100개를 우편으로 지급한다.", "점검이 연장되면 연장 1시간마다 루멘석 50개를 추가 지급한다."]},
+    {"id": "notice_v15_extend", "title": "1.5 업데이트 점검 연장 안내", "body": ["10월 21일 1.5 업데이트 점검이 2시간 연장되었다(06:00~10:00).", "연장 보상으로 루멘석 100개를 추가 지급했다(정기 점검 보상 100개와 별도)."]},
+    {"id": "notice_known_issues", "title": "알려진 문제 모음(v1.5 기준)", "body": "__KNOWN_ISSUES__"},
+    {"id": "notice_probability", "title": "확률 표기 정책", "body": ["모든 소환 상품의 등급별 확률은 게임 내 '확률 정보'에 표기한다.", "픽업 소환은 픽업 대상의 개별 확률을 함께 표기한다."]}
+  ]
+}

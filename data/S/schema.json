@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "S 스포츠·e스포츠 2026 시즌 질의",
+  "description": "KBO·LCK·롤드컵 2026 시즌 질문에 답하는 JSON 하나를 만든다. 문서에 근거가 없으면 answerable 을 false 로 두고 값을 지어내지 않는다.",
+  "type": "object",
+  "properties": {
+    "league": {
+      "enum": [
+        "KBO",
+        "LCK",
+        "Worlds"
+      ],
+      "description": "리그·대회"
+    },
+    "entity": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "팀·선수 등 대상. 없으면 null"
+    },
+    "metric": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "묻는 지표(예: '정규시즌 순위', '승률')"
+    },
+    "value": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "답 값. 근거가 없으면 null"
+    },
+    "as_of": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "값의 기준일(YYYY-MM-DD)"
+    },
+    "answerable": {
+      "type": "boolean",
+      "description": "근거 문서로 답할 수 있으면 true"
+    }
+  },
+  "required": [
+    "league",
+    "entity",
+    "metric",
+    "value",
+    "as_of",
+    "answerable"
+  ],
+  "additionalProperties": false
+}

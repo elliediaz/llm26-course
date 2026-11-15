@@ -1,0 +1,12 @@
+# G 도메인 채점 규칙: scorer.py가 읽음
+# match: exact(정규화 후 일치) · enum · bool · numeric(허용오차 tol) · numbers(정답 숫자가 출력에 모두 있으면 정답) · set_f1 · contains
+# 정답이 null 이면 출력도 null(또는 빈 값)이어야 정답
+# core: true 인 필드가 모두 맞으면 Exact Match(보조 지표)
+fields:
+  category:    {match: enum,   weight: 2, core: true}
+  entity:      {match: exact,  weight: 1}
+  patch:       {match: exact,  weight: 1}
+  is_intended: {match: bool,   weight: 1}
+  fact:        {match: numbers, weight: 1}
+  action:      {match: enum,   weight: 2, core: true}
+  priority:    {match: enum,   weight: 1, core: true}

@@ -1,0 +1,62 @@
+[
+  {
+    "qid": "Q01",
+    "query": "천장 찍으려면 몇 번 뽑아야 돼요?",
+    "gold_faq_id": "F01",
+    "variant": "표현 변형·은어"
+  },
+  {
+    "qid": "Q02",
+    "query": "수요일 아침에 접속이 안 되는데 왜 그래요?",
+    "gold_faq_id": "F05",
+    "variant": "표현 변형"
+  },
+  {
+    "qid": "Q03",
+    "query": "돈 냈는데 다이아가 안 들어왔어요",
+    "gold_faq_id": "F07",
+    "variant": "은어"
+  },
+  {
+    "qid": "Q04",
+    "query": "구매한 지 사흘 됐는데 돈 돌려받을 수 있나요",
+    "gold_faq_id": "F08",
+    "variant": "표현 변형"
+  },
+  {
+    "qid": "Q05",
+    "query": "폰 바꿨는데 내 캐릭터 그대로 가져가려면?",
+    "gold_faq_id": "F10",
+    "variant": "표현 변형"
+  },
+  {
+    "qid": "Q06",
+    "query": "누가 제 계정에 들어온 거 같아요",
+    "gold_faq_id": "F11",
+    "variant": "표현 변형"
+  },
+  {
+    "qid": "Q07",
+    "query": "일일던전 입장횟수 몇번임",
+    "gold_faq_id": "F13",
+    "variant": "띄어쓰기·말줄임"
+  },
+  {
+    "qid": "Q08",
+    "query": "매크로 유져 신고하고싶어요",
+    "gold_faq_id": "F16",
+    "variant": "오타"
+  },
+  {
+    "qid": "Q09",
+    "query": "너프당한 영웅 보상 없나요?",
+    "gold_faq_id": "F23",
+    "variant": "은어"
+  },
+  {
+    "qid": "Q10",
+    "query": "오늘 저녁 메뉴 추천해 줘",
+    "gold_faq_id": null,
+    "variant": "무관 질문"
+  }
+]

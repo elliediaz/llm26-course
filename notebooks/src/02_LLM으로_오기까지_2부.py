@@ -1,0 +1,214 @@
+# %% [markdown]
+# # LLM으로 오기까지 ②: 트랜스포머에서 오늘의 LLM까지 (2회차)
+#
+# 1회차에서 "고정 길이 벡터 병목 → 어텐션"까지 확인했고, LLM은 다음 토큰을 고르는 분류기라는 것도 직접 봤다. 오늘은 RNN을 뺀 트랜스포머가 어떻게 지금의 LLM이 됐고, 그 LLM에 무엇이 아직 모자란지(→ 5·6·7회차 과제)를 확인한다.
+#
+# | 절 | 문제 | 해결 | 확인 방법 | 시간 |
+# |---|---|---|---|---|
+# | 1 | RNN은 순차 계산이라 병렬화가 안 됨 | 트랜스포머(어텐션만) | GRU vs Self-Attention 시간·메모리 | 4분 |
+# | 2 | 어휘집 밖 단어(OOV), 한국어 토큰 비용 | 서브워드(BPE) | 미니 BPE, 실제 토크나이저 | 8분 |
+# | 3 | 이해(양방향)와 생성(단방향)의 목표 충돌 | 구조 분기: BERT(빈칸) / GPT(다음 토큰) | 빈칸 맞히기 vs 다음 토큰 | 5분 |
+# | 4 | 과업마다 모델 사본을 따로 학습 | 규모 확대 → 문맥 내 학습 | Base 모델 0-shot vs few-shot | 6분 |
+# | 5 | 질문에 답하지 않고 글을 이어 씀 | 정렬(지시 학습·RLHF) | Base vs Instruct | 5분 |
+# | 6 | 학습 시점 이후·비공개 지식은 모름(환각) | 찾아서 넣기(RAG) / 행동은 학습(LoRA) | 모르는 사실 질문 → 문맥 주입 | 5분 |
+# | 7 | 생성할 때 같은 계산 반복 | KV Cache(대신 메모리 사용) | 캐시 유무 비교 | 5분 |
+
+# %%
+import os, sys
+sys.path.insert(0, os.path.abspath("../src") if os.path.isdir("../src") else os.path.abspath("src"))
+import config, utils, lineage, model_utils
+utils.korean_font()
+from IPython.display import Image, display
+
+# %% [markdown]
+# ## 1. RNN을 빼고 어텐션만: 트랜스포머('17)
+#
+# **문제.** RNN은 t번째 상태를 계산하려면 t-1번째가 끝나야 한다. 문장이 길수록 차례로 기다리는 단계가 늘고, GPU의 수천 개 코어를 놀린다.
+#
+# **해결.** Self-Attention은 모든 토큰 쌍의 관계를 **행렬 곱 한 번**으로 계산한다. 학습을 한꺼번에 병렬로 돌릴 수 있게 되면서 대규모 사전학습이 현실이 됐다.
+
+# %%
+utils.print_table(lineage.rnn_vs_attention_timing());
+
+# %% [markdown]
+# **읽는 법.** 길이가 늘 때 GRU 시간은 순차 단계 수만큼 늘고, Self-Attention은 병렬이라 덜 늘지만 **점수 행렬이 길이의 제곱**으로 커진다(마지막 열).
+#
+# | 혼동하기 쉬운 말 | 트랜스포머의 실제 특성 |
+# |---|---|
+# | 장거리 의존성 | **강점.** 어떤 두 토큰이든 한 번에 직접 연결 |
+# | 긴 컨텍스트 | **약점.** 연산·메모리가 길이의 제곱. 원 논문·BERT 때는 512토큰 수준 |
+# | 장기 기억 | **없음.** 매번 윈도우 안의 토큰만 본다. 윈도우 밖은 완전히 잊는다 |
+#
+# - **이후 회차:** "기억이 없다" → 세 갈래 해법: 가중치에 넣기(학습, 7회차) / 윈도우 늘리기(긴 컨텍스트) / 찾아서 넣기(RAG, 6회차)
+
+# %% [markdown]
+# ## 2. 서브워드 토큰화: OOV 해결과 한국어 토큰 비용
+#
+# **문제.** 단어 단위 어휘집은 처음 보는 단어(신조어·은어·오타)를 표현하지 못한다(OOV). 게임 문의는 은어투성이다.
+
+# %%
+sents = lineage.domain_sentences()
+new = ["이번 패치 개꿀이네 너프 먹었네", "서리칼날 공격력 왜 줄었어요", "녹스 궁 쿨 몇초임"]
+utils.print_table([lineage.oov_rate(sents, new)]);
+
+# %% [markdown]
+# **해결: 서브워드(BPE, Sennrich et al. 2016).** 자주 붙어 나오는 글자 쌍을 반복해서 합쳐 어휘를 만든다. 처음 보는 단어도 아는 조각으로 쪼개지므로 OOV가 없어진다. 아래는 도메인 문서로 직접 학습한 미니 BPE다.
+
+# %%
+bpe = lineage.MiniBPE(merges=400).fit(sents)
+print("합친 규칙 앞 15개:", ["".join(r) for r in bpe.rules[:15]])
+for s in new:
+    print(f"{s}\n  → {bpe.tokenize(s)}")
+
+# %% [markdown]
+# **실제 LLM 토크나이저**로 같은 뜻의 한국어·영어 문장 토큰 수를 비교한다. 토큰 수 = **비용·속도·컨텍스트 한도**다.
+
+# %%
+import subprocess
+subprocess.run([sys.executable, os.path.join(os.path.dirname(config.__file__), "inspect_tokenizer.py")])
+subprocess.run([sys.executable, os.path.join(os.path.dirname(config.__file__), "inspect_tokenizer.py"), "--text", "녹스 궁 쿨 몇초임", "--models", config.SMALL_MODEL_ID, config.EMBED_MODEL])
+
+# %% [markdown]
+# **읽는 법.** 바이트 단위 BPE(Qwen 등)는 한글 한 글자(3바이트)가 조각 2개로 갈라지기도 한다(조각을 하나씩 풀면 `�`로 보임). 같은 뜻이라도 한국어가 토큰을 더 쓰면 같은 컨텍스트에 덜 들어가고 비용은 더 든다.
+#
+# - **실제 응용:** 모델 선택 기준(4회차)에 한국어 토큰 효율이 들어가는 이유. 6회차에서 검색 결과를 몇 개까지 넣을지 정할 때도 토큰으로 센다
+
+# %% [markdown]
+# ## 3. 사전학습 목표의 분기: 빈칸 맞히기(BERT) vs 다음 토큰 예측(GPT) ('18)
+#
+# **문제.** 이해 과업(분류·검색)은 문장 양쪽을 다 보는 편이 좋다. 그런데 "다음 단어 예측"으로 학습하려면 오른쪽을 보면 안 된다(정답을 미리 보게 됨).
+#
+# **해결: 목표에 맞춰 구조가 갈라졌다.**
+# - BERT(2018.10): 일부를 가리고 맞히게 함(MLM) → 양방향을 쓰는 **인코더**
+# - GPT-1(2018.6, BERT보다 먼저): 다음 토큰 예측 → 왼쪽만 보는 **디코더**
+
+# %%
+print("[빈칸 맞히기: 오른쪽 '요일에 진행합니다'까지 보고 맞힘]")
+print(lineage.fill_mask("정기 점검은 매주 <mask>요일에 진행합니다."))
+base, base_tok = model_utils.load_llm(config.BASE_MODEL_ID, quant="bf16")
+print("\n[다음 토큰 예측: '정기 점검은 매주' 까지만 보고 예측]")
+print(lineage.next_token("정기 점검은 매주", base, base_tok))
+
+# %% [markdown]
+# **분기는 목적 때문, 수렴은 규모 때문.** 이후 디코더 전용이 주류가 된 것은 4절의 "규모를 키우니 생성 모델이 이해 과업까지 흡수한" 결과다. GPT가 BERT의 양방향성을 가져온 것이 아니다(지금도 단방향).
+
+# %% [markdown]
+# ## 4. 규모와 문맥 내 학습 ('19~'22)
+#
+# **문제.** 사전학습-파인튜닝 시대에는 과업마다 출력층을 붙이고 모델 사본을 따로 학습했다(과업 × 분야 × 언어만큼 모델이 늘어남).
+#
+# **해결.** 모델을 키우자 프롬프트 속 **예시 몇 개만으로** 과업을 수행하는 능력(문맥 내 학습, GPT-3 '20)이 나타났다. 가중치는 그대로다.
+#
+# | 모델 | 시기 | 파라미터 |
+# |---|---|---|
+# | GPT-1 | '18 | 약 1.2억 |
+# | BERT-large | '18 | 3.4억 |
+# | GPT-2 | '19 | 15억 |
+# | GPT-3 | '20 | 1,750억 |
+# | Chinchilla | '22 | 700억(같은 연산이면 데이터를 함께 늘리는 편이 효율적: 파라미터당 약 20토큰) |
+#
+# 아래는 **정렬 전 Base 모델**(0.6B)에 문의를 분류 코드(PAY·BUG·ACC …)로 바꾸게 한 결과다. 코드 목록은 알려 주지 않고 예시만 바꾼다. 예시 0개면 코드 형식을 알 길이 없고, 예시를 넣으면 가중치를 바꾸지 않고도 형식과 분류를 따라 한다.
+
+# %%
+test = utils.read_json(config.data_dir() / "test_seed.json")
+train = utils.read_jsonl(config.data_dir() / "train_seed.jsonl")
+shots, seen = [], set()
+for r in train:                                   # 분류가 서로 다른 예시 7개(분류마다 1개)
+    if r["gold"]["category"] not in seen:
+        seen.add(r["gold"]["category"]); shots.append(r)
+for k in (0, 3, 7):
+    r = lineage.icl_accuracy(base, base_tok, test, shots[:k])
+    print(f"예시 {k}개 → 형식 준수 {r['format_ok']:.0%} · 정확도 {r['accuracy']:.0%}")
+utils.print_table(r["rows"]);
+
+# %% [markdown]
+# - **실제 응용:** 프롬프트 몇 줄로 새 기능을 시험하는 지금의 개발 방식이 여기서 시작됐다
+# - **이후 회차:** 문맥 내 학습은 **RAG의 전제**다. 가중치를 안 바꾸고 문맥으로 과업을 바꿀 수 있어야 검색 결과를 붙여 쓸 수 있다(6회차). 5회차의 "예시 제공" 형식 강제도 같은 원리다
+
+# %% [markdown]
+# ## 5. 정렬과 대화형 모델 ('21~'23)
+#
+# **문제.** 사전학습 모델(Base)은 "그럴듯한 다음 글"을 쓸 뿐, 질문에 답하라는 지시를 따르지 않는다. 질문을 이어 쓰거나 비슷한 질문을 늘어놓기도 한다.
+#
+# **해결.** 지시문-응답 쌍으로 학습(FLAN '21)하고 사람 선호로 다듬은(InstructGPT '22, RLHF) 모델이 지시를 따르게 됐다. ChatGPT('22.11)의 직접 기반이다. 13억 InstructGPT의 응답이 1,750억 GPT-3보다 사람 평가에서 더 선호됐다.
+
+# %%
+q = "결제했는데 루멘석이 안 들어왔어요. 어떻게 해야 하나요?"
+print("[Base 모델, 그대로 입력]\n", lineage.chat_raw_vs_template(base, base_tok, q, use_template=False))
+inst, inst_tok = model_utils.load_llm(config.SMALL_MODEL_ID, quant="bf16")
+print("\n[Instruct 모델, Chat Template 적용]\n", lineage.chat_raw_vs_template(inst, inst_tok, q, use_template=True))
+print("\n[Chat Template이 실제로 만드는 입력 문자열]")
+print(inst_tok.apply_chat_template([{"role": "user", "content": q}], tokenize=False, add_generation_prompt=True, **config.CHAT_TEMPLATE_KWARGS))
+
+# %% [markdown]
+# - **읽는 법:** Instruct 모델은 역할 구분 토큰(`<|im_start|>user` 등)으로 감싼 입력을 학습했다. 추론할 때도 같은 형식으로 넣어야 학습 때와 조건이 맞는다 → **5회차 Chat Template 실습**
+# - **파인튜닝 목적의 이동:** 과업 적응('18) → 행동 정렬('22) → 추론·도구 사용 능력 형성('25). 7회차 LoRA도 **행동(형식·판단)을 맞추는** 쪽에 쓴다
+
+# %% [markdown]
+# ## 6. 가중치에 담긴 지식의 한계와 문맥 주입
+#
+# **문제.** 모델은 학습 시점 이후 정보나 비공개 정보(우리 회사·우리 게임 문서)를 모른다. 모르면 "모른다"고 하기보다 **그럴듯하게 지어낸다**(환각).
+#
+# 가상 게임 '프로젝트 루멘'은 어떤 모델도 학습한 적이 없다. 그대로 물어본 뒤, 패치노트를 문맥에 넣고 다시 물어본다.
+
+# %%
+q = "프로젝트 루멘 v1.4 패치에서 서리칼날 공격력은 얼마에서 얼마로 바뀌었나요? 한 문장으로 답하세요."
+doc = (config.data_dir() / "corpus" / "patch_v1.4.md").read_text(encoding="utf-8")
+g1 = model_utils.generate(inst, inst_tok, [{"role": "user", "content": q}], config.GEN_EVAL)
+g2 = model_utils.generate(inst, inst_tok, [{"role": "user", "content": f"[참고 문서]\n{doc}\n\n[질문]\n{q}"}], config.GEN_EVAL)
+print("[문맥 없음]", g1["text"], f"(입력 {g1['n_in']}토큰)")
+print("[문서 주입]", g2["text"], f"(입력 {g2['n_in']}토큰, 지연 {g2['latency']}s)")
+
+# %% [markdown]
+# | 문제 | 가중치에 저장(학습) | 바깥 저장소(검색) |
+# |---|---|---|
+# | 최신성 | 바뀌면 다시 학습 | 문서만 바꾸면 즉시 반영 |
+# | 환각 | 모르는 것도 그럴듯하게 생성 | 근거 문서로 완화(완전 해결은 아님) |
+# | 근거 제시 | 출처 추적 불가 | 검색한 문서를 함께 보여 줌 |
+# | 수정·삭제 | 특정 사실만 고치기 어려움 | 해당 문서만 수정·삭제 |
+# | 대가 | 학습 시간·비용 | 입력이 길어져 **지연·메모리 증가**(위 토큰 수 비교) |
+#
+# - **이후 회차:** 지식은 **6회차 RAG**로, 형식·판단(행동)은 **7회차 LoRA**로 나눠 다룬다. 두 기법은 경쟁이 아니라 **분담**이다
+# - 오개념 정정: "LoRA 한계 때문에 RAG가 나왔다"는 사실과 다르다. RAG 연구는 2020년(LoRA는 2021년)이고, 실무 확산은 둘 다 2023년이다
+
+# %% [markdown]
+# ## 7. KV Cache: 생성 속도와 메모리의 교환
+#
+# 디코더는 토큰을 하나씩 만든다. 매번 앞 토큰 전체를 다시 계산하는 대신 앞 토큰의 Key·Value를 저장해 재사용한다. 빨라지는 대신 **메모리를 쓴다.** 위 6절에서 문서를 넣었을 때 입력이 길어진 만큼 캐시도 커진다.
+
+# %%
+subprocess.run([sys.executable, os.path.join(os.path.dirname(config.__file__), "mini_transformer.py"), "--kv"])
+p = config.PATHS["figs"] / "kv_cache.png"
+print("실제 모델 측정: python src/kv_cache_bench.py" if not p.exists() else "")
+if p.exists():
+    display(Image(str(p)))
+
+# %% [markdown]
+# ## 정리: 발전사 요약과 과정 구성
+#
+# | 시기 | 해결한 문제 | 남긴 제약(다음 단계 동기) | 이 과정 |
+# |---|---|---|---|
+# | ~'13 n-gram·SMT | 확률 언어모델 | 희소성, 고정 윈도우 | 1회차 |
+# | '13~'16 임베딩·서브워드 | 의미 벡터, OOV | 다의어, 문맥 무시 | 1·2회차 |
+# | '14 인코더-디코더·어텐션 | 길이가 다른 변환, 병목 해소 | 순차 계산 | 1회차 |
+# | '17 트랜스포머 | 병렬화, 장거리 의존 | 길이 제곱 비용, 기억 없음 | 2회차 |
+# | '18~'19 사전학습·구조 분기 | 라벨 없이 범용 표현 | 과업마다 사본 | 1·2회차 |
+# | '19~'22 규모·문맥 내 학습 | 프롬프트만으로 과업 | 지시 불이행 | 2회차 |
+# | '21~'23 정렬 | 지시 따르기, 대화 | 최신성, 환각 | 2·5회차 |
+# | '19~'24 효율적 파인튜닝(LoRA) | 저비용 특화 | 지식 주입 한계 | **7회차** |
+# | '20~ 검색 증강(RAG) | 외부 지식, 근거, 즉시 갱신 | 검색 품질 의존 | **6회차** |
+# | '22~'25 추론·도구 사용 | 다단계 추론, 도구 호출 | 비용·컨텍스트 관리 | 8회차 |
+# | '25~'26 에이전트·컨텍스트 설계 | 지식·절차·기억 분리 운용 | 평가·통제·비용 | 9·10회차 |
+#
+# **조건 c를 무엇으로 채우는가**: 이 과정의 회차는 이 질문에 대한 답의 순서다.
+#
+# | 회차 | 조건 c | 모델에서 바꾸는 것 |
+# |---|---|---|
+# | 1회차 | 인코더가 압축한 벡터 | (처음부터 학습) |
+# | 5회차 | 지시문·예시·출력 형식(프롬프트) | 없음 |
+# | 6회차 | 검색한 문서 | 없음 |
+# | 7회차 | 지시문 | 행동(형식·판단): LoRA |
+# | 8~10회차 | 모델이 도구로 스스로 조립한 문맥 | (공급사가 학습한 도구 사용 능력) |
+#
+# 다음 회차(3·4회차, 차승희 박사)에서는 실제 LLM 여러 개를 GPU에서 돌려 속도·메모리·품질을 비교하고 팀 모델을 고른다.
+# 오늘 정한 생성 설정(`src/config.py`의 `GEN_SERVICE`)과 실험 기록을 남겨 두고 인계한다: `python src/resume_check.py --handover 2`

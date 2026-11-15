@@ -1,0 +1,8 @@
+[
+  {"id": "S1", "ko": "결제했는데 아이템이 안 들어왔어요.", "en": "I paid, but the item has not arrived.", "ko_para": "돈은 나갔는데 아이템을 못 받았습니다."},
+  {"id": "S2", "ko": "정기 점검은 매주 수요일 오전 6시부터 8시까지입니다.", "en": "Regular maintenance runs every Wednesday from 6 to 8 a.m.", "ko_para": "매주 수요일 아침 6~8시에 점검합니다."},
+  {"id": "S3", "ko": "주휴수당은 1주 소정근로시간이 15시간 이상일 때 받을 수 있습니다.", "en": "Weekly holiday pay applies when contracted hours are at least 15 hours a week.", "ko_para": "일주일에 15시간 넘게 일하기로 했으면 주휴수당이 나옵니다."},
+  {"id": "S4", "ko": "삼성 라이온즈가 정규시즌을 마쳤다.", "en": "The Samsung Lions finished the regular season.", "ko_para": "삼성 라이온즈의 정규시즌이 끝났다."},
+  {"id": "S5", "ko": "너프 먹은 서리칼날, 아직 쓸 만한가요?", "en": "Is the nerfed Frostblade still usable?", "ko_para": "하향 조정된 서리칼날을 계속 써도 될까요?"},
+  {"id": "S6", "ko": "ㅋㅋㅋ 이번 패치 개꿀이네", "en": "lol this patch is awesome", "ko_para": "이번 패치 정말 좋네요."}
+]

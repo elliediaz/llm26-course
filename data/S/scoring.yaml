@@ -1,0 +1,8 @@
+# S 도메인 채점 규칙: scorer.py가 읽음(가중치는 5회차 전 확정)
+fields:
+  league:     {match: enum,    weight: 1, core: true}
+  entity:     {match: exact,   weight: 1}
+  metric:     {match: contains, weight: 1}
+  value:      {match: numbers, weight: 2, core: true}
+  as_of:      {match: exact,   weight: 1}
+  answerable: {match: bool,    weight: 2, core: true}

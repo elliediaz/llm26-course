@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "L 알바·자취 생활법률 판단",
+  "description": "아르바이트·자취 상황(가상 사례)을 읽고 쟁점·위반 여부·근거 조문·금액을 판단한 JSON 하나를 만든다. 정보가 부족하면 판단불가로 두고 부족한 정보를 적는다. 법률 자문이 아님.",
+  "type": "object",
+  "properties": {
+    "issue": {
+      "enum": [
+        "최저임금",
+        "주휴수당",
+        "가산수당",
+        "퇴직금",
+        "근로계약서",
+        "해고예고",
+        "보증금",
+        "계약갱신",
+        "차임증액",
+        "기타"
+      ],
+      "description": "핵심 쟁점"
+    },
+    "violation": {
+      "enum": [
+        "위반",
+        "위반아님",
+        "판단불가"
+      ],
+      "description": "법 위반 여부"
+    },
+    "law_article": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "근거 조문(예: '근로기준법 제55조'). 없으면 null"
+    },
+    "amount_krw": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "미지급액 등 계산 금액(원). 해당 없으면 null"
+    },
+    "missing_info": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "판단에 필요한데 빠진 정보 목록. 없으면 빈 배열"
+    }
+  },
+  "required": [
+    "issue",
+    "violation",
+    "law_article",
+    "amount_krw",
+    "missing_info"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,5 @@
+# pip -c 제약 파일: 이미지에 들어 있는 torch 를 바꾸지 못하게 고정한다.
+# 이미지(runpod/pytorch:1.1.0-cu1281-torch291-ubuntu2404)의 실제 버전은 Pod에서
+#   python -c "import torch, torchvision; print(torch.__version__, torchvision.__version__)"
+# 로 확인한 값으로 맞춘다. 로컬 버전 꼬리표(+cu128)는 제약 파일에 쓰지 않는다.
+torch==2.9.1

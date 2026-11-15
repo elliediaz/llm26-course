@@ -1,0 +1,14 @@
+# 사전 시딩 모델 목록(setup_pod.sh 4단계): "repo_id [패턴...]"
+#   패턴: 그대로 쓰면 포함(--include), 앞에 '-' 를 붙이면 제외(--exclude). 패턴이 없으면 저장소 전체.
+#   제외 방식을 기본으로 쓴다(포함 방식은 필요한 파일을 빠뜨리기 쉽다).
+# 용량은 2026-10 HF 저장소 기준 추정, 합계 약 44GB. 차승희 박사 회차 모델은 협의 후 추가.
+skt/A.X-4.0-Light                                   # ~15GB, Apache-2.0, 강사 지정 기본 LLM
+Qwen/Qwen3-8B                                       # ~16.4GB, Apache-2.0, 백업 LLM
+Qwen/Qwen3-0.6B                                     # ~1.5GB(751.6M BF16), Apache-2.0, 2회차 Attention·KV Cache
+nlpai-lab/KURE-v1                                   # ~2.3GB, MIT, 임베딩 1순위
+BAAI/bge-m3 -onnx/* -imgs/*                         # ~2.3GB(가중치는 pytorch_model.bin), MIT, 임베딩 백업
+dragonkue/bge-reranker-v2-m3-ko                     # ~2.3GB, Apache-2.0, 6회차 Reranker
+Helsinki-NLP/opus-mt-ko-en -*.h5 -*.msgpack -*.ot   # ~0.3GB(tf_model.h5 등 제외, 전체는 1.25GB), Apache-2.0
+gogamza/kobart-base-v2                              # ~1GB(bin·safetensors 모두 포함), MIT, 1회차 Enc-Dec 학습 백업
+Qwen/Qwen3-0.6B-Base                                # ~1.2GB, Apache-2.0, 2회차 Base vs Instruct·문맥 내 학습 확인(2026-10-29 추가)
+FacebookAI/xlm-roberta-base -*.h5 -*.msgpack -*.onnx -pytorch_model.bin   # ~1.1GB, MIT, 2회차 빈칸 맞히기(MLM) 확인(2026-10-29 추가)

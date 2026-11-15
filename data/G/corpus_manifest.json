@@ -1,0 +1,569 @@
+[
+  {
+    "doc_id": "hero_h01",
+    "title": "영웅 아르덴",
+    "file": "corpus/hero_h01.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 357
+  },
+  {
+    "doc_id": "hero_h02",
+    "title": "영웅 세라핀",
+    "file": "corpus/hero_h02.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 350
+  },
+  {
+    "doc_id": "hero_h03",
+    "title": "영웅 카이로",
+    "file": "corpus/hero_h03.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 336
+  },
+  {
+    "doc_id": "hero_h04",
+    "title": "영웅 미르",
+    "file": "corpus/hero_h04.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 403
+  },
+  {
+    "doc_id": "hero_h05",
+    "title": "영웅 루가",
+    "file": "corpus/hero_h05.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 333
+  },
+  {
+    "doc_id": "hero_h06",
+    "title": "영웅 엘로디",
+    "file": "corpus/hero_h06.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 345
+  },
+  {
+    "doc_id": "hero_h07",
+    "title": "영웅 바스크",
+    "file": "corpus/hero_h07.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 345
+  },
+  {
+    "doc_id": "hero_h08",
+    "title": "영웅 녹스",
+    "file": "corpus/hero_h08.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 414
+  },
+  {
+    "doc_id": "hero_h09",
+    "title": "영웅 하늘",
+    "file": "corpus/hero_h09.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 296
+  },
+  {
+    "doc_id": "hero_h10",
+    "title": "영웅 테오",
+    "file": "corpus/hero_h10.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 345
+  },
+  {
+    "doc_id": "hero_h11",
+    "title": "영웅 이브렌",
+    "file": "corpus/hero_h11.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 385
+  },
+  {
+    "doc_id": "hero_h12",
+    "title": "영웅 솔라",
+    "file": "corpus/hero_h12.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 313
+  },
+  {
+    "doc_id": "equip_e01",
+    "title": "장비 서리칼날",
+    "file": "corpus/equip_e01.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 144
+  },
+  {
+    "doc_id": "equip_e02",
+    "title": "장비 화염의 지팡이",
+    "file": "corpus/equip_e02.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 93
+  },
+  {
+    "doc_id": "equip_e03",
+    "title": "장비 바람가르개 활",
+    "file": "corpus/equip_e03.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 138
+  },
+  {
+    "doc_id": "equip_e04",
+    "title": "장비 심연의 낫",
+    "file": "corpus/equip_e04.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 135
+  },
+  {
+    "doc_id": "equip_e05",
+    "title": "장비 천둥 망치",
+    "file": "corpus/equip_e05.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 91
+  },
+  {
+    "doc_id": "equip_e06",
+    "title": "장비 독니 단검",
+    "file": "corpus/equip_e06.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 152
+  },
+  {
+    "doc_id": "equip_e07",
+    "title": "장비 성채 방패",
+    "file": "corpus/equip_e07.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 135
+  },
+  {
+    "doc_id": "equip_e08",
+    "title": "장비 은빛 갑옷",
+    "file": "corpus/equip_e08.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 92
+  },
+  {
+    "doc_id": "equip_e09",
+    "title": "장비 용비늘 갑옷",
+    "file": "corpus/equip_e09.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 136
+  },
+  {
+    "doc_id": "equip_e10",
+    "title": "장비 수호자의 투구",
+    "file": "corpus/equip_e10.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 96
+  },
+  {
+    "doc_id": "equip_e11",
+    "title": "장비 별빛 반지",
+    "file": "corpus/equip_e11.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 143
+  },
+  {
+    "doc_id": "equip_e12",
+    "title": "장비 여명의 목걸이",
+    "file": "corpus/equip_e12.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 96
+  },
+  {
+    "doc_id": "equip_e13",
+    "title": "장비 생명의 부적",
+    "file": "corpus/equip_e13.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 95
+  },
+  {
+    "doc_id": "equip_e14",
+    "title": "장비 거인의 장갑",
+    "file": "corpus/equip_e14.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 96
+  },
+  {
+    "doc_id": "equip_e15",
+    "title": "장비 질풍 장화",
+    "file": "corpus/equip_e15.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 129
+  },
+  {
+    "doc_id": "equip_e16",
+    "title": "장비 달그림자 망토",
+    "file": "corpus/equip_e16.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 92
+  },
+  {
+    "doc_id": "patch_v1.0",
+    "title": "v1.0 패치노트",
+    "file": "corpus/patch_v1.0.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 542
+  },
+  {
+    "doc_id": "patch_v1.1",
+    "title": "v1.1 패치노트",
+    "file": "corpus/patch_v1.1.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 1349
+  },
+  {
+    "doc_id": "patch_v1.2",
+    "title": "v1.2 패치노트",
+    "file": "corpus/patch_v1.2.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 1288
+  },
+  {
+    "doc_id": "patch_v1.3",
+    "title": "v1.3 패치노트",
+    "file": "corpus/patch_v1.3.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 1381
+  },
+  {
+    "doc_id": "patch_v1.4",
+    "title": "v1.4 패치노트",
+    "file": "corpus/patch_v1.4.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 1666
+  },
+  {
+    "doc_id": "patch_v1.5",
+    "title": "v1.5 패치노트",
+    "file": "corpus/patch_v1.5.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 1711
+  },
+  {
+    "doc_id": "event_ev1",
+    "title": "이벤트 출시 기념 출석",
+    "file": "corpus/event_ev1.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 135
+  },
+  {
+    "doc_id": "event_ev2",
+    "title": "이벤트 여름 해변 축제",
+    "file": "corpus/event_ev2.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 127
+  },
+  {
+    "doc_id": "event_ev3",
+    "title": "이벤트 잿빛 거인 토벌전",
+    "file": "corpus/event_ev3.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 111
+  },
+  {
+    "doc_id": "event_ev4",
+    "title": "이벤트 보름달 송편 이벤트",
+    "file": "corpus/event_ev4.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 113
+  },
+  {
+    "doc_id": "event_ev5",
+    "title": "이벤트 호박등 축제",
+    "file": "corpus/event_ev5.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 137
+  },
+  {
+    "doc_id": "event_ev6",
+    "title": "이벤트 녹스 픽업 소환",
+    "file": "corpus/event_ev6.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 107
+  },
+  {
+    "doc_id": "product_p1",
+    "title": "상품 루멘석 묶음(소)",
+    "file": "corpus/product_p1.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 114
+  },
+  {
+    "doc_id": "product_p2",
+    "title": "상품 루멘석 묶음(중)",
+    "file": "corpus/product_p2.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 115
+  },
+  {
+    "doc_id": "product_p3",
+    "title": "상품 루멘석 묶음(대)",
+    "file": "corpus/product_p3.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 117
+  },
+  {
+    "doc_id": "product_p4",
+    "title": "상품 월간 성좌 패스",
+    "file": "corpus/product_p4.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 146
+  },
+  {
+    "doc_id": "product_p5",
+    "title": "상품 초보 모험가 꾸러미",
+    "file": "corpus/product_p5.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 135
+  },
+  {
+    "doc_id": "product_p6",
+    "title": "상품 성장 지원 패키지",
+    "file": "corpus/product_p6.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 140
+  },
+  {
+    "doc_id": "product_p7",
+    "title": "상품 호박등 한정 꾸러미",
+    "file": "corpus/product_p7.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 158
+  },
+  {
+    "doc_id": "product_p8",
+    "title": "상품 SSR 확정 소환권 꾸러미",
+    "file": "corpus/product_p8.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 143
+  },
+  {
+    "doc_id": "system_gacha",
+    "title": "성좌 소환 규칙",
+    "file": "corpus/system_gacha.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 227
+  },
+  {
+    "doc_id": "system_growth",
+    "title": "재화와 성장",
+    "file": "corpus/system_growth.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 184
+  },
+  {
+    "doc_id": "policy_pol-01",
+    "title": "운영정책 POL-01 결제 후 미지급",
+    "file": "corpus/policy_pol-01.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 188
+  },
+  {
+    "doc_id": "policy_pol-02",
+    "title": "운영정책 POL-02 청약철회(환불)",
+    "file": "corpus/policy_pol-02.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 230
+  },
+  {
+    "doc_id": "policy_pol-03",
+    "title": "운영정책 POL-03 계정 도용 의심",
+    "file": "corpus/policy_pol-03.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 179
+  },
+  {
+    "doc_id": "policy_pol-04",
+    "title": "운영정책 POL-04 계정 연동·복구 문의",
+    "file": "corpus/policy_pol-04.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 160
+  },
+  {
+    "doc_id": "policy_pol-05",
+    "title": "운영정책 POL-05 버그 접수",
+    "file": "corpus/policy_pol-05.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 235
+  },
+  {
+    "doc_id": "policy_pol-06",
+    "title": "운영정책 POL-06 밸런스 변경 문의",
+    "file": "corpus/policy_pol-06.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 225
+  },
+  {
+    "doc_id": "policy_pol-07",
+    "title": "운영정책 POL-07 이벤트 문의",
+    "file": "corpus/policy_pol-07.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 204
+  },
+  {
+    "doc_id": "policy_pol-08",
+    "title": "운영정책 POL-08 부정행위·비매너 신고",
+    "file": "corpus/policy_pol-08.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 218
+  },
+  {
+    "doc_id": "policy_pol-09",
+    "title": "운영정책 POL-09 건의·기타 문의",
+    "file": "corpus/policy_pol-09.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 154
+  },
+  {
+    "doc_id": "notice_maintenance",
+    "title": "정기 점검 안내",
+    "file": "corpus/notice_maintenance.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 134
+  },
+  {
+    "doc_id": "notice_v15_extend",
+    "title": "1.5 업데이트 점검 연장 안내",
+    "file": "corpus/notice_v15_extend.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 116
+  },
+  {
+    "doc_id": "notice_known_issues",
+    "title": "알려진 문제 모음(v1.5 기준)",
+    "file": "corpus/notice_known_issues.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 324
+  },
+  {
+    "doc_id": "notice_probability",
+    "title": "확률 표기 정책",
+    "file": "corpus/notice_probability.md",
+    "source": "강사 제작 가상 게임 DB",
+    "license": "CC BY 4.0",
+    "as_of": "2026-10-29",
+    "chars": 84
+  }
+]

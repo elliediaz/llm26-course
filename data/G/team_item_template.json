@@ -1,0 +1,335 @@
+{
+  "domain": "G",
+  "allocation": {
+    "K": 8,
+    "R": 7,
+    "F": 5
+  },
+  "rules": [
+    "K(지식형): 코퍼스의 특정 문서를 봐야만 답할 수 있는 문의. gold_doc_ids 에 근거 문서 id 를 반드시 적는다",
+    "R(추론형): 입력 문장 안에 판단 근거가 모두 있는 문의(추출·계산)",
+    "F(형식·판단형): 운영정책(policy_*) 의 분류 규약을 따라야 맞힐 수 있는 문의",
+    "gold 는 schema.json 을 통과해야 한다. 값이 없으면 null",
+    "시드 문항과 같은 문장·같은 사실을 다시 쓰지 않는다(표현만 바꾼 문항 금지)",
+    "실존 인물·실제 게임 이름·개인정보를 넣지 않는다"
+  ],
+  "example": {
+    "id": "G-S-01",
+    "type": "K",
+    "input": "지난 패치 이후로 서리칼날 공격력이 줄어든 것 같은데 버그 아닌가요? 보상해 주세요",
+    "gold": {
+      "category": "밸런스",
+      "entity": "서리칼날",
+      "patch": "v1.4",
+      "is_intended": true,
+      "fact": "공격력 120→105",
+      "action": "안내",
+      "priority": "P3"
+    },
+    "gold_doc_ids": [
+      "patch_v1.4"
+    ]
+  },
+  "items": [
+    {
+      "id": "G-T-01",
+      "type": "K",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-02",
+      "type": "K",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-03",
+      "type": "K",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-04",
+      "type": "K",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-05",
+      "type": "K",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-06",
+      "type": "K",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-07",
+      "type": "K",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-08",
+      "type": "K",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-09",
+      "type": "R",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-10",
+      "type": "R",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-11",
+      "type": "R",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-12",
+      "type": "R",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-13",
+      "type": "R",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-14",
+      "type": "R",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-15",
+      "type": "R",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-16",
+      "type": "F",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-17",
+      "type": "F",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-18",
+      "type": "F",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-19",
+      "type": "F",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    },
+    {
+      "id": "G-T-20",
+      "type": "F",
+      "input": "",
+      "gold": {
+        "category": null,
+        "entity": null,
+        "patch": null,
+        "is_intended": null,
+        "fact": null,
+        "action": null,
+        "priority": null
+      },
+      "gold_doc_ids": []
+    }
+  ]
+}
