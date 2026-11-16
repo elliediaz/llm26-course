@@ -7,7 +7,7 @@ CNN     [N,1,28,28] → Conv 3×3 16장 → ReLU → MaxPool → [N,16,14,14]
                     → Conv 3×3 32장 → ReLU → MaxPool → [N,32,7,7] → 펼치기 [N,1568] → Linear 128 → Linear 10
         (작은 창을 밀며 같은 무늬를 어디서든 찾음. 가까운 픽셀끼리의 관계를 살림)
 
-  python src/nn_cnn.py                               # MLP·CNN 각 2에폭(CPU 서버 약 1~2분)
+  python src/nn_cnn.py                               # MLP·CNN 각 2에폭(개인 CPU 서버 약 15초)
   python src/nn_cnn.py --model cnn --channels 32 64 --epochs 3 --lr 0.002
   python src/nn_cnn.py --target group                # 10종 → 4묶음(상의·하의/원피스·신발·가방)으로 바꿔 풀기(해보기 B)
 결과: results/nn_cnn.json, results/fig/nn_cnn_pred.png(예측 예시), results/fig/nn_cnn_maps.png(첫 층 특징 맵)

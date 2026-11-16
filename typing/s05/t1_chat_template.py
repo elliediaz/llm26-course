@@ -1,4 +1,4 @@
-"""[따라 치기 5-T1] Chat Template 적용 (5회차 코드 구조, 5분)
+"""[따라 치기 5-T1] Chat Template 적용 (5회차 코드 구조)
 
 실행: python typing/s05/t1_chat_template.py      (빈칸 ____을 채운 뒤)
 확인: ① 역할(system·user·assistant)이 특수 토큰으로 감싸여 한 줄의 글로 바뀜

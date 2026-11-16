@@ -7,7 +7,7 @@ RNN     한 칸씩 읽으며 상태 하나를 고침. 멀리 떨어진 정보는
 LSTM    문(gate)으로 '기억할 것'을 따로 들고 감. 실제 리뷰에서는 RNN보다 오래 버티지만(실습 C) 학습이 짧으면 이 과제에서도 길이 20부터 무너지고, 여전히 한 칸씩 차례로 계산
 어텐션  모든 칸이 맨 앞 칸을 한 번에 직접 봄(트랜스포머의 핵심 부품). 길이와 상관없이 거리가 1
 
-  python src/seq_limits.py                     # 길이 5·10·20·40, 세 구조 각 1,000스텝(개인 CPU 서버 약 1~2분)
+  python src/seq_limits.py                     # 길이 5·10·20·40, 세 구조 각 1,000스텝(개인 CPU 서버 약 1분)
   python src/seq_limits.py --steps 3000        # 더 오래 학습하면 LSTM이 버티는 길이가 늘어나나(해보기)
 결과: results/seq_limits.json, results/fig/seq_limits.png
 """

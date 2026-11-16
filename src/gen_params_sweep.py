@@ -1,4 +1,4 @@
-"""2회차 18:46 걸어 두기, 실습 2 ⑥에서 해석: 생성 설정 비교표. 같은 입력에 Temperature·Top-k·Top-p 조합을 바꿔 여러 번 생성해 본다.
+"""2회차 1교시 휴식 직전에 걸어 두고 실습 2 ⑥에서 해석: 생성 설정 비교표. 같은 입력에 Temperature·Top-k·Top-p 조합을 바꿔 여러 번 생성해 본다.
 
   python src/gen_params_sweep.py                    # 기본 6개 조합 × 프롬프트 6건 × 3회
   python src/gen_params_sweep.py --model Qwen/Qwen3-0.6B --ids G-GP-5 --repeats 10 --temperature 0.7 --top-p 0.9

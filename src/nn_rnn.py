@@ -6,7 +6,7 @@
 바꿔 풀기(회귀)  --task ccu: 가상 RPG 시간별 동시 접속자 수 → 다음 1시간 접속자 수   data/G/ccu_hourly.csv
   [N,48,4] 지난 48시간(접속자·시각·요일·점검) → LSTM → [N,1] 숫자
 
-  python src/nn_rnn.py                                   # 감성 분류 RNN vs LSTM(CPU 서버 약 3분)
+  python src/nn_rnn.py                                   # 감성 분류 RNN vs LSTM(개인 CPU 서버 약 45초)
   python src/nn_rnn.py --cell lstm --predict "배우들 연기는 좋았는데 결말이 너무 허무하다"
   python src/nn_rnn.py --task ccu                        # 같은 LSTM으로 회귀 문제(해보기 C)
 결과: results/nn_rnn.json(또는 nn_rnn_ccu.json), results/fig/nn_rnn_len.png, runs/nn_rnn_<cell>.pt
