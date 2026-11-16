@@ -11,7 +11,8 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 MODEL = "Qwen/Qwen3-0.6B"
 DEV = "cuda" if torch.cuda.is_available() else "cpu"
 tok = AutoTokenizer.from_pretrained(MODEL)
-model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.bfloat16 if DEV == "cuda" else torch.float32).to(DEV)
+DTYPE = (torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16) if DEV == "cuda" else torch.float32
+model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=DTYPE).to(DEV)   # T4 등 BF16 미지원 GPU는 FP16
 
 # 1) 출력층의 크기 = 고를 수 있는 '클래스'의 수
 print("어휘 크기(클래스 수):", model.config.____)

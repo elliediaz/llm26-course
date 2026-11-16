@@ -51,17 +51,30 @@ def matmul_tflops(n: int = 8192, reps: int = 10) -> float | None:
     import torch
     if not torch.cuda.is_available():
         return None
-    a = torch.randn(n, n, device="cuda", dtype=torch.bfloat16)
-    b = torch.randn(n, n, device="cuda", dtype=torch.bfloat16)
-    for _ in range(2):
-        a @ b
-    torch.cuda.synchronize()
-    t0 = time.perf_counter()
-    for _ in range(reps):
-        a @ b
-    torch.cuda.synchronize()
+    dt = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16   # T4 등 BF16 미지원 GPU는 FP16
+    try:
+        a = torch.randn(n, n, device="cuda", dtype=dt)
+        b = torch.randn(n, n, device="cuda", dtype=dt)
+        for _ in range(2):
+            a @ b
+        torch.cuda.synchronize()
+        t0 = time.perf_counter()
+        for _ in range(reps):
+            a @ b
+        torch.cuda.synchronize()
+    except RuntimeError:
+        return None
     sec = (time.perf_counter() - t0) / reps
     return round(2 * n**3 / sec / 1e12, 1)
+
+
+def where() -> str:
+    """실행 환경 구별: RunPod 실습 서버, 구글 코랩, 그 밖(개인 PC 등)."""
+    if os.environ.get("RUNPOD_POD_ID"):
+        return "RunPod"
+    if os.environ.get("COLAB_RELEASE_TAG") or os.path.isdir("/content/sample_data"):
+        return "코랩"
+    return "개인 PC"
 
 
 def seeded_models() -> list[dict]:
@@ -88,7 +101,8 @@ def main() -> None:
     utils.set_seed()
     env = {
         "checked_at": utils.now(),
-        "pod_id": os.environ.get("RUNPOD_POD_ID", "(로컬)"),
+        "where": where(),
+        "pod_id": os.environ.get("RUNPOD_POD_ID", "(없음)"),
         "python": platform.python_version(),
         "hf_home": os.environ.get("HF_HOME", "(기본값)"),
         **gpu_info(),
@@ -104,7 +118,7 @@ def main() -> None:
     env["models"] = seeded_models()
 
     print("\n[환경점검표]")
-    for k in ("pod_id", "name", "vram_total_gb", "vram_free_gb", "bf16", "torch", "cuda_runtime", "driver",
+    for k in ("where", "pod_id", "name", "vram_total_gb", "vram_free_gb", "bf16", "torch", "cuda_runtime", "driver",
               "transformers", "peft", "trl", "bitsandbytes", "disk_free_gb", "matmul_bf16_tflops"):
         print(f"  {k:20s} {env.get(k)}")
     if env["models"]:
@@ -119,6 +133,10 @@ def main() -> None:
         verdict = f"통과(GPU {round(vram)}GB: 7~8B 모델 추론·4비트 학습 단계)"
     elif models_ok:
         verdict = "통과(개인 CPU 실습 서버: 소형 모델 단계, LLM 실행은 팀 GPU 서버에서)"
+    elif env["where"] != "RunPod" and env.get("torch"):
+        dev = f"GPU {env.get('name')}" if env.get("cuda_available") else "CPU"
+        verdict = (f"통과({env['where']} {dev}: 1·2회차 실습 가능. 미리 받은 모델이 없으므로 "
+                   "LLM·임베딩 모델은 처음 실행할 때 내려받음)")
     else:
         verdict = "확인 필요: 강사·TA에게 알릴 것"
     env["verdict"] = verdict
