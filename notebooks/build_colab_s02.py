@@ -31,37 +31,31 @@ def typing_cell(rel: str) -> None:
     code(f"%%writefile {rel}\n{body}")
 
 
-md(f"""
-# 2회차 실습 노트북: 트랜스포머 구조, 토큰, 생성 설정, KV Cache
+md("""
+# 2회차 실습 노트북
 
-코랩, 개인 PC의 주피터, 수업 실습 서버 어디서 열어도 같은 순서로 진행할 수 있게 만든 노트북임.
-2회차 실습가이드(PDF)의 명령을 셀 단위로 옮겼고, 확인할 값도 같음.
+실습가이드의 명령을 순서대로 셀로 옮긴 노트북임. 코랩, 개인 PC, 실습 서버에서 똑같이 쓸 수 있음
 
-| 할 일 | 방법 |
-|---|---|
-| 셀 실행 | 셀을 누르고 **Shift + Enter** (또는 셀 왼쪽 ▶) |
-| 따라 치기 | `%%writefile`로 시작하는 셀에서 `____`을 채우고 실행 → 바로 아래 셀로 실행 |
-| 내 작업 남기기 | 코랩은 **파일 → Drive에 사본 저장**. 결과 파일은 맨 아래 '결과 내려받기' 셀 |
-
-- 위에서부터 차례로 실행함. 런타임이 끊기면 **0번 셀부터 다시** 실행함
-- 코랩은 런타임 유형 **T4 GPU를 권장**함. GPU가 배정되지 않으면 CPU로 진행해도 됨(생성 설정 비교 약 13분, 휴식 동안 걸어 둠)
-- 코랩 바로 열기: {COLAB_URL}
+- 셀은 위에서부터 차례로 Shift + Enter로 실행함
+- `%%writefile` 셀은 빈칸 `____`을 채운 뒤 실행하고, 바로 아래 셀로 결과를 봄
+- 연결이 끊기면 0번 셀부터 다시 실행함
+- 작업을 남기려면 파일 → Drive에 사본 저장. 결과 파일은 맨 아래 셀로 내려받음
 """)
 md("""
-## 0. 준비: 저장소 받기와 환경 점검
-- 2회차는 런타임 유형 **T4 GPU 권장**(런타임 → 런타임 유형 변경). CPU로도 모든 셀이 돌아감
-- 판정이 `통과(...)`로 나오면 됨. `확인 필요`가 나오면 손을 들어 TA를 부름
+## 0. 준비
+- 런타임 유형은 T4 GPU 권장(런타임 → 런타임 유형 변경). CPU로도 됨
+- 아래 두 셀을 실행해 판정이 '통과'인지 봄. '확인 필요'가 나오면 TA를 부름
 """)
 code(r'''
 import os, sys, shutil, subprocess, threading
 from IPython.display import Image, Markdown, display
 
 REPO = "https://github.com/elliediaz/llm26-course.git"
-if os.path.isfile("../src/config.py"):          # 저장소 안의 notebooks/에서 열었을 때(개인 PC·실습 서버)
+if os.path.isfile("../src/config.py"):          # 저장소 안에서 열었을 때
     HOME = os.path.abspath("..")
-elif os.path.isdir("/workspace/course"):        # 수업 실습 서버(RunPod)
+elif os.path.isdir("/workspace/course"):        # 실습 서버
     HOME = "/workspace/course"
-else:                                           # 코랩, 또는 저장소 밖에서 연 개인 PC
+else:                                           # 코랩
     HOME = "/content/course" if os.path.isdir("/content") else os.path.abspath("llm26-course")
     if not os.path.isdir(HOME):
         subprocess.run(["git", "clone", "-q", "--depth", "1", REPO, HOME], check=True)
@@ -73,13 +67,11 @@ os.makedirs("results/fig", exist_ok=True)
 
 
 def show(*paths, width=760):
-    """그림 파일을 셀 아래에 띄움. 아직 없으면 알려 줌."""
     for p in paths:
         display(Image(p, width=width)) if os.path.exists(p) else print("아직 없음:", p)
 
 
 def tail(path, n=8):
-    """로그 파일의 마지막 n줄(학습이 어디까지 왔는지 확인)."""
     if not os.path.exists(path):
         print("아직 없음:", path)
         return
@@ -88,7 +80,7 @@ def tail(path, n=8):
 
 
 def use_ref():
-    """학습이 늦을 때 1회차 참고 결과를 복사(이미 있는 내 결과는 덮어쓰지 않음)."""
+    # 학습이 늦을 때 참고 결과를 복사함(내 결과는 덮어쓰지 않음)
     n = 0
     for f in sorted(os.listdir("ref/s01")):
         dst = {".json": "results", ".png": "results/fig", ".pt": "runs"}.get(os.path.splitext(f)[1])
@@ -129,9 +121,8 @@ show("results/fig/attn_compare.png")
 
 md("""
 ## 휴식 전 걸어 두기: 생성 설정 비교
-- 같은 질문을 설정(greedy, temperature, top-p)만 바꿔 여러 번 생성함
-- 실습 서버(8코어)에서 약 11분, 코랩 CPU(2코어)에서 약 13분 걸림(T4 GPU면 더 짧음). 뒤에서 돌리고 다음 셀로 넘어감
-- 도는 동안 다른 생성·학습 셀을 실행하지 않음. 탭을 닫지 않음
+- 같은 질문을 설정만 바꿔 여러 번 생성함(코랩 CPU 약 13분, T4면 더 짧음)
+- 쉬는 동안 탭을 닫지 않음. 도는 동안 다른 생성·학습 셀은 실행하지 않음
 """)
 code(r'''
 def _run_sweep():
@@ -152,8 +143,8 @@ print("\\n모두 끝남" if os.path.exists("results/bg_done.txt") else "\\n아�
 
 md("""
 ## 해보기 ①. MiniGPT 설정과 학습 글 바꾸기
-- 기본값으로 한 번, 그다음 **하나만** 바꿔 다시 학습함(실습 서버 한 번 약 95초)
-- 생성 설정 비교가 도는 중이면 끝난 뒤에 실행함(둘이 겹치면 둘 다 느려짐)
+- 기본값으로 한 번, 그다음 값 하나만 바꿔 다시 학습함(한 번 약 95초)
+- 생성 설정 비교가 끝난 뒤에 실행함
 """)
 code("""
 !python src/mini_transformer.py --train 1.5
@@ -167,7 +158,7 @@ show("results/fig/mini_gpt_loss.png")
 
 md("""
 ## 실습 2. 문맥 내 학습과 고르는 법
-- ④ 예시 개수에 따라 Base 모델의 답이 어떻게 바뀌는지, Base와 Instruct가 같은 질문에 어떻게 다르게 답하는지 봄(발전사 노트북 §4·§5와 같은 내용)
+- ④ 예시 개수에 따라 Base 모델의 답이 어떻게 바뀌는지, Base와 Instruct가 같은 질문에 어떻게 다르게 답하는지 봄
 """)
 code("""
 sys.path.insert(0, os.path.abspath("src"))
@@ -204,7 +195,7 @@ for p in ("results/gen_sweep.md", "ref/s02/gen_sweep_main_7b.md"):
 
 md("""
 ## 실습 3. KV Cache와 문맥 주입
-- ⑥ KV Cache를 켜고 끌 때의 속도와 메모리를 잼(실습 서버 약 2분 45초)
+- ⑥ KV Cache를 켜고 끌 때의 속도와 메모리를 잼(약 3분)
 """)
 code("""
 !python src/mini_transformer.py --kv
@@ -214,7 +205,7 @@ show("results/fig/kv_cache.png")
 
 md("""
 ## 해보기 ②. 팀 생성 설정과 KV Cache 손계산
-- D(필수, 팀): 형식형 문의로 내가 고른 설정 하나를 greedy와 비교하고 `GEN_SERVICE`를 정함(실습 서버 한 번 약 60초)
+- D(필수, 팀): 형식형 문의로 내가 고른 설정 하나를 greedy와 비교하고 `GEN_SERVICE`를 정함(한 번 약 60초)
 """)
 code("""
 !python src/gen_params_sweep.py --model Qwen/Qwen3-0.6B --kind 형식형 --temperature 0.5 --top-p 0.8
@@ -229,7 +220,7 @@ code("!python src/resume_check.py --handover 2")
 
 md("""
 ## 결과 내려받기
-- `results/`를 압축해 내려받음. 코랩은 런타임이 끝나면 파일이 사라지므로 수업을 마치기 전에 실행함
+- 코랩은 연결이 끝나면 파일이 사라지므로 수업을 마치기 전에 실행함
 """)
 code(r'''
 shutil.make_archive("s02_results", "zip", ".", "results")
@@ -244,11 +235,11 @@ md("""
 ## 문제가 생기면
 | 증상 | 조치 |
 |---|---|
-| `No such file or directory`, `ModuleNotFoundError: config` | 0번 셀을 먼저 실행(작업 폴더가 바뀌지 않은 상태) |
-| 런타임 연결이 끊김 | 다시 연결하고 0번 셀부터 실행. 뒤에서 돌던 생성 설정 비교는 다시 걸어 둠 |
-| GPU를 할당할 수 없다는 안내 | CPU로 연결해 그대로 진행(생성 설정 비교만 오래 걸림) |
-| 셀이 끝나지 않음 | 셀 왼쪽 ■(중지)를 누르고 TA를 부름 |
-| 모델 내려받기가 멈춘 듯함(`Rate limited` 문구) | 내려받기 요청 제한임. 1~2분 기다리면 이어짐 |
+| `No such file or directory` | 0번 셀부터 다시 실행 |
+| 연결이 끊김 | 다시 연결하고 0번 셀부터 실행. 생성 설정 비교는 다시 걸어 둠 |
+| GPU를 쓸 수 없다는 안내 | CPU로 그대로 진행 |
+| 셀이 끝나지 않음 | 셀 왼쪽 ■를 누르고 TA를 부름 |
+| `Rate limited` 문구 | 1~2분 기다리면 이어짐 |
 """)
 
 nb = {"cells": cells,

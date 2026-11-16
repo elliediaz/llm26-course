@@ -31,39 +31,32 @@ def typing_cell(rel: str) -> None:
     code(f"%%writefile {rel}\n{body}")
 
 
-md(f"""
-# 1회차 실습 노트북: Dense → CNN → RNN·LSTM → seq2seq·어텐션 → 디코더 LLM
+md("""
+# 1회차 실습 노트북
 
-코랩, 개인 PC의 주피터, 수업 실습 서버 어디서 열어도 같은 순서로 진행할 수 있게 만든 노트북임.
-실습가이드(PDF)의 명령을 셀 단위로 옮겼고, 확인할 값도 같음.
+실습가이드의 명령을 순서대로 셀로 옮긴 노트북임. 코랩, 개인 PC, 실습 서버에서 똑같이 쓸 수 있음
 
-| 할 일 | 방법 |
-|---|---|
-| 셀 실행 | 셀을 누르고 **Shift + Enter** (또는 셀 왼쪽 ▶) |
-| 따라 치기 | `%%writefile`로 시작하는 셀에서 `____`을 채우고 실행 → 파일이 고쳐짐 → 바로 아래 셀로 실행 |
-| 그림 보기 | 결과 셀 아래에 그림이 바로 뜸 |
-| 내 작업 남기기 | 코랩은 **파일 → Drive에 사본 저장**. 결과 파일은 맨 아래 '결과 내려받기' 셀 |
-
-- 위에서부터 차례로 실행함. 셀 하나가 끝나야(왼쪽 ▶가 다시 보여야) 다음 셀이 돌아감
-- 런타임이 끊기면 **0번 셀부터 다시** 실행함(코랩은 연결이 끊기면 만든 파일이 사라짐)
-- 코랩 바로 열기: {COLAB_URL}
+- 셀은 위에서부터 차례로 Shift + Enter로 실행함
+- `%%writefile` 셀은 빈칸 `____`을 채운 뒤 실행하고, 바로 아래 셀로 결과를 봄
+- 연결이 끊기면 0번 셀부터 다시 실행함
+- 작업을 남기려면 파일 → Drive에 사본 저장. 결과 파일은 맨 아래 셀로 내려받음
 """)
 
 md("""
-## 0. 준비: 저장소 받기와 환경 점검
-- 코랩은 런타임 유형 **CPU로 충분함**. T4 GPU가 잡히면 학습이 더 빨라질 뿐 결과는 같음
-- 판정이 `통과(...)`로 나오면 됨. `확인 필요`가 나오면 손을 들어 TA를 부름
+## 0. 준비
+- 런타임 유형은 CPU면 됨
+- 아래 두 셀을 실행해 판정이 '통과'인지 봄. '확인 필요'가 나오면 TA를 부름
 """)
 code(r'''
 import os, sys, shutil, subprocess, threading
 from IPython.display import Image, Markdown, display
 
 REPO = "https://github.com/elliediaz/llm26-course.git"
-if os.path.isfile("../src/config.py"):          # 저장소 안의 notebooks/에서 열었을 때(개인 PC·실습 서버)
+if os.path.isfile("../src/config.py"):          # 저장소 안에서 열었을 때
     HOME = os.path.abspath("..")
-elif os.path.isdir("/workspace/course"):        # 수업 실습 서버(RunPod)
+elif os.path.isdir("/workspace/course"):        # 실습 서버
     HOME = "/workspace/course"
-else:                                           # 코랩, 또는 저장소 밖에서 연 개인 PC
+else:                                           # 코랩
     HOME = "/content/course" if os.path.isdir("/content") else os.path.abspath("llm26-course")
     if not os.path.isdir(HOME):
         subprocess.run(["git", "clone", "-q", "--depth", "1", REPO, HOME], check=True)
@@ -75,13 +68,11 @@ os.makedirs("results/fig", exist_ok=True)
 
 
 def show(*paths, width=760):
-    """그림 파일을 셀 아래에 띄움. 아직 없으면 알려 줌."""
     for p in paths:
         display(Image(p, width=width)) if os.path.exists(p) else print("아직 없음:", p)
 
 
 def tail(path, n=8):
-    """로그 파일의 마지막 n줄(학습이 어디까지 왔는지 확인)."""
     if not os.path.exists(path):
         print("아직 없음:", path)
         return
@@ -90,7 +81,7 @@ def tail(path, n=8):
 
 
 def use_ref():
-    """학습이 늦을 때 1회차 참고 결과를 복사(이미 있는 내 결과는 덮어쓰지 않음)."""
+    # 학습이 늦을 때 참고 결과를 복사함(내 결과는 덮어쓰지 않음)
     n = 0
     for f in sorted(os.listdir("ref/s01")):
         dst = {".json": "results", ".png": "results/fig", ".pt": "runs"}.get(os.path.splitext(f)[1])
@@ -107,9 +98,8 @@ code(r'''
 
 md("""
 ## 실습 A. Dense로 이탈(분류)과 플레이 시간(회귀)
-- 데이터 `data/G/churn.csv`: 가상 RPG 유저 20,000명의 최근 활동 12개(합성 데이터)
-- 같은 몸통에 출력층(머리)만 바꾸면 분류(2칸)와 회귀(1칸)가 됨
-- 따라 치기 T1: 아래 셀의 빈칸 6개를 채우고 실행함(막히면 실습가이드 실습 A의 빈칸 답)
+- 데이터: 가상 RPG 유저 2만 명의 활동 12개(`data/G/churn.csv`)
+- 따라 치기 T1: 빈칸 6개(답은 실습가이드 실습 A)
 """)
 typing_cell("typing/s01/t1_dense_heads.py")
 code("!python typing/s01/t1_dense_heads.py")
@@ -118,17 +108,15 @@ code("""
 show("results/fig/nn_dense.png")
 """)
 md("""
-**확인할 것**
-- 모양표: `[N,12] → [N,64] → [N,32] →` 분류 `[N,2]` / 회귀 `[N,1]`(마지막 줄만 다름)
-- 분류 정확도 약 0.83(기준선 '모두 유지' 0.72), 재현율 약 0.56
-- 회귀 평균 오차 약 19분(기준선 '모두 평균' 40분)
-- '기준값을 바꾸면' 표: 판정 기준만 바꿔도 재현율과 정밀도가 반대로 움직임
+확인 값
+- 모양표 마지막 줄: 분류 `[N,2]`, 회귀 `[N,1]`
+- 분류 정확도 약 0.83(기준선 0.72), 회귀 평균 오차 약 19분(기준선 40분)
 """)
 
 md("""
 ## 실습 B. CNN으로 옷 사진 10종
-- 데이터 `data/common/fashion_mnist/`: Fashion-MNIST(MIT), 28×28 흑백 옷 사진, 학습 6만·시험 1만
-- 따라 치기 T2: 층을 지날 때마다 바뀌는 모양을 맞힘(빈칸 6개)
+- 데이터: Fashion-MNIST 옷 사진 7만 장(28×28 흑백)
+- 따라 치기 T2: 빈칸 6개
 """)
 typing_cell("typing/s01/t2_cnn_shapes.py")
 code("!python typing/s01/t2_cnn_shapes.py")
@@ -137,16 +125,14 @@ code("""
 show("results/fig/nn_cnn_pred.png", "results/fig/nn_cnn_maps.png")
 """)
 md("""
-**확인할 것**
-- 모양표: `[N,1,28,28] → [N,16,28,28] → [N,16,14,14] → [N,32,14,14] → [N,32,7,7] → [N,1568] → [N,128] → [N,10]`
-- 정확도 MLP 약 0.84, CNN 약 0.88. '가장 많이 헷갈린 쌍'에서 셔츠·티셔츠 찾기
-- T2에서 `7`을 `8`로 바꿔 실행하고 오류 문구(`mat1 and mat2 shapes cannot be multiplied`)를 한 번 읽어 봄
+확인 값
+- 정확도 MLP 약 0.84, CNN 약 0.88
+- 가장 많이 헷갈린 쌍: 셔츠와 티셔츠
 """)
 
 md("""
 ## 해보기 ①
-- `tasks/s01_해보기.md`의 A·B에서 골라 **한 번에 하나만** 바꿔 실행하고 결과를 비교함
-- 아래 셀의 명령을 고쳐 가며 실행함. 바꾼 것·명령·결과·이유를 기록표에 남김
+- `tasks/s01_해보기.md`에서 골라 값을 하나만 바꿔 실행하고 기록표에 남김
 """)
 code("""
 !python src/nn_dense.py --hidden 8
@@ -155,9 +141,8 @@ code("""
 
 md("""
 ## 휴식 전 걸어 두기
-- RNN·LSTM 감성 분류와 seq2seq 세 구조 학습을 차례로 **뒤에서** 돌림(실행 즉시 다음 셀로 넘어가도 됨)
-- 코랩 CPU(2코어)에서 약 7분 걸림. 휴식 동안 **브라우저 탭을 닫지 않음**(닫으면 런타임이 끊길 수 있음)
-- 도는 동안 다른 학습 셀을 실행하지 않음(둘 다 크게 느려짐)
+- 실습 C·D에 쓸 학습을 뒤에서 돌림(약 7분)
+- 쉬는 동안 브라우저 탭을 닫지 않음. 도는 동안 다른 학습 셀은 실행하지 않음
 """)
 code(r'''
 JOBS = [(["src/nn_rnn.py"], "results/log_nn_rnn.txt"),
@@ -183,27 +168,25 @@ print("\\n모두 끝남" if os.path.exists("results/bg_done.txt") else "\\n아�
 
 md("""
 ## 실습 C. RNN과 LSTM, 내 문장 감성 분류
-- 데이터 `data/common/nsmc/`: 네이버 영화 리뷰(NSMC, CC0) 학습 3만·시험 1만 건, 글자 하나를 토큰 하나로 씀
-- 휴식 뒤에도 학습이 끝나지 않았으면 `use_ref()`로 참고 결과를 받아 진행함(내 결과는 덮어쓰지 않음)
+- 데이터: 네이버 영화 리뷰 4만 건(`data/common/nsmc/`)
+- 학습이 덜 끝났으면 `use_ref()`로 참고 결과를 받아 진행함
 """)
 code("""
 tail("results/log_nn_rnn.txt", 30)
-# use_ref()      # 학습이 늦을 때만 앞의 # 을 지우고 실행
+# use_ref()
 """)
 code("""
 !python src/nn_rnn.py --cell lstm --predict "배우들 연기는 좋았는데 결말이 너무 허무하다" "인생 영화 등극 ㅠㅠ 두 번 봤어요"
 """)
 md("""
-**확인할 것**
-- 모양표: `[N,T] → 임베딩 [N,T,64] → LSTM [N,T,128] → 마지막 상태 [N,128] → [N,2]`
-- 정확도 RNN 약 0.73, LSTM 약 0.80. 81자 이상 리뷰에서 0.66 → 0.76으로 차이가 가장 큼
-- 내 문장 3개 이상의 확률. 반어, 부정이 겹친 문장, 신조어로 틀리는 사례 찾기
+확인 값
+- 정확도 RNN 약 0.73, LSTM 약 0.80(81자 이상 리뷰에서 차이가 가장 큼)
+- 따옴표 안의 문장을 내 문장으로 바꿔 틀리는 예를 찾아봄
 """)
 
 md("""
 ## 트랜스포머 이전 구조의 한계(시연)
-- 첫 숫자 기억하기: 숫자 L개 중 맨 앞 숫자를 맞히는 10칸 분류(찍으면 0.1)
-- VAE: 옷 사진을 숫자 몇 개(z)로 압축했다가 다시 그림
+- 첫 숫자 기억하기(찍으면 0.1), VAE(사진을 숫자 몇 개로 줄였다가 다시 그림)
 """)
 code("!python src/seq_limits.py      # 코랩 CPU에서 약 1분 30초")
 code("""
@@ -213,8 +196,7 @@ show("results/fig/nn_vae_recon.png", "results/fig/nn_vae_latent.png")
 
 md("""
 ## 실습 D. seq2seq와 어텐션
-- 한글 금액 수사 → 숫자 표기(예: '삼억 칠천이백만 오천 원' → 372,005,000)
-- `gru`는 문장 전체를 벡터 하나에 담고, `gru_attn`은 매 시점 입력 전체를 다시 봄
+- 한글 금액을 숫자로 바꾸기(예: '삼억 칠천이백만 오천 원' → 372,005,000)
 """)
 code("""
 tail("results/log_seq2seq.txt", 6)
@@ -222,16 +204,14 @@ tail("results/log_seq2seq.txt", 6)
 show("results/fig/attn_tiny_gru_attn.png")
 """)
 md("""
-**확인할 것**
-- `gru`는 17자 이상에서 크게 떨어지고(실습 서버 약 0.73, 코랩 CPU 약 0.56), `gru_attn`은 길이와 상관없이 약 1.00
-- 학습을 시간(2분)으로 끊으므로 코어가 적은 코랩에서는 학습량이 줄어 값이 더 낮게 나옴. 비교의 방향은 같음
-- 그림: 출력 숫자마다 입력의 어느 글자를 봤는지
+확인 값
+- 17자 이상에서 `gru`는 떨어지고(코랩 약 0.56), `gru_attn`은 약 1.00
 """)
 
 md("""
 ## 실습 E. 디코더 LLM은 다음 토큰 분류기
-- 따라 치기 T3: 빈칸 5개. 처음 실행할 때 모델(Qwen3-0.6B, 약 1.5GB)을 내려받으므로 1~2분 더 걸림
-- 세 갈래 비교(`seq2seq_demo.py`)와 해보기 ② D도 처음 실행할 때 임베딩·번역 모델을 내려받음
+- 따라 치기 T3: 빈칸 5개
+- 처음 실행할 때 모델을 내려받아 1~2분 더 걸림
 """)
 typing_cell("typing/s01/t3_next_token.py")
 code("!python typing/s01/t3_next_token.py")
@@ -241,27 +221,26 @@ if os.path.exists("results/structure_compare.md"):
     display(Markdown(open("results/structure_compare.md", encoding="utf-8").read()))
 """)
 md("""
-**확인할 것**
-- 어휘 크기 151,936 = 출력층이 고르는 후보 수(클래스 수)
-- 상위 5개 후보와 확률, 확률 합 1.0. 마지막 줄 = 분류를 15번 반복해 만든 글
+확인 값
+- 어휘 크기 151,936, 확률 합 1.0
 """)
 
 md("""
-## 해보기 ② D. 내 질문 10건으로 FAQ 의미 검색기 재기(필수)
-- 아래 셀의 질문 10건을 고침: 표현 바꾸기 5, 오타 2, 은어 2, 무관 질문 1
-- `gold_faq_id`에 정답 FAQ 번호(`data/G/faq.json`)를 씀. 무관 질문은 `null`
-- **10건 중 8건 이상 1순위**이면 완료
+## 해보기 ② D. 내 질문 10건으로 FAQ 검색기 재기
+- 아래 셀의 질문 10건을 고침(표현 바꾸기 5, 오타 2, 은어 2, 무관 질문 1)
+- `gold_faq_id`에 정답 번호를 씀(`data/G/faq.json`). 무관 질문은 `null`
+- 10건 중 8건 이상 맞히면 완료
 """)
 code("%%writefile my_queries.json\n" + (ROOT / "data/G/my_queries_template.json").read_text(encoding="utf-8").rstrip("\n"))
 code("!python src/faq_search.py --queries my_queries.json")
 md("""
-- 선택(C): 접속자 예측에서 기준선 이기기. `--epochs`, `--window`, `--hidden`, `--cell` 중 하나씩 바꿈
+- 선택: 접속자 예측에서 기준선 이기기
 """)
 code("!python src/nn_rnn.py --task ccu")
 
 md("""
 ## 결과 내려받기
-- `results/`를 압축해 내려받음. 코랩은 런타임이 끝나면 파일이 사라지므로 수업을 마치기 전에 실행함
+- 코랩은 연결이 끝나면 파일이 사라지므로 수업을 마치기 전에 실행함
 """)
 code(r'''
 shutil.make_archive("s01_results", "zip", ".", "results")
@@ -276,11 +255,10 @@ md("""
 ## 문제가 생기면
 | 증상 | 조치 |
 |---|---|
-| `No such file or directory`, `ModuleNotFoundError: config` | 0번 셀을 먼저 실행(작업 폴더가 바뀌지 않은 상태) |
-| 런타임 연결이 끊김 | 다시 연결하고 0번 셀부터 실행. 학습이 필요한 실습은 `use_ref()`로 참고 결과를 받음 |
-| GPU를 할당할 수 없다는 안내 | CPU로 연결해 그대로 진행(1회차는 CPU로 충분) |
-| 셀이 끝나지 않음 | 셀 왼쪽 ■(중지)를 누르고 TA를 부름 |
-| 모델 내려받기가 멈춘 듯함(`Rate limited` 문구) | 내려받기 요청 제한임. 1~2분 기다리면 이어짐 |
+| `No such file or directory` | 0번 셀부터 다시 실행 |
+| 연결이 끊김 | 다시 연결하고 0번 셀부터 실행, 필요하면 `use_ref()` |
+| 셀이 끝나지 않음 | 셀 왼쪽 ■를 누르고 TA를 부름 |
+| `Rate limited` 문구 | 1~2분 기다리면 이어짐 |
 """)
 
 nb = {"cells": cells,
