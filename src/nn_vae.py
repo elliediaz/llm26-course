@@ -1,4 +1,4 @@
-"""1회차 실습 F: VAE(변분 오토인코더). 옷 사진을 숫자 몇 개로 압축했다가 다시 그리는 생성 모델.
+"""1회차 시연(트랜스포머 이전 구조의 한계): VAE(변분 오토인코더). 옷 사진을 숫자 몇 개로 압축했다가 다시 그리는 생성 모델.
 
 데이터  Fashion-MNIST(실습 B와 같은 옷 사진, 학습 6만·시험 1만)  →  data/common/fashion_mnist/
 구조    인코더  [N,1,28,28] → 펼치기 [N,784] → Linear 256 → ReLU → 평균 μ [N,z]·흩어짐 logσ² [N,z]
@@ -8,7 +8,7 @@
 잘 되는 것  비슷한 사진 다시 그리기, 두 사진 사이를 부드럽게 잇기, 비슷한 옷끼리 잠재 공간에 모임
 안 되는 것  무늬·글자 같은 세부는 흐려짐(사진 한 장을 숫자 z개에 담음), 길이가 바뀌는 글을 다른 글로 바꾸는 일은 못 함
 
-  python src/nn_vae.py                 # z 2개, 3에폭(개인 CPU 서버 약 30초)
+  python src/nn_vae.py                 # z 2개, 3에폭(개인 CPU 서버 약 10초)
   python src/nn_vae.py --z 16          # 담을 숫자를 늘리면 덜 흐려지나(해보기)
   python src/nn_vae.py --epochs 10     # 오래 학습하면
 결과: results/nn_vae.json, results/fig/nn_vae_recon.png(원본·재구성), nn_vae_interp.png(사이 잇기),
