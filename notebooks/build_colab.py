@@ -101,7 +101,7 @@ def use_ref():
     print(f"참고 결과 {n}개 복사(이미 있던 파일은 그대로 둠)")
 ''')
 code(r'''
-%pip install -q koreanize-matplotlib
+%pip install -q koreanize-matplotlib sentence-transformers
 !python src/check_gpu.py
 ''')
 
@@ -156,7 +156,8 @@ code("""
 md("""
 ## 휴식 전 걸어 두기
 - RNN·LSTM 감성 분류와 seq2seq 세 구조 학습을 차례로 **뒤에서** 돌림(실행 즉시 다음 셀로 넘어가도 됨)
-- 코랩 CPU에서 약 10분 걸림. 휴식 동안 **브라우저 탭을 닫지 않음**(닫으면 런타임이 끊길 수 있음)
+- 코랩 CPU(2코어)에서 약 7분 걸림. 휴식 동안 **브라우저 탭을 닫지 않음**(닫으면 런타임이 끊길 수 있음)
+- 도는 동안 다른 학습 셀을 실행하지 않음(둘 다 크게 느려짐)
 """)
 code(r'''
 JOBS = [(["src/nn_rnn.py"], "results/log_nn_rnn.txt"),
@@ -204,7 +205,7 @@ md("""
 - 첫 숫자 기억하기: 숫자 L개 중 맨 앞 숫자를 맞히는 10칸 분류(찍으면 0.1)
 - VAE: 옷 사진을 숫자 몇 개(z)로 압축했다가 다시 그림
 """)
-code("!python src/seq_limits.py")
+code("!python src/seq_limits.py      # 코랩 CPU에서 약 1분 30초")
 code("""
 !python src/nn_vae.py
 show("results/fig/nn_vae_recon.png", "results/fig/nn_vae_latent.png")
@@ -222,13 +223,15 @@ show("results/fig/attn_tiny_gru_attn.png")
 """)
 md("""
 **확인할 것**
-- `gru`는 17자 이상에서 약 0.73으로 떨어지고, `gru_attn`은 길이와 상관없이 약 1.00
+- `gru`는 17자 이상에서 크게 떨어지고(실습 서버 약 0.73, 코랩 CPU 약 0.56), `gru_attn`은 길이와 상관없이 약 1.00
+- 학습을 시간(2분)으로 끊으므로 코어가 적은 코랩에서는 학습량이 줄어 값이 더 낮게 나옴. 비교의 방향은 같음
 - 그림: 출력 숫자마다 입력의 어느 글자를 봤는지
 """)
 
 md("""
 ## 실습 E. 디코더 LLM은 다음 토큰 분류기
 - 따라 치기 T3: 빈칸 5개. 처음 실행할 때 모델(Qwen3-0.6B, 약 1.5GB)을 내려받으므로 1~2분 더 걸림
+- 세 갈래 비교(`seq2seq_demo.py`)와 해보기 ② D도 처음 실행할 때 임베딩·번역 모델을 내려받음
 """)
 typing_cell("typing/s01/t3_next_token.py")
 code("!python typing/s01/t3_next_token.py")
