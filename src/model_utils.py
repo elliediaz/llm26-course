@@ -65,7 +65,8 @@ def load_llm(model_id: str | None = None, quant: str | None = None, attn: str | 
         from peft import PeftModel
         model = PeftModel.from_pretrained(model, adapter)
     model.eval()
-    print(f"[모델] {model_id} ({quant}{', +adapter' if adapter else ''}) 로딩 {time.perf_counter() - t0:.1f}s"
+    dt = str(next(model.parameters()).dtype).replace("torch.", "")    # CPU 서버에서는 bf16 대신 float32로 올라감
+    print(f"[모델] {model_id} ({quant if quant != 'bf16' else dt}{', +adapter' if adapter else ''}) 로딩 {time.perf_counter() - t0:.1f}s"
           + (f", VRAM {torch.cuda.memory_allocated() / 1024**3:.1f}GB" if torch.cuda.is_available() else ""))
     return model, tok
 

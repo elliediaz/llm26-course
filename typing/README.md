@@ -20,8 +20,8 @@
 | 1 | `s01/t3_next_token.py` | 실습 E | 6 | 출력층 크기 151,936(= 클래스 수), 확률 합 1, 생성 = 분류 15번 반복 |
 | 1 | `s01/t4_score_and_pick.py` | 해보기 D | 8 | 점수 25개(연속값) → 가장 높은 것 고르기(분류), 기준값 미만이면 '해당 없음' |
 | 1 | `s01/t5_ticket_clf.py` | 해보기 E | 12 | category 분류 정확도, priority 분류 vs 회귀(정확도·MAE) |
-| 2 | `s02/t1_self_attention.py` | 실습 1 ③ | 10 | 주의 가중치 대각선 위쪽 0, 행 합 1 |
-| 2 | `s02/t2_sampling.py` | 실습 2 ⑦ | 6 | Temperature·Top-k·Top-p에 따라 '서로 다른 토큰 수'가 달라짐 |
+| 2 | `s02/t1_self_attention.py` | 실습 1 ② | 6 | 주의 가중치 대각선 위쪽 0, 행 합 1 |
+| 2 | `s02/t2_sampling.py` | 실습 2 ⑤ | 6 | Temperature·Top-k·Top-p에 따라 '서로 다른 토큰 수'가 달라짐 |
 | 5 | `s05/t1_chat_template.py` | 코드 구조 | 5 | 역할 토큰과 `assistant` 차례 표시, 템플릿 유무 토큰 수 |
 | 5 | `s05/t2_field_scorer.py` | 코드 구조 | 7 | 필드별 0/1 점수와 가중 평균(Task Accuracy) |
 

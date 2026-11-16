@@ -1,4 +1,4 @@
-"""2회차 실습 2 ⑧: KV Cache가 생성 속도와 메모리에 미치는 영향 측정 + 도전과제 ②(입력 길이별 VRAM·지연).
+"""2회차 실습 3 ⑥: KV Cache가 생성 속도와 메모리에 미치는 영향 측정 + 도전과제 ②(입력 길이별 VRAM·지연).
 
   python src/kv_cache_bench.py                         # 소형 모델(Qwen3-0.6B), 입력 길이 4단계 × 캐시 유/무
   python src/kv_cache_bench.py --lengths 512 2048 8192 --new 64 --model skt/A.X-4.0-Light   # 큰 모델·긴 입력

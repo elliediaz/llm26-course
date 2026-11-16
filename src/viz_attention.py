@@ -4,7 +4,7 @@
   python src/viz_attention.py tiny --arch transformer --text "이천이십육년 십일월 십육일"
   python src/viz_attention.py opus --text "결제했는데 아이템이 안 들어왔어요"      # 1회차: 사전학습 번역 모델(opus-mt)의 Cross-Attention
   python src/viz_attention.py self --text "서리칼날 공격력이 왜 줄었나요"          # 2회차: Decoder-only의 Self-Attention
-  python src/viz_attention.py compare --text "결제했는데 아이템이 안 들어왔어요"   # 2회차 실습 1 ④: Cross vs Self 나란히
+  python src/viz_attention.py compare --text "결제했는데 아이템이 안 들어왔어요"   # 2회차 실습 1 ③: Cross vs Self 나란히
 
 Attention 가중치를 받으려면 로딩할 때 attn_implementation="eager"가 필요하다(기본 SDPA는 가중치를 돌려주지 않음).
 그림: results/fig/attn_<모드>.png

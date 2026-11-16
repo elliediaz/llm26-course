@@ -1,4 +1,4 @@
-"""[따라 치기 2-T1] Self-Attention 직접 계산 (2회차 실습 1 ③, 10분)
+"""[따라 치기 2-T1] Self-Attention 직접 계산 (2회차 실습 1 ②, 6분)
 
 실행: python typing/s02/t1_self_attention.py      (빈칸 ____을 채운 뒤)
 확인: ① 점수표 s는 (토큰 수 × 토큰 수): 모든 쌍의 유사도
