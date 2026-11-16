@@ -4,8 +4,8 @@
 > Pod 경로: `/workspace/course` · 커널: **LLM-PBL (course)** · 터미널: `source /workspace/activate.sh`
 > 모델·버전 기준일 2026-10. 설정은 `src/config.py` 한 곳에서만 바꿈
 >
-> **코랩·개인 PC로 실습(1회차 기본)**: [1회차 노트북을 코랩에서 열기](https://colab.research.google.com/github/elliediaz/llm26-course/blob/main/notebooks/s01_colab.ipynb).
-> 개인 PC의 주피터에서는 저장소를 받은 뒤 `notebooks/s01_colab.ipynb`를 그대로 열어 씀
+> **코랩·개인 PC로 실습**: [1회차 노트북을 코랩에서 열기](https://colab.research.google.com/github/elliediaz/llm26-course/blob/main/notebooks/s01_colab.ipynb) · [2회차 노트북을 코랩에서 열기](https://colab.research.google.com/github/elliediaz/llm26-course/blob/main/notebooks/s02_colab.ipynb)(런타임 T4 GPU 권장).
+> 개인 PC의 주피터에서는 저장소를 받은 뒤 `notebooks/s01_colab.ipynb`·`s02_colab.ipynb`를 그대로 열어 씀
 
 ## 구조
 
@@ -15,7 +15,7 @@ course/
 ├─ src/          단순 실행 스크립트(아래 표): 완성 코드를 실행하고 결과를 해석
 ├─ typing/       따라 치기 코드: 빈칸(____)을 채워 직접 실행(회차별 sNN/)
 ├─ tasks/        과제 카드·해보기 카드: 값과 대상을 바꿔 보는 연습(회차별)
-├─ notebooks/    1회차 실습 노트북(s01_colab.ipynb, 코랩·개인 PC 공용), 1·2회차 발전사 확인 노트북(원본은 notebooks/src/*.py)
+├─ notebooks/    1·2회차 실습 노트북(s01_colab·s02_colab, 코랩·개인 PC 공용), 1·2회차 발전사 확인 노트북(원본은 notebooks/src/*.py)
 ├─ data/
 │  ├─ common/    공개 데이터(Fashion-MNIST·NSMC 리뷰), 금액 수사 생성기, 토큰 비교 문장
 │  └─ G · L · S  팀 도메인 데이터(README에 출처·라이선스·기준일). G에는 1회차 신경망 실습용 합성 데이터도 있음
