@@ -4,6 +4,7 @@
   python src/dataset_tool.py check                             # 형식·유형 할당·정답 스키마·중복 점검
   python src/dataset_tool.py merge                             # test_seed + team_items → test_dataset.json(30건)
   python src/dataset_tool.py stats                             # 현재 test_dataset.json 유형 분포
+  python src/dataset_tool.py leak                              # 7회차: 학습 파일(train*.jsonl)과 시험 문항이 겹치는지 점검
 
 강사 전용(현장 보정): python src/dataset_tool.py swap G-T-07 G-P-K03 --pool solutions/data/G/test_pool.json
 """
@@ -61,7 +62,7 @@ def check(team_path, seed, schema, alloc) -> list[str]:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["check", "merge", "stats", "swap"])
+    ap.add_argument("cmd", choices=["check", "merge", "stats", "swap", "leak"])
     ap.add_argument("args", nargs="*")
     ap.add_argument("--team", default=None, help="기본: data/<DOMAIN>/team_items.json")
     ap.add_argument("--pool", help="swap에 쓸 교체 풀(강사 전용)")
@@ -90,6 +91,20 @@ def main() -> None:
     if a.cmd == "stats":
         ds = utils.read_json(d / "test_dataset.json")
         print(f"  {len(ds)}건 {dict(collections.Counter(x['type'] for x in ds))}")
+    if a.cmd == "leak":
+        ds = utils.read_json(d / "test_dataset.json")
+        for f in sorted(d.glob("train*.jsonl")):
+            if f.name == "train_seed.jsonl":
+                continue
+            rows = utils.read_jsonl(f)
+            texts = [next(m["content"] for m in r["prompt"] if m["role"] == "user").split("[문의]\n")[-1] for r in rows if "prompt" in r]
+            same = near = 0
+            for t in ds:
+                best = max((similarity(t["input"], x) for x in texts), default=0)
+                same += best >= 0.99
+                near += 0.8 <= best < 0.99
+            flag = "  ← 시험 문항이 학습에 들어 있음" if same else ""
+            print(f"  {f.name:24s} 학습 {len(rows):4d}건 · 시험 문항과 같음 {same}건 · 매우 비슷(0.8 이상) {near}건{flag}")
     if a.cmd == "swap":
         out_id, in_id = a.args
         pool = {p["id"]: p for p in utils.read_json(a.pool)}
