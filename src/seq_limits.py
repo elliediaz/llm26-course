@@ -1,14 +1,16 @@
-"""1회차 시연(트랜스포머 이전 구조의 한계): 첫 숫자 기억하기 과제로 RNN·LSTM·어텐션을 비교한다.
+"""2회차 M1 ①(1회차 시연에서 옮김): 첫 숫자 기억하기로 RNN·LSTM과 트랜스포머 층을 비교한다.
 
 과제    숫자 L개가 한 줄로 들어오고, 정답은 맨 처음 숫자(0~9 중 하나 고르기 = 10칸 분류)
         예) L=5  : 7 3 9 1 4 → 정답 7  /  L=60 : 7 3 9 … (60개) → 정답 7
         숫자는 무작위라 맨 앞 하나를 끝까지 들고 가야만 맞힘. 찍으면 0.1
 RNN     한 칸씩 읽으며 상태 하나를 고침. 멀리 떨어진 정보는 곱셈이 거듭되며 희미해짐(기울기 소실)
 LSTM    문(gate)으로 '기억할 것'을 따로 들고 감. 실제 리뷰에서는 RNN보다 오래 버티지만(실습 C) 이 과제에서는 3,000스텝으로 늘려도 길이 20부터 무너지고, 여전히 한 칸씩 차례로 계산
-어텐션  모든 칸이 맨 앞 칸을 한 번에 직접 봄(트랜스포머의 핵심 부품). 길이와 상관없이 거리가 1
+트랜스포머 층  Self-Attention + FFN 한 층(nn.TransformerEncoderLayer). 모든 칸이 맨 앞 칸을 한 번에 직접 봄. 길이와 상관없이 거리가 1
+              대신 점수표가 길이×길이라서 CPU에서는 길이가 늘수록 시간이 더 듦(11/17 2코어: 길이 40에서 RNN 6.4초, 트랜스포머 층 19.8초)
 
   python src/seq_limits.py                     # 길이 5·10·20·40, 세 구조 각 1,000스텝(개인 CPU 서버 약 1분)
   python src/seq_limits.py --steps 3000        # 더 오래 학습하면 LSTM이 버티는 길이가 늘어나나(해보기)
+  python src/seq_limits.py --lengths 20 40 80  # 더 먼 거리에서도 트랜스포머 층이 버티나(약 2분)
 결과: results/seq_limits.json, results/fig/seq_limits.png
 """
 from __future__ import annotations
@@ -78,7 +80,7 @@ def main() -> None:
     ap.add_argument("--steps", type=int, default=1000)
     a = ap.parse_args()
     dev = T.device()
-    names = {"rnn": "RNN", "lstm": "LSTM", "attn": "어텐션(트랜스포머 층 1개)"}
+    names = {"rnn": "RNN", "lstm": "LSTM", "attn": "트랜스포머 층 1개"}
     rows, res = [], {}
     for kind in names:
         res[kind] = {}

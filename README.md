@@ -77,23 +77,3 @@ python src/nn_cnn.py                    # 1회차 실습 B
 python typing/s01/t3_next_token.py      # 1회차 실습 E(빈칸을 채운 뒤)
 python src/benchmark.py --limit 3       # 하네스 동작 확인(5회차부터)
 ```
-
-## 배포 경로
-
-| 단계 | 위치 | 하는 일 |
-|---|---|---|
-| 1 | 강사 작업 폴더 `20_강의안_작업/starter_code/` | 원본(정답 `solutions/` 포함). 여기서만 고침 |
-| 2 | `export_course.sh` → `_배포/llm26-course/` | `solutions/`·`results/`·`runs/`·개인 파일을 빼고 복사 |
-| 3 | 배포 저장소(GitHub `llm26-course`) | 강사 PC에서 커밋·푸시 |
-| 4 | 실습 서버 `/workspace/course` | 서버 첫 부팅 때 복제, 이후 부팅마다 `activate.sh`가 최신본을 받음 |
-
-- 학생은 4번만 봄. 수업 중 고친 파일이 있으면 강사가 푸시한 뒤 터미널에서 `source /workspace/activate.sh`를 다시 실행하면 받아짐
-- 학생이 만든 파일(`results/`, `runs/`, `my_queries.json` 등)은 갱신해도 지워지지 않음
-
-## 규칙
-
-- 모델 이름·생성 설정·경로를 스크립트에 직접 쓰지 않음 → `config.py`
-- 평가는 `GEN_EVAL`(greedy) 고정. 바꾸면 이전 측정과 비교할 수 없음
-- 한 번에 하나만 바꿔서 잼(프롬프트·채점 규칙·데이터를 동시에 바꾸지 않음)
-- 실존 개인정보 입력 금지. 데이터 폴더의 README에 적힌 라이선스를 따름
-- 결과 파일은 `results/`에 남기고 팀 저장소에 커밋(데이터는 트랙 A만)
