@@ -1,0 +1,63 @@
+{
+ "name": "토큰 표본",
+ "source": "강사 직접 작성",
+ "license": "CC BY 4.0",
+ "categories": [
+  {
+   "category": "한국어 일상",
+   "texts": [
+    "오늘 저녁에 친구들이랑 떡볶이 먹으러 가기로 했어",
+    "내일 오전 수업은 휴강이라서 조금 늦게 일어나도 돼"
+   ]
+  },
+  {
+   "category": "한국어 신조어·줄임말",
+   "texts": [
+    "점메추 해 줘. 오늘은 갓생 살 거라서 샐러드로",
+    "알잘딱깔센하게 정리해서 보내 줘. 킹받네 진짜"
+   ]
+  },
+  {
+   "category": "영어",
+   "texts": [
+    "Can you recommend a good place for dinner tonight?",
+    "The meeting has been moved to Thursday afternoon."
+   ]
+  },
+  {
+   "category": "같은 뜻 한국어·영어",
+   "texts": [
+    "결제했는데 아이템이 안 들어왔어요",
+    "I paid, but the item did not arrive."
+   ]
+  },
+  {
+   "category": "코드",
+   "texts": [
+    "for i in range(10): print(i * i)",
+    "SELECT name, price FROM menu WHERE price < 10000;"
+   ]
+  },
+  {
+   "category": "숫자·날짜",
+   "texts": [
+    "2026년 11월 17일 오후 6시 30분, 결제 금액 38,500원",
+    "주문번호 2026111712345, 운송장 6894-2231-7750"
+   ]
+  },
+  {
+   "category": "자음·기호",
+   "texts": [
+    "ㅋㅋㅋㅋㅋ 진짜 웃기다 ㅎㅎ",
+    "★☆★ 이벤트 마감 D-3 !!! ★☆★"
+   ]
+  },
+  {
+   "category": "한자어·전문 용어",
+   "texts": [
+    "자기회귀 언어모델의 토큰화 과정에서 어휘 외 단어가 발생함",
+    "개인정보 보호법 제17조에 따른 제3자 제공 동의"
+   ]
+  }
+ ]
+}

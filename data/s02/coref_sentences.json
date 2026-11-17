@@ -1,0 +1,167 @@
+{
+ "name": "지시어·다의어 문장",
+ "source": "강사 직접 작성(지시어 문장은 Winograd 스키마 형식을 빌림)",
+ "license": "CC BY 4.0",
+ "coref": [
+  {
+   "text": "The trophy does not fit in the suitcase because it is too big.",
+   "target": "it",
+   "candidates": [
+    "trophy",
+    "suitcase"
+   ],
+   "answer": "trophy"
+  },
+  {
+   "text": "The trophy does not fit in the suitcase because it is too small.",
+   "target": "it",
+   "candidates": [
+    "trophy",
+    "suitcase"
+   ],
+   "answer": "suitcase"
+  },
+  {
+   "text": "The cat chased the mouse because it was hungry.",
+   "target": "it",
+   "candidates": [
+    "cat",
+    "mouse"
+   ],
+   "answer": "cat"
+  },
+  {
+   "text": "The cat chased the mouse, but it escaped into a hole.",
+   "target": "it",
+   "candidates": [
+    "cat",
+    "mouse"
+   ],
+   "answer": "mouse"
+  },
+  {
+   "text": "The ball hit the window and it broke into pieces.",
+   "target": "it",
+   "candidates": [
+    "ball",
+    "window"
+   ],
+   "answer": "window"
+  },
+  {
+   "text": "The student asked the teacher a question because she was confused.",
+   "target": "she",
+   "candidates": [
+    "student",
+    "teacher"
+   ],
+   "answer": "student"
+  },
+  {
+   "text": "트로피가 가방에 들어가지 않았다. 그것이 너무 컸기 때문이다.",
+   "target": "그것",
+   "candidates": [
+    "트로피",
+    "가방"
+   ],
+   "answer": "트로피"
+  },
+  {
+   "text": "트로피가 가방에 들어가지 않았다. 그것이 너무 작았기 때문이다.",
+   "target": "그것",
+   "candidates": [
+    "트로피",
+    "가방"
+   ],
+   "answer": "가방"
+  },
+  {
+   "text": "고양이가 쥐를 쫓았다. 그것은 배가 고팠다.",
+   "target": "그것",
+   "candidates": [
+    "고양이",
+    "쥐"
+   ],
+   "answer": "고양이"
+  },
+  {
+   "text": "고양이가 쥐를 쫓았다. 그것은 구멍 속으로 숨었다.",
+   "target": "그것",
+   "candidates": [
+    "고양이",
+    "쥐"
+   ],
+   "answer": "쥐"
+  },
+  {
+   "text": "공이 유리창에 맞았다. 그것은 산산조각이 났다.",
+   "target": "그것",
+   "candidates": [
+    "공",
+    "유리창"
+   ],
+   "answer": "유리창"
+  },
+  {
+   "text": "학생이 선생님에게 질문했다. 그는 숙제가 어려웠다.",
+   "target": "그는",
+   "candidates": [
+    "학생",
+    "선생님"
+   ],
+   "answer": "학생"
+  }
+ ],
+ "polysemy": [
+  {
+   "word": "배",
+   "sense": "과일",
+   "text": "후식으로 깎아 먹은 배가 정말 달았다"
+  },
+  {
+   "word": "배",
+   "sense": "과일",
+   "text": "과일 가게에서 산 배가 크고 무거웠다"
+  },
+  {
+   "word": "배",
+   "sense": "선박",
+   "text": "섬으로 가는 배가 안개 때문에 늦게 출발했다"
+  },
+  {
+   "word": "배",
+   "sense": "선박",
+   "text": "항구에 정박한 배가 파도에 흔들렸다"
+  },
+  {
+   "word": "배",
+   "sense": "신체",
+   "text": "점심을 너무 많이 먹어서 배가 불렀다"
+  },
+  {
+   "word": "배",
+   "sense": "신체",
+   "text": "찬 음식을 먹었더니 배가 아팠다"
+  },
+  {
+   "word": "bank",
+   "sense": "은행",
+   "text": "She went to the bank to open a savings account"
+  },
+  {
+   "word": "bank",
+   "sense": "은행",
+   "text": "I withdrew some cash from the bank this morning"
+  },
+  {
+   "word": "bank",
+   "sense": "강둑",
+   "text": "We sat on the grassy river bank and watched the boats"
+  },
+  {
+   "word": "bank",
+   "sense": "강둑",
+   "text": "The children fished from the muddy bank of the stream"
+  }
+ ]
+}

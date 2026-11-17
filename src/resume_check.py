@@ -17,7 +17,8 @@ import utils
 R, D = config.PATHS["results"], config.data_dir()
 CHECKS = {
     "1회차 산출물": [R / "env_check.json", R / "faq_eval.json"],
-    "2회차 산출물": [R / "xor_demo.json", R / "seq_limits.json", R / "llm_sentiment_Qwen3-0.6B_4shot.json"],   # V2(11/17)
+    "2회차 산출물": [R / "xor_demo.json", R / "seq_limits.json", R / "polysemy.json", R / "token_cost.json",
+                  R / "leaderboard.csv"],   # V3(11/17, 미션형)
     "5회차 산출물": [D / "test_dataset.json", R / "base.json", R / "scoreboard.json"],
     "6회차 산출물": [R / "rag.json", R / "retrieval_compare.json"],
 }

@@ -1,7 +1,8 @@
-"""2회차 실습 노트북 V2(코랩·개인 PC·실습 서버 공용) 생성: notebooks/s02_colab.ipynb
+"""2회차 실습 노트북 V3(코랩·개인 PC·실습 서버 공용) 생성: notebooks/s02_colab.ipynb
 
-V2: 1회차 정리(복습 실습 R) → 실습 D(1회차 남은 부분) → 트랜스포머 실습 1 → 토큰 실습 2 → 다음 토큰 실습 3 → LLM 감성 분류 실습 F → 해보기 ②
-V1(11/16 작성본)은 notebooks/_V1/에 보존함
+V3: 미션형. M0 XOR 몸풀기 → M1 기억력 감사 → M2 어텐션 탐정 → M3 토큰 요금 견적 → M4 다음 단어 맞히기
+    → M5 학습 없는 분류기 경연 → M6 FAQ 검색기(과제)
+V1·V2는 notebooks/_V1, notebooks/_V2에 보존함(수강생 저장소에는 올리지 않음)
 따라 치기 셀은 typing/의 실제 파일 내용을 %%writefile 셀로 넣는다. 다시 생성: python notebooks/build_colab_s02.py
 """
 from __future__ import annotations
@@ -32,18 +33,27 @@ def typing_cell(rel: str) -> None:
 
 
 md("""
-# 2회차 실습 노트북
+# 2회차 미션 노트북
 
-실습가이드의 명령을 순서대로 셀로 옮긴 노트북임. 코랩, 개인 PC, 실습 서버에서 똑같이 쓸 수 있음
+오늘 실습은 미션 여섯 개로 진행함. 자세한 배경·힌트·기록표는 『2회차 미션 워크북』(PDF)에 있음
 
 - 셀은 위에서부터 차례로 Shift + Enter로 실행함
 - `%%writefile` 셀은 빈칸 `____`을 채운 뒤 실행하고, 바로 아래 셀로 결과를 봄
-- 연결이 끊기면 0번 셀부터 다시 실행함
-- 작업을 남기려면 파일 → Drive에 사본 저장. 결과 파일은 맨 아래 셀로 내려받음
+- 연결이 끊기면 0번 셀부터 다시 실행함. 결과 파일은 맨 아래 셀로 내려받음
+
+| 미션 | 의뢰 | 쓰는 것 | 시간 |
+|---|---|---|---|
+| M0 | 입사 시험: 직선 하나로 안 나뉘는 문제 | `xor_demo.py` | 10분 |
+| M1 | 기억력 감사: 긴 문장 앞부분을 잊는 이유 | `seq_limits.py`, seq2seq 학습 | 20분 |
+| M2 | 어텐션 탐정: 모델은 문장을 어떻게 읽나 | 따라 치기 2-T1, `attention_probe.py` | 25분 |
+| M3 | 토큰 요금 견적: 챗봇 한 달 요금 | `token_cost.py` | 12분 |
+| M4 | 다음 단어 맞히기: 속담 이벤트에 써도 되나 | 따라 치기 T3, `next_word_game.py` | 13분 |
+| M5 | 학습 없는 분류기 경연 | `llm_classify.py` | 23분 |
+| M6 | (과제) FAQ 검색기 재기 | `faq_search.py` | 집에서 |
 """)
 md("""
 ## 0. 준비
-- 런타임 유형은 T4 GPU 권장(런타임 → 런타임 유형 변경). CPU로도 됨
+- 런타임 유형은 T4 GPU 권장(런타임 → 런타임 유형 변경). CPU로도 모든 셀이 돎
 - 아래 두 셀을 실행해 판정이 '통과'인지 봄. '확인 필요'가 나오면 TA를 부름
 """)
 code(r'''
@@ -64,6 +74,7 @@ else:                                           # 코랩
 os.chdir(HOME)
 print("작업 폴더:", os.getcwd())
 os.makedirs("results/fig", exist_ok=True)
+os.makedirs("prompts", exist_ok=True)
 
 
 def show(*paths, width=760):
@@ -95,37 +106,40 @@ code(r'''
 !python src/check_gpu.py
 ''')
 
+# ---------------------------------------------------------------- M0
 md("""
-## 복습 실습 R. XOR를 직접 나눠 보기
+## M0. 입사 시험: XOR를 나눠라
 - 단층 · 층만 쌓기 · 층 + 활성화 함수, 세 모델로 AND·OR·XOR를 학습함(약 10초)
+- 기록: XOR 줄의 정확도 세 개, `--hidden 2`일 때 시드마다 달라지는 값
 """)
 code("""
 !python src/xor_demo.py
 show("results/fig/xor_boundary.png", width=620)
 """)
 code("""
-!python src/xor_demo.py --hidden 2
-# !python src/xor_demo.py --hidden 2 --seed 3
+for seed in [0, 1, 3]:
+    !python src/xor_demo.py --hidden 2 --seed {seed} | grep XOR
 # !python src/xor_demo.py --act sigmoid
 """)
 md("""
 확인 값
 - XOR 줄: 단층 0.50, 2층·활성화 X 0.50, 2층·ReLU 1.00
-- `--hidden 2`: 시작값에 따라 0.50 · 0.75 · 1.00으로 갈림. `--seed`를 바꿔 다시 실행해 봄
+- `--hidden 2`: 시드 0은 0.75, 시드 3은 1.00. 뉴런이 적으면 시작값 운에 따라 갈림
 """)
 
+# ---------------------------------------------------------------- M1
 md("""
-## 실습 D ①. 기억 길이 시험
-- 숫자 여러 개 중 맨 앞 숫자를 맞힘(찍으면 0.1). 거리가 멀어질수록 어떻게 되는지 봄(코랩 CPU 약 1분 30초)
+## M1. 기억력 감사: 앞부분을 잊는 이유
+의뢰: 고객사 챗봇이 긴 문의의 앞부분을 자꾸 놓친다고 함. RNN·LSTM 계열이 어디까지 기억하는지 재고, 어텐션을 붙이면 달라지는지 확인
+
+1) 기억 길이 시험: 숫자 여러 개 중 맨 앞 숫자를 맞힘(찍으면 0.1, 코랩 CPU 약 1분 30초)
 """)
 code("""
 !python src/seq_limits.py
 show("results/fig/seq_limits.png")
 """)
-
 md("""
-## 휴식 전 걸어 두기(실습 D ②)
-- 한글 금액을 숫자로 바꾸는 seq2seq 세 구조를 2분씩 학습함(약 7분)
+2) 휴식 전 걸어 두기: 한글 금액을 숫자로 바꾸는 seq2seq 세 구조를 2분씩 학습함(약 7분)
 - 쉬는 동안 탭을 닫지 않음. 도는 동안 다른 학습 셀은 실행하지 않음
 """)
 code(r'''
@@ -145,10 +159,8 @@ code("""
 tail("results/log_seq2seq.txt", 4)
 print("\\n모두 끝남" if os.path.exists("results/bg_done.txt") else "\\n아직 학습 중")
 """)
-
 md("""
-## 실습 D ③④. seq2seq 세 구조의 결과
-- 학습이 덜 끝났으면 `use_ref()`로 참고 결과를 받아 진행함
+3) 휴식 후: 세 구조의 결과와 어텐션 그림. 학습이 덜 끝났으면 `use_ref()`로 참고 결과를 받아 진행함
 """)
 code("""
 tail("results/log_seq2seq.txt", 6)
@@ -160,89 +172,210 @@ show("results/fig/attn_tiny_gru_attn.png")
 """)
 md("""
 확인 값
-- 17자 이상에서 `gru`는 떨어지고(코랩 CPU 약 0.5), `gru_attn`은 약 1.00
-- 그림: 출력 숫자마다 입력의 어느 글자를 봤는지
+- 기억 길이: 거리가 멀어질수록 RNN이 먼저 무너지고 LSTM이 더 버팀
+- seq2seq: 17자 이상에서 `gru`는 약 0.5로 떨어지고 `gru_attn`은 약 1.00
+- 그림: 출력 숫자마다 입력의 어느 글자를 봤는지가 대각선으로 보임
 """)
 
+# ---------------------------------------------------------------- M2
 md("""
-## 실습 1. Self-Attention을 직접 계산하고 그려 보기
-- 따라 치기 2-T1: 빈칸 5개
+## M2. 어텐션 탐정: 모델은 문장을 어떻게 읽나
+의뢰: "모델이 '그것'이 무엇인지 아는가?"라는 질문에 근거를 들어 답하는 짧은 보고서
+
+1) Self-Attention을 직접 계산함. 따라 치기 2-T1, 빈칸 5개
 """)
 typing_cell("typing/s02/t1_self_attention.py")
 code("!python typing/s02/t1_self_attention.py")
-code("!python src/mini_transformer.py --info")
+md("""
+2) 같은 낱말, 다른 뜻: 과일 배 · 타는 배 · 몸의 배가 모델 안에서 다른 벡터가 되는지 봄(약 20초)
+""")
 code("""
-!python src/viz_attention.py compare --text "결제했는데 아이템이 안 들어왔어요"
-show("results/fig/attn_compare.png")
+!python src/attention_probe.py --polysemy
+show("results/fig/polysemy.png")
+""")
+md("""
+3) '그것'은 무엇인가: 지시어 문장 12개에서 층별 어텐션을 재고, 모델에게 직접도 물어봄(약 20초)
+""")
+code("""
+!python src/attention_probe.py
+show("results/fig/attention_probe.png")
+""")
+md("""
+4) 내 문장으로 수사: 따옴표 안을 바꿔 다시 실행함. 후보는 쉼표로 구분
+""")
+code("""
+!python src/attention_probe.py --text "엄마가 딸에게 전화했다. 그녀는 집에 늦게 온다고 했다." --target 그녀 --cands 엄마,딸
+show("results/fig/attention_probe_text.png", width=620)
 """)
 md("""
 확인 값
-- 가중치 첫 행 1.00, 둘째 행 0.45·0.55, 대각선 위쪽 0, 행마다 합 1
-- 그림: Self는 대각선 위쪽이 빈 삼각형, Cross는 번역 결과와 입력의 대응
-- 따옴표 안의 문장을 바꿔 다시 그려 봄
+- 2-T1: 가중치 첫 행 1.00, 둘째 행 0.45·0.55, 대각선 위쪽 0
+- 다의어: 0층(임베딩)에서는 '배'끼리 유사도가 모두 1.00. 마지막 층에서는 같은 뜻 0.93, 다른 뜻 0.84로 벌어짐
+- 지시어: big·small 쌍에서 '지시어 자리' 값이 똑같음(trophy 쪽 0.41, 뒤 단어를 아직 못 봄). 묻기 정답률 0.50(0.6B 모델의 한계)
 """)
 
+# ---------------------------------------------------------------- M3
 md("""
-## 실습 2. 여러 종류의 글로 토큰 수 재기
-- 처음 실행할 때 토크나이저 세 개를 내려받음(약 45초)
+## M3. 토큰 요금 견적: 챗봇 한 달 요금
+의뢰: 배달앱 고객사가 상담 챗봇의 월 요금 견적을 요청함. 모델(토크나이저)마다 요금이 얼마나 달라지는지 비교
+
+1) 표본 문장 8종 × 토크나이저 4종(처음 실행 때 토크나이저를 내려받아 약 30초)
 """)
-code("!python src/inspect_tokenizer.py")
-code(r'''
-texts = ["녹스 궁 쿨 몇초임",
-         "for i in range(10): print(i)",
-         "2026년 11월 17일 오후 6시, 3,850원",
-         "오늘 진짜 최고 ㅋㅋㅋ",
-         "Transformer는 RNN보다 빠름"]
-for t in texts:
-    print("=" * 10, t)
-    !python src/inspect_tokenizer.py --text "{t}"
-''')
+code("""
+!python src/token_cost.py
+show("results/fig/token_cost.png")
+""")
+md("""
+2) 쪼개진 모양 보기: 내가 고른 문장을 넣어 봄. `·`은 한 글자가 여러 토큰으로 갈라진 조각
+""")
+code("""
+!python src/token_cost.py --text "점메추 해 줘. 오늘은 갓생 살 거라서" "결제했는데 아이템이 안 들어왔어요"
+""")
+md("""
+3) 견적 조건 바꾸기: 하루 요청 수, 답변 길이, 단가를 우리 서비스에 맞게 바꿔 봄
+""")
+code("""
+!python src/token_cost.py --traffic game --daily 50000 --answer-ratio 5 --price 3000 | tail -8
+""")
 md("""
 확인 값
-- 한국어 글자당 토큰: A.X 0.46 · Qwen3 0.75 · KURE 0.60(기본 표)
-- 같은 뜻이라도 모델마다 토큰 수가 다름. 토큰 수 = 비용 · 속도 · 컨텍스트 한도
+- 한국어 일상 문장 글자/토큰: A.X 3.06 · Qwen3 1.12 · KURE 1.62 · GPT-2 0.44
+- 영어 문장은 네 토크나이저가 모두 같음(19토큰). 차이는 한국어에서 남
+- 기본 조건 월 요금: A.X 약 7.7만 원, Qwen3 약 13.9만 원, GPT-2 약 41.9만 원
 """)
 
+# ---------------------------------------------------------------- M4
 md("""
-## 실습 3. 다음 토큰 분류기와 고르는 법
-- 따라 치기 T3: 빈칸 5개. 처음 실행할 때 모델을 내려받아 1~2분 더 걸림
+## M4. 다음 단어 맞히기
+의뢰: 마케팅팀이 '속담 이어 말하기' 이벤트에 LLM을 쓰자고 함. 써도 되는지 판정
+
+1) 다음 토큰 분류기 직접 보기: 따라 치기 T3, 빈칸 5개(처음 실행 때 모델을 내려받아 1~2분 더 걸림)
 """)
 typing_cell("typing/s01/t3_next_token.py")
 code("!python typing/s01/t3_next_token.py")
 md("""
-- 따라 치기 2-T2: 빈칸 3개. greedy · Temperature · Top-k · Top-p별로 30번 뽑음
-""")
-typing_cell("typing/s02/t2_sampling.py")
-code("!python typing/s02/t2_sampling.py")
-md("""
-확인 값
-- 어휘 크기 151,936, 확률 합 1.0
-- 30번 뽑기에서 서로 다른 토큰 수: greedy·T 0.3 1개, T 1.0 22개, T 1.5 29개, Top-k 5 4개, Top-p 0.9 20개
-""")
-
-md("""
-## 실습 F. LLM으로 영화 리뷰 감성 분류
-- 1회차 LSTM과 같은 NSMC 리뷰를 학습 없이 분류함. 프롬프트 뒤에 ' 긍정'과 ' 부정'을 붙여 확률을 비교함
-- 리뷰 60건, 코랩 CPU 약 1분(T4면 더 짧음)
-""")
-code("!python src/llm_sentiment.py")
-code("""
-!python src/llm_sentiment.py --shots 4
-show("results/fig/llm_sentiment.png", width=560)
+2) 먼저 맞혀 보기: 아래 앞부분 세 개의 다음 단어를 종이에 적은 뒤 실행함
 """)
 code("""
-!python src/llm_sentiment.py --text "배우는 좋은데 각본이 아쉽다" "두 번 봐도 또 울었다"
-# !python src/llm_sentiment.py --shots 4 --model Qwen/Qwen3-0.6B-Base
-# !python src/llm_sentiment.py --shots 8
+!python src/next_word_game.py --prefix "가는 말이 고와야" "The early bird catches the" "오늘 점심 메뉴는"
+""")
+md("""
+3) 속담 50개 채점: 대화용(Instruct)과 원본(Base) 비교(약 2분)
+""")
+code("""
+!python src/next_word_game.py --model both | tail -12
+show("results/fig/next_word_game.png", width=560)
+""")
+md("""
+4) 온도 바꿔 보기: 같은 앞부분에서 다섯 번 뽑음
+""")
+code("""
+!python src/next_word_game.py --prefix "우리 팀 프로젝트 이름은" --temp 1.0 --samples 5
+# !python src/next_word_game.py --prefix "우리 팀 프로젝트 이름은" --temp 0.3 --samples 5
 """)
 md("""
 확인 값
-- 예시 0개: 정확도 0.50, 모두 '긍정'으로 답함
-- 예시 4개: 약 0.68, Base 모델 예시 4개: 약 0.78(1회차 LSTM 0.80)
+- T3: 어휘 크기 151,936, 확률 합 1.0
+- 속담: 영어는 대부분 맞히고 한국어는 거의 못 맞힘. 학습 데이터에 들어 있던 양의 차이
+- 온도 1.0은 매번 다른 이름, 0.3은 거의 같은 이름
 """)
 
+# ---------------------------------------------------------------- M5
 md("""
-## 해보기 ②. 내 질문 10건으로 FAQ 검색기 재기
+## M5. 학습 없는 분류기 경연
+의뢰: 고객사 네 곳이 문장 분류기를 요청함. 학습할 시간과 GPU가 없으므로 가중치는 그대로 두고 프롬프트만으로 정확도를 올림
+
+| 과제 | 고객사(가상) | 라벨 | 찍기 수준 |
+|---|---|---|---|
+| `delivery` | 배달앱 | 맛 · 배달 · 양 · 포장 · 칭찬 | 0.20 |
+| `smishing` | 통신사 보안팀 | 정상 · 스미싱 | 0.50 |
+| `news` | 포털 뉴스팀 | IT과학 · 경제 · 사회 · 생활문화 · 스포츠 | 0.20 |
+| `game` | 게임사 운영팀 | 결제 · 밸런스 · 버그 · 이벤트 · 제재 | 0.20 |
+| `nsmc` | (1회차) 영화 리뷰 | 부정 · 긍정 | 0.50 |
+
+규칙
+- 개발셋(`--split dev`, 기본값)으로 몇 번이고 고쳐 봄. 시험셋(`--split test`)은 마지막에 한 번만 돌림
+- 고칠 수 있는 손잡이는 다섯 개: 지시문(`--prompt`), 예시 수(`--shots`), 라벨 단어(`--words`), 보정(`--calibrate`), 모델(`--model base`)
+- 마지막 줄 '제출 줄'을 팀 기록표와 공유 시트에 붙임
+
+1) 몸풀기: 1회차 LSTM(0.80)과 같은 영화 리뷰를 학습 없이 분류(약 1분)
+""")
+code("!python src/llm_sentiment.py --shots 4")
+md("""
+2) 우리 팀 과제 고르기
+""")
+code("""
+TASK = "delivery"      # delivery · smishing · news · game · nsmc 중 하나
+TAG = "팀이름"          # 리더보드에 남길 이름
+!python src/llm_classify.py --list
+""")
+md("""
+3) 기준 점수: 아무것도 고치지 않은 상태
+""")
+code("""
+!python src/llm_classify.py --task {TASK} --show-prompt --tag {TAG}_기준
+show(f"results/fig/llm_classify_{TASK}.png", width=420)
+""")
+md("""
+4) 손잡이 돌리기: 한 번에 하나씩 바꾸고 결과를 기록표에 적음
+""")
+code("""
+!python src/llm_classify.py --task {TASK} --shots 5 --tag {TAG}_예시5
+""")
+code("""
+!python src/llm_classify.py --task {TASK} --shots 5 --calibrate --tag {TAG}_예시5_보정
+""")
+md("""
+5) 지시문 고치기: 아래 파일 내용을 우리 과제에 맞게 고쳐 씀. 라벨 정의, 헷갈리는 경우의 기준을 적으면 효과가 큼
+""")
+code("""
+%%writefile prompts/my_prompt.txt
+배달 음식 리뷰를 읽고 고객이 무엇에 대해 말하는지 하나만 고름.
+맛: 맛, 간, 익힘, 냄새에 대한 불만
+배달: 배달 시간, 기사, 도착 과정에 대한 불만
+양: 양이 적거나 빠진 품목이 있음
+포장: 포장이 새거나 더럽거나 이물질이 나옴
+칭찬: 만족하거나 다시 주문하겠다는 내용
+""")
+code("""
+!python src/llm_classify.py --task {TASK} --prompt prompts/my_prompt.txt --shots 5 --calibrate --tag {TAG}_지시문1
+""")
+md("""
+6) 라벨 단어와 모델 바꾸기(선택): 라벨 순서대로 다른 단어를 줌. Base 모델은 대화용으로 다듬기 전의 원본
+""")
+code("""
+# !python src/llm_classify.py --task delivery --shots 5 --calibrate --words "맛없음,늦음,부족,새거나더러움,만족"
+# !python src/llm_classify.py --task {TASK} --shots 5 --calibrate --model base --tag {TAG}_base
+!python src/llm_classify.py --task {TASK} --shots 5 --calibrate --text "사장님 감사해요 근데 국물이 다 샜어요"
+""")
+md("""
+7) 최종 제출: 개발셋에서 가장 좋았던 설정 그대로 시험셋을 한 번만 돌림
+""")
+code("""
+!python src/llm_classify.py --task {TASK} --split test --prompt prompts/my_prompt.txt --shots 5 --calibrate --tag {TAG}_최종
+""")
+code("""
+import pandas as pd
+pd.read_csv("results/leaderboard.csv").tail(12)
+""")
+md("""
+확인 값(Qwen3-0.6B, 시험셋)
+
+| 과제 | 예시 0 | 예시 0 + 보정 | 예시 5 | 예시 5 + 보정 | Base · 예시 5 + 보정 |
+|---|---|---|---|---|---|
+| delivery | 0.20 | 0.26 | 0.56 | 0.64 | 0.62 |
+| news | 0.20 | 0.33 | 0.45 | 0.56 | 0.56 |
+| game | 0.24 | 0.39 | 0.43 | 0.61 | 0.71 |
+| smishing(예시 2) | 0.53 | 0.58 | 0.98 | 0.98 | 0.78 |
+
+- 위 5)의 예시 지시문 + 예시 5 + 보정(delivery): 개발셋 0.80, 시험셋 0.70
+- 예시 0개일 때 한 라벨로만 답하는 쏠림이 보이면 보정부터 켬
+- 이 값을 넘기면 지시문이 효과를 낸 것
+""")
+
+# ---------------------------------------------------------------- M6
+md("""
+## M6. (과제) 내 질문 10건으로 FAQ 검색기 재기
 - 아래 셀의 질문 10건을 고침(표현 바꾸기 5, 오타 2, 은어 2, 무관 질문 1)
 - `gold_faq_id`에 정답 번호를 씀(`data/G/faq.json`). 무관 질문은 `null`
 - 10건 중 8건 이상 맞히면 완료
@@ -267,14 +400,23 @@ except ImportError:
 ''')
 
 md("""
+## 더 해 보기(선택)
+- 따라 치기 2-T2: greedy · Temperature · Top-k · Top-p별로 30번 뽑기
+- 나만의 데이터: `data/s02/README.md` 구조로 라벨당 15건을 써서 `--data`로 돌려 봄
+""")
+typing_cell("typing/s02/t2_sampling.py")
+code("!python typing/s02/t2_sampling.py")
+
+md("""
 ## 문제가 생기면
 | 증상 | 조치 |
 |---|---|
 | `No such file or directory` | 0번 셀부터 다시 실행 |
-| 연결이 끊김 | 다시 연결하고 0번 셀부터 실행. 실습 D 학습은 다시 걸거나 `use_ref()` |
+| 연결이 끊김 | 다시 연결하고 0번 셀부터 실행. M1 학습은 다시 걸거나 `use_ref()` |
 | GPU를 쓸 수 없다는 안내 | CPU로 그대로 진행 |
 | 셀이 끝나지 않음 | 셀 왼쪽 ■를 누르고 TA를 부름 |
 | `Rate limited` 문구 | 1~2분 기다리면 이어짐 |
+| `--words 는 라벨 수만큼` | 라벨 순서대로 같은 개수를 쉼표로 적음 |
 """)
 
 nb = {"cells": cells,

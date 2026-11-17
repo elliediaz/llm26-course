@@ -1,0 +1,209 @@
+{
+ "name": "속담 이어 말하기",
+ "source": "한국어·영어 전래 속담(저작권 보호 대상 아님), 앞뒤 나누기는 강사 작성",
+ "license": "퍼블릭 도메인",
+ "ko": [
+  {
+   "prefix": "가는 말이 고와야",
+   "answer": "오는 말이 곱다"
+  },
+  {
+   "prefix": "낮말은 새가 듣고",
+   "answer": "밤말은 쥐가 듣는다"
+  },
+  {
+   "prefix": "원숭이도 나무에서",
+   "answer": "떨어진다"
+  },
+  {
+   "prefix": "세 살 버릇",
+   "answer": "여든까지 간다"
+  },
+  {
+   "prefix": "백지장도",
+   "answer": "맞들면 낫다"
+  },
+  {
+   "prefix": "소 잃고",
+   "answer": "외양간 고친다"
+  },
+  {
+   "prefix": "발 없는 말이",
+   "answer": "천 리 간다"
+  },
+  {
+   "prefix": "가랑비에",
+   "answer": "옷 젖는 줄 모른다"
+  },
+  {
+   "prefix": "고래 싸움에",
+   "answer": "새우 등 터진다"
+  },
+  {
+   "prefix": "돌다리도",
+   "answer": "두들겨 보고 건너라"
+  },
+  {
+   "prefix": "티끌 모아",
+   "answer": "태산"
+  },
+  {
+   "prefix": "등잔 밑이",
+   "answer": "어둡다"
+  },
+  {
+   "prefix": "바늘 도둑이",
+   "answer": "소도둑 된다"
+  },
+  {
+   "prefix": "꿩 먹고",
+   "answer": "알 먹는다"
+  },
+  {
+   "prefix": "누워서",
+   "answer": "떡 먹기"
+  },
+  {
+   "prefix": "우물 안",
+   "answer": "개구리"
+  },
+  {
+   "prefix": "배보다",
+   "answer": "배꼽이 더 크다"
+  },
+  {
+   "prefix": "하늘이 무너져도",
+   "answer": "솟아날 구멍이 있다"
+  },
+  {
+   "prefix": "호랑이도 제 말 하면",
+   "answer": "온다"
+  },
+  {
+   "prefix": "도토리",
+   "answer": "키 재기"
+  },
+  {
+   "prefix": "될성부른 나무는",
+   "answer": "떡잎부터 알아본다"
+  },
+  {
+   "prefix": "아니 땐 굴뚝에",
+   "answer": "연기 날까"
+  },
+  {
+   "prefix": "빈 수레가",
+   "answer": "요란하다"
+  },
+  {
+   "prefix": "사공이 많으면",
+   "answer": "배가 산으로 간다"
+  },
+  {
+   "prefix": "웃는 얼굴에",
+   "answer": "침 못 뱉는다"
+  },
+  {
+   "prefix": "열 번 찍어",
+   "answer": "안 넘어가는 나무 없다"
+  },
+  {
+   "prefix": "지렁이도",
+   "answer": "밟으면 꿈틀한다"
+  },
+  {
+   "prefix": "천 리 길도",
+   "answer": "한 걸음부터"
+  },
+  {
+   "prefix": "콩 심은 데",
+   "answer": "콩 나고 팥 심은 데 팥 난다"
+  },
+  {
+   "prefix": "작은 고추가",
+   "answer": "맵다"
+  },
+  {
+   "prefix": "금강산도",
+   "answer": "식후경"
+  },
+  {
+   "prefix": "그림의",
+   "answer": "떡"
+  },
+  {
+   "prefix": "믿는 도끼에",
+   "answer": "발등 찍힌다"
+  },
+  {
+   "prefix": "뛰는 놈 위에",
+   "answer": "나는 놈 있다"
+  },
+  {
+   "prefix": "말 한마디로",
+   "answer": "천 냥 빚을 갚는다"
+  },
+  {
+   "prefix": "개구리 올챙이",
+   "answer": "적 생각 못 한다"
+  },
+  {
+   "prefix": "같은 값이면",
+   "answer": "다홍치마"
+  },
+  {
+   "prefix": "구슬이 서 말이라도",
+   "answer": "꿰어야 보배"
+  },
+  {
+   "prefix": "남의 떡이",
+   "answer": "더 커 보인다"
+  },
+  {
+   "prefix": "쇠뿔도",
+   "answer": "단김에 빼라"
+  }
+ ],
+ "en": [
+  {
+   "prefix": "Actions speak louder than",
+   "answer": "words"
+  },
+  {
+   "prefix": "The early bird catches the",
+   "answer": "worm"
+  },
+  {
+   "prefix": "Don't count your chickens before they",
+   "answer": "hatch"
+  },
+  {
+   "prefix": "When in Rome, do as the",
+   "answer": "Romans do"
+  },
+  {
+   "prefix": "A picture is worth a thousand",
+   "answer": "words"
+  },
+  {
+   "prefix": "Better late than",
+   "answer": "never"
+  },
+  {
+   "prefix": "Practice makes",
+   "answer": "perfect"
+  },
+  {
+   "prefix": "Where there's a will, there's a",
+   "answer": "way"
+  },
+  {
+   "prefix": "Two heads are better than",
+   "answer": "one"
+  },
+  {
+   "prefix": "Every cloud has a silver",
+   "answer": "lining"
+  }
+ ]
+}
