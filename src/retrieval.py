@@ -21,9 +21,13 @@ import utils
 
 
 # ---------------------------------------------------------------- 코퍼스·분할
-def load_corpus(domain: str | None = None) -> list[dict]:
+def load_corpus(domain: str | None = None, with_updates: bool = False) -> list[dict]:
+    """with_updates=True면 corpus_updates/(기준일 뒤에 나온 문서)도 넣음. 6회차 '새 문서가 나왔다' 사건"""
     ddir = config.data_dir(domain)
     manifest = utils.read_json(ddir / "corpus_manifest.json")
+    upd = ddir / "corpus_updates" / "updates_manifest.json"
+    if with_updates and upd.exists():
+        manifest = manifest + utils.read_json(upd)
     docs = []
     for m in manifest:
         text = (ddir / m["file"]).read_text(encoding="utf-8")

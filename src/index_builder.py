@@ -4,6 +4,7 @@
   python src/index_builder.py                      # ④ 두 전략 모두 인덱스 구축 + Recall@k·MRR 비교
   python src/index_builder.py --strategy sentence  # 한 전략만
   python src/index_builder.py --backend faiss      # 벡터DB 교체(chroma 문제 시)
+  python src/index_builder.py --strategy sentence --with-updates   # 새로 나온 문서(corpus_updates/)까지 넣어 다시 만듦
 
 비교 후 고른 전략을 src/config.py의 CHUNK_STRATEGY에 적는다(이후 rag.py·benchmark.py가 그 인덱스를 씀).
 "검색 먼저 재라": 정답 문서를 못 가져오면 프롬프트를 아무리 고쳐도 소용없다.
@@ -36,8 +37,9 @@ def main() -> None:
     ap.add_argument("--strategy", choices=["fixed", "sentence", "both"], default="both")
     ap.add_argument("--backend", choices=["chroma", "faiss", "numpy"], default=None)
     ap.add_argument("--stats", action="store_true", help="조각 통계만(인덱스는 만들지 않음)")
+    ap.add_argument("--with-updates", action="store_true", help="corpus_updates/의 새 문서도 넣음(재학습 없이 지식 갱신)")
     a = ap.parse_args()
-    docs = retrieval.load_corpus()
+    docs = retrieval.load_corpus(with_updates=a.with_updates)
     total = sum(len(d["text"]) for d in docs)
     print(f"[코퍼스] 도메인 {config.DOMAIN} · 문서 {len(docs)}건 · {total:,}자")
     strategies = ["fixed", "sentence"] if a.strategy == "both" else [a.strategy]

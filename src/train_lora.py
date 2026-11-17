@@ -3,7 +3,10 @@
   python src/build_train_data.py --augment 300                 # 먼저 학습 데이터 준비
   python src/train_lora.py --team team3 --run r16               # 기본: config.QUANT로 본체 로딩(nf4이면 QLoRA)
   python src/train_lora.py --team team3 --run r8 --r 8          # 도전과제 ①: rank 바꾸기
-  python src/train_lora.py --team team3 --run n100 --limit 100  # 도전과제 ③: 100·300·500건 학습 곡선
+  python src/train_lora.py --team team3 --run n100 --limit 100  # 데이터 양 바꾸기
+  python src/train_lora.py --team team3 --run lr1e3 --lr 1e-3     # 학습률 바꾸기
+  python src/train_lora.py --team team3 --run qv --target qv       # LoRA를 붙일 층 바꾸기(qv · qkvo · all)
+  python src/train_lora.py --team team3 --run noise30 --data train_noise30.jsonl   # build_train_data.py가 만든 다른 학습 파일
 
 학습은 휴식 시간과 겹치게 돌린다. config.LORA["max_minutes"]를 넘기면 그때까지 학습한 Adapter를 저장하고 끝낸다.
 학습이 끝나지 않으면: 강사가 미리 학습한 Adapter(adapters/_instructor/<도메인>/)로 재평가를 이어 간다.
@@ -26,6 +29,10 @@ from trl import SFTConfig, SFTTrainer
 import config
 import model_utils
 import utils
+
+
+TARGETS = {"qv": ["q_proj", "v_proj"], "qkvo": ["q_proj", "k_proj", "v_proj", "o_proj"],
+           "all": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]}
 
 
 class TimeLimit(TrainerCallback):
@@ -56,13 +63,16 @@ def main() -> None:
     ap.add_argument("--max-minutes", type=float, default=L["max_minutes"])
     ap.add_argument("--limit", type=int, help="학습 데이터 앞에서 N건만")
     ap.add_argument("--quant", default=config.QUANT, choices=["bf16", "nf4"])
+    ap.add_argument("--target", choices=["qv", "qkvo", "all"], default="qkvo",
+                    help="LoRA를 붙일 층: qv(q·v) · qkvo(어텐션 넷, 기본) · all(어텐션 + MLP)")
+    ap.add_argument("--data", default="train.jsonl", help="data/<도메인>/ 안의 학습 파일 이름")
     a = ap.parse_args()
     utils.set_seed()
     out_dir = config.PATHS["adapters"] / a.team / a.run
     d = config.data_dir()
-    ds = load_dataset("json", data_files={"train": str(d / "train.jsonl"), "valid": str(d / "valid.jsonl")})
+    ds = load_dataset("json", data_files={"train": str(d / a.data), "valid": str(d / "valid.jsonl")})
     train = ds["train"].select(range(min(a.limit, len(ds["train"])))) if a.limit else ds["train"]
-    print(f"[학습] 도메인 {config.DOMAIN} · 학습 {len(train)}건 · 검증 {len(ds['valid'])}건 · {a.quant} · r={a.r}")
+    print(f"[학습] 도메인 {config.DOMAIN} · {a.data} {len(train)}건 · 검증 {len(ds['valid'])}건 · {a.quant} · r={a.r} · lr={a.lr} · 층 {a.target}")
 
     utils.vram_reset()
     model, tok = model_utils.load_llm(quant=a.quant)
@@ -71,7 +81,7 @@ def main() -> None:
         from peft import prepare_model_for_kbit_training
         model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=True)
     lora = LoraConfig(r=a.r, lora_alpha=a.alpha or 2 * a.r, lora_dropout=L["dropout"],
-                      target_modules=L["target_modules"], task_type="CAUSAL_LM")
+                      target_modules=TARGETS[a.target], task_type="CAUSAL_LM")
     gpu = torch.cuda.is_available()
     args = SFTConfig(
         output_dir=str(config.PATHS["runs"] / "lora_tmp" / a.team / a.run),
@@ -91,7 +101,7 @@ def main() -> None:
     tok.save_pretrained(out_dir)
     size_mb = sum(p.stat().st_size for p in out_dir.glob("adapter_model.*")) / 1024**2
     info = {"team": a.team, "run": a.run, "domain": config.DOMAIN, "base_model": config.MODEL_ID, "quant": a.quant,
-            "r": a.r, "alpha": a.alpha or 2 * a.r, "epochs": a.epochs, "lr": a.lr, "batch": a.batch,
+            "r": a.r, "alpha": a.alpha or 2 * a.r, "epochs": a.epochs, "lr": a.lr, "batch": a.batch, "target": a.target, "data": a.data,
             "max_length": a.max_length, "n_train": len(train), "minutes": round(t.sec / 60, 2),
             "stopped_by_time_limit": timer.stopped, "trainable_params": trainable["trainable"],
             "adapter_mb": round(size_mb, 1), "vram_peak_gb": utils.vram_peak_gb(), "finished_at": utils.now()}

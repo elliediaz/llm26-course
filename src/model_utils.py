@@ -15,6 +15,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers.utils import logging as hf_logging
 
 hf_logging.disable_progress_bar()       # 가중치 로딩 진행 막대가 로그를 덮지 않게 함
+hf_logging.set_verbosity_error()        # 토크나이저 안내 경고(clean_up_tokenization_spaces 등)를 숨김
 
 import config
 import utils

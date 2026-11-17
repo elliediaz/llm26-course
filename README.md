@@ -14,8 +14,7 @@
 course/
 ├─ setup/        Pod 환경 구성(venv·커널·모델 시딩): 수업 전 강사가 실행
 ├─ src/          단순 실행 스크립트(아래 표): 완성 코드를 실행하고 결과를 해석
-├─ typing/       따라 치기 코드: 빈칸(____)을 채워 직접 실행(회차별 sNN/)
-├─ tasks/        과제 카드·해보기 카드: 값과 대상을 바꿔 보는 연습(회차별)
+├─ tasks/        해보기·사건 카드: 상황을 주고 값과 설정을 바꿔 판단하게 하는 카드(회차별)
 ├─ notebooks/    1·2회차 실습 노트북(s01_colab·s02_colab, 코랩·개인 PC 공용), 1·2회차 발전사 확인 노트북(원본은 notebooks/src/*.py)
 ├─ data/
 │  ├─ common/    공개 데이터(Fashion-MNIST·NSMC 리뷰), 금액 수사 생성기, 토큰 비교 문장
@@ -66,17 +65,18 @@ course/
 
 | 종류 | 위치 | 하는 일 |
 |---|---|---|
-| 따라 치기 | `typing/sNN/` | 강사 화면을 보며 빈칸을 채워 실행(10~40줄). 원리를 손으로 확인 |
-| 단순 실행 | `src/` | 완성 스크립트 실행 → 결과 숫자·그림 해석 |
-| 과제·해보기 | `tasks/` | 해보기: 값·대상·하이퍼파라미터를 하나씩 바꿔 결과 비교(10~30분). 과제: 팀 주제. 결과와 근거를 기록 |
+| 실행·비교 | `src/` | 완성 스크립트를 옵션을 바꿔 가며 실행 → 결과 숫자·그림을 비교해 해석 |
+| 보조 실험 | `experiments/sNN/` | 원리를 눈으로 확인하는 짧은 완성 코드(층별 모양, 다음 토큰 확률, Self-Attention, 생성 설정, Chat Template, 채점 규칙). 옵션으로 조건을 바꿔 봄 |
+| 해보기·사건 카드 | `tasks/` | 상황(문제)이 주어지고, 손잡이(하이퍼파라미터·설정)를 바꿔 돌린 결과로 팀이 판단해 근거와 함께 기록 |
 
 ## 빠른 시작
 
 ```bash
 source /workspace/activate.sh
 python src/check_gpu.py                 # 1회차: 서버 확인
-python src/nn_dense.py                  # 1회차 실습 A(따라 치기 T1 후)
+python src/nn_dense.py                  # 1회차 실습 A
 python src/nn_cnn.py                    # 1회차 실습 B
-python typing/s01/t3_next_token.py      # 1회차 실습 E(빈칸을 채운 뒤)
+python experiments/s01/next_token.py    # 1회차 실습 E
 python src/benchmark.py --limit 3       # 하네스 동작 확인(5회차부터)
+python src/sweep.py shots 0 2 --limit 5  # 손잡이 실험(예시 개수 0 대 2)
 ```

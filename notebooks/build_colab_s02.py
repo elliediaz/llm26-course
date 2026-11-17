@@ -3,7 +3,7 @@
 V3: 미션형. M0 XOR 몸풀기 → M1 기억력 감사 → M2 어텐션 탐정 → M3 토큰 요금 견적 → M4 다음 단어 맞히기
     → M5 학습 없는 분류기 경연 → M6 FAQ 검색기(과제)
 V1·V2는 notebooks/_V1, notebooks/_V2에 보존함(수강생 저장소에는 올리지 않음)
-따라 치기 셀은 typing/의 실제 파일 내용을 %%writefile 셀로 넣는다. 다시 생성: python notebooks/build_colab_s02.py
+보조 실험 셀은 experiments/의 완성 코드를 옵션만 바꿔 실행한다(빈칸 없음). 다시 생성: python notebooks/build_colab_s02.py
 """
 from __future__ import annotations
 
@@ -27,27 +27,22 @@ def code(text: str) -> None:
                   "source": text.strip("\n")})
 
 
-def typing_cell(rel: str) -> None:
-    body = (ROOT / rel).read_text(encoding="utf-8").rstrip("\n")
-    code(f"%%writefile {rel}\n{body}")
-
-
 md("""
 # 2회차 미션 노트북
 
 오늘 실습은 미션 여섯 개로 진행함. 자세한 배경·힌트·기록표는 『2회차 미션 워크북』(PDF)에 있슴
 
 - 셀은 위에서부터 차례로 Shift + Enter로 실행함
-- `%%writefile` 셀은 빈칸 `____`을 채운 뒤 실행하고, 바로 아래 셀로 결과를 봄
+- `!python experiments/...` 셀은 옵션을 바꿔 가며 여러 번 돌려 봄. 무엇을 바꿨을 때 결과가 달라지는지가 핵심임
 - 연결이 끊기면 0번 셀부터 다시 실행함. 결과 파일은 맨 아래 셀로 내려받음
 
 | 미션 | 의뢰 | 쓰는 것 | 시간 |
 |---|---|---|---|
 | M0 | 입사 시험: 직선 하나로 안 나뉘는 문제 | `xor_demo.py` | 10분 |
 | M1 | 기억력 감사: 긴 문장 앞부분을 잊는 이유 | `seq_limits.py`, seq2seq 학습 | 20분 |
-| M2 | 어텐션 탐정: 모델은 문장을 어떻게 읽나 | 따라 치기 2-T1, `attention_probe.py` | 25분 |
+| M2 | 어텐션 탐정: 모델은 문장을 어떻게 읽나 | `experiments/s02/self_attention.py`, `attention_probe.py` | 25분 |
 | M3 | 토큰 요금 견적: 챗봇 한 달 요금 | `token_cost.py` | 12분 |
-| M4 | 다음 단어 맞히기: 속담 이벤트에 써도 되나 | 따라 치기 T3, `next_word_game.py` | 13분 |
+| M4 | 다음 단어 맞히기: 속담 이벤트에 써도 되나 | `experiments/s01/next_token.py`, `next_word_game.py` | 13분 |
 | M5 | 어제 그 리뷰를 트랜스포머로, 학습 없는 분류기 경연 | `llm_sentiment.py`, `llm_classify.py` | 23분 |
 | M6 | (과제) FAQ 검색기 재기 | `faq_search.py` | 집에서 |
 """)
@@ -184,10 +179,13 @@ md("""
 ## M2. 어텐션 탐정: 모델은 문장을 어떻게 읽나
 의뢰: "모델이 '그것'이 무엇인지 아는가?"라는 질문에 근거를 들어 답하는 짧은 보고서
 
-1) Self-Attention을 직접 계산함. 따라 치기 2-T1, 빈칸 5개
+1) Self-Attention을 직접 계산함. 마스크를 빼거나 √d 나누기를 빼면 주의 가중치가 어떻게 바뀌는지 봄
 """)
-typing_cell("typing/s02/t1_self_attention.py")
-code("!python typing/s02/t1_self_attention.py")
+code("!python experiments/s02/self_attention.py")
+code("""
+!python experiments/s02/self_attention.py --no-mask                # 미래 토큰도 봄(인코더 방식)
+!python experiments/s02/self_attention.py --dim 512 --no-scale     # 나누기를 빼면 한 칸에 쏠림
+""")
 md("""
 1-1) 블록 하나의 모양 확인: 작은 GPT(4층)의 텐서 모양과 파라미터 수를 Qwen3와 나란히 봄(약 15초)
 """)
@@ -256,10 +254,9 @@ md("""
 ## M4. 다음 단어 맞히기
 의뢰: 마케팅팀이 '속담 이어 말하기' 이벤트에 LLM을 쓰자고 함. 써도 되는지 판정
 
-1) 다음 토큰 분류기 직접 보기: 따라 치기 T3, 빈칸 5개(처음 실행 때 모델을 내려받아 1~2분 더 걸림)
+1) 다음 토큰 분류기 직접 보기(처음 실행 때 모델을 내려받아 1~2분 더 걸림). 문장을 바꿔 1등 확률이 갈리는 단계를 찾음
 """)
-typing_cell("typing/s01/t3_next_token.py")
-code("!python typing/s01/t3_next_token.py")
+code("!python experiments/s01/next_token.py --steps 10")
 md("""
 2) 먼저 맞혀 보기: 아래 앞부분 세 개의 다음 단어를 종이에 적은 뒤 실행함
 """)
@@ -430,11 +427,11 @@ except ImportError:
 
 md("""
 ## 더 해 보기(선택)
-- 따라 치기 2-T2: greedy · Temperature · Top-k · Top-p별로 30번 뽑기
+- 생성 설정: greedy · 온도 · Top-k · Top-p별로 30번 뽑아 서로 다른 토큰 수를 비교함. `--settings`로 조합을 바꿔 봄
 - 나만의 데이터: `data/s02/README.md` 구조로 라벨당 15건을 써서 `--data`로 돌려 봄
 """)
-typing_cell("typing/s02/t2_sampling.py")
-code("!python typing/s02/t2_sampling.py")
+code("!python experiments/s02/sampling.py")
+code('!python experiments/s02/sampling.py --settings t=0 t=0.7 t=0.7,p=0.5 t=2.0 t=2.0,k=3 --draws 50')
 
 md("""
 ## 문제가 생기면

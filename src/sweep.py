@@ -7,6 +7,7 @@
   python src/sweep.py max_tokens 24 48 96 256 --limit 10
   python src/sweep.py prompt base prompts/s05/주입방어.txt prompts/s05/우리팀.txt --limit 10
   python src/sweep.py score_mode loose strict                  # 생성은 한 번, 채점만 두 가지
+  python src/sweep.py mode base rag --limit 10                 # 6회차: 검색 결과를 넣기 전과 후
   python src/sweep.py top_k 1 2 4 8 --mode rag --limit 10      # 6회차
   python src/sweep.py context_tokens 300 800 1500 3000 --mode rag --limit 10   # 6회차
   python src/sweep.py adapter none adapters/<팀>/r4 adapters/<팀>/r16 --limit 10  # 7회차
@@ -46,6 +47,7 @@ KNOBS = {
     "max_tokens": "최대 생성 토큰",
     "prompt": "덧붙인 규칙 파일",
     "score_mode": "채점 방식(느슨·엄격)",
+    "mode": "검색 사용(6회차)",
     "top_k": "검색 문서 수(6회차)",
     "context_tokens": "참고 문서 토큰 상한(6회차)",
     "adapter": "LoRA Adapter(7회차)",
@@ -131,7 +133,7 @@ def main() -> None:
     if a.knob not in RELOAD:
         model, tok = model_utils.load_llm()
     retriever = None
-    if a.mode == "rag":
+    if a.mode == "rag" or (a.knob == "mode" and "rag" in a.values):
         import retrieval
         retriever = retrieval.Retriever()
 
@@ -150,7 +152,7 @@ def main() -> None:
                 model, tok = model_utils.load_llm(quant=v)
         if a.knob == "score_mode":
             if shared_out is None:
-                shared_out = run_once(model, tok, items, schema, rules, base, retriever, quiet=True)
+                shared_out = run_once(model, tok, items, schema, rules, base, retriever if a.mode == "rag" else None, quiet=True)
             res = {"metrics": {}, "items": []}
             for it in shared_out["items"]:
                 s = scorer.score_item(it["output"], it["gold"], rules, schema, v)
@@ -160,9 +162,10 @@ def main() -> None:
         else:
             st = setting(a.knob, v, base)
             runs = []
+            rt = retriever if (a.knob != "mode" and a.mode == "rag") or (a.knob == "mode" and v == "rag") else None
             for r in range(a.repeat):
                 utils.set_seed(config.SEED + r)
-                runs.append(run_once(model, tok, items, schema, rules, st, retriever, quiet=True))
+                runs.append(run_once(model, tok, items, schema, rules, st, rt, quiet=True))
         accs = [x["metrics"]["task_accuracy"] for x in runs]
         m = runs[0]["metrics"]
         same = None
@@ -170,6 +173,7 @@ def main() -> None:
             outs = [[i["output"] for i in x["items"]] for x in runs]
             same = round(sum(len({o[k] for o in outs}) == 1 for k in range(len(items))) / len(items), 2)
         row = {"값": label(v), "Task Accuracy": round(stat.mean(accs), 3), "JSON 성공률": m["json_success"],
+               **({"검색 적중": m["retrieval_hit_rate"]} if "retrieval_hit_rate" in m else {}),
                "Exact Match": m["exact_match"], **{f"{t}": round(x, 2) for t, x in m["by_type"].items()},
                "p50 지연(초)": m["latency"]["p50"], "입력 토큰": m.get("n_in_avg"), "출력 토큰": m.get("n_out_avg"),
                "VRAM(GB)": m.get("vram_peak_gb")}

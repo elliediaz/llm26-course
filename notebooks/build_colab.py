@@ -1,7 +1,7 @@
 """1회차 실습 노트북(코랩·개인 PC·실습 서버 공용) 생성: notebooks/s01_colab.ipynb
 
-따라 치기 셀은 typing/s01/의 실제 파일 내용을 %%writefile 셀로 넣는다(파일과 노트북이 어긋나지 않게).
-고칠 때는 이 파일과 typing/ 원본을 고친 뒤 다시 생성한다: python notebooks/build_colab.py
+보조 실험 셀은 experiments/s01/의 완성 코드를 옵션만 바꿔 실행한다(빈칸 없음).
+고칠 때는 이 파일을 고친 뒤 다시 생성한다: python notebooks/build_colab.py
 """
 from __future__ import annotations
 
@@ -26,18 +26,13 @@ def code(text: str) -> None:
                   "source": text.strip("\n")})
 
 
-def typing_cell(rel: str) -> None:
-    body = (ROOT / rel).read_text(encoding="utf-8").rstrip("\n")
-    code(f"%%writefile {rel}\n{body}")
-
-
 md("""
 # 1회차 실습 노트북
 
 실습가이드의 명령을 순서대로 셀로 옮긴 노트북임. 코랩, 개인 PC, 실습 서버에서 똑같이 쓸 수 있음
 
 - 셀은 위에서부터 차례로 Shift + Enter로 실행함
-- `%%writefile` 셀은 빈칸 `____`을 채운 뒤 실행하고, 바로 아래 셀로 결과를 봄
+- `!python experiments/...` 셀은 옵션(`--act`, `--kernel` 등)을 바꿔 가며 여러 번 돌려 봄. 결과가 어떻게 달라지는지가 핵심임
 - 연결이 끊기면 0번 셀부터 다시 실행함
 - 작업을 남기려면 파일 → Drive에 사본 저장. 결과 파일은 맨 아래 셀로 내려받음
 """)
@@ -99,10 +94,13 @@ code(r'''
 md("""
 ## 실습 A. Dense로 이탈(분류)과 플레이 시간(회귀)
 - 데이터: 가상 RPG 유저 2만 명의 활동 12개(`data/G/churn.csv`)
-- 따라 치기 T1: 빈칸 6개(답은 실습가이드 실습 A)
+- 보조 실험: 같은 몸통에 출력층만 2칸(분류)·1칸(회귀). 활성화를 빼거나 몸통을 좁히면 두 점수가 어떻게 되는지 봄
 """)
-typing_cell("typing/s01/t1_dense_heads.py")
-code("!python typing/s01/t1_dense_heads.py")
+code("!python experiments/s01/dense_heads.py")
+code("""
+!python experiments/s01/dense_heads.py --act none         # 활성화 없이: 층을 쌓아도 직선 하나
+!python experiments/s01/dense_heads.py --hidden 4         # 몸통을 아주 좁게
+""")
 code("""
 !python src/nn_dense.py
 show("results/fig/nn_dense.png")
@@ -116,10 +114,13 @@ md("""
 md("""
 ## 실습 B. CNN으로 옷 사진 10종
 - 데이터: Fashion-MNIST 옷 사진 7만 장(28×28 흑백)
-- 따라 치기 T2: 빈칸 6개
+- 보조 실험: 층마다 바뀌는 모양과 파라미터 수. 필터 크기·패딩·풀링을 바꿔 Linear 입력 크기가 어떻게 바뀌는지 봄
 """)
-typing_cell("typing/s01/t2_cnn_shapes.py")
-code("!python typing/s01/t2_cnn_shapes.py")
+code("!python experiments/s01/cnn_shapes.py")
+code("""
+!python experiments/s01/cnn_shapes.py --kernel 5 --padding 0
+!python experiments/s01/cnn_shapes.py --no-pool --compare-mlp
+""")
 code("""
 !python src/nn_cnn.py
 show("results/fig/nn_cnn_pred.png", "results/fig/nn_cnn_maps.png")
@@ -210,11 +211,11 @@ md("""
 
 md("""
 ## 실습 E. 디코더 LLM은 다음 토큰 분류기
-- 따라 치기 T3: 빈칸 5개
+- 보조 실험: 출력층 크기(어휘 수)와 한 토큰씩 고르는 과정. 문장을 바꿔 1등 확률이 높은 단계와 갈리는 단계를 봄
 - 처음 실행할 때 모델을 내려받아 1~2분 더 걸림
 """)
-typing_cell("typing/s01/t3_next_token.py")
-code("!python typing/s01/t3_next_token.py")
+code("!python experiments/s01/next_token.py")
+code('!python experiments/s01/next_token.py --text "환불은 구매 후 며칠" --steps 10 --topk 3')
 code("""
 !python src/seq2seq_demo.py
 if os.path.exists("results/structure_compare.md"):
