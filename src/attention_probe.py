@@ -10,6 +10,9 @@
   ③ 다의어: '배'(과일·선박·신체) 자리의 은닉 벡터끼리 코사인 유사도. 0층(임베딩)과 깊은 층을 비교
 주의: 이 모델(Decoder-only)은 앞 토큰만 봄. "too big"의 big은 it보다 뒤에 있으므로 it 자리에서는 아직 모름
 결과: results/attention_probe.json, results/fig/attention_probe.png, results/fig/polysemy.png
+
+메모: 처음에는 문장을 그대로 넣었더니 한국어 문장은 정답과 상관없이 첫 낱말(트로피·고양이·학생) 쪽 값이 0.86~0.94로 나왔음.
+      첫 토큰에 어텐션이 몰리는 현상(어텐션 싱크) 때문이라 문장 앞에 줄바꿈을 하나 붙여서 잼(SINK)
 """
 from __future__ import annotations
 

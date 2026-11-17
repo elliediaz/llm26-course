@@ -10,6 +10,8 @@
   첫 낱말: 정답의 첫 낱말까지만 맞음
   후보 순위: 정답 첫 토큰이 다음 토큰 후보 중 몇 번째였나(1이면 가장 유력, 어휘 약 15만 개 중)
 결과: results/next_word_game_<모델>.json, results/fig/next_word_game.png
+
+메모: 0.6B 모델은 한국어 속담을 거의 못 맞힘(11/17 실측 40개 중 0개, 영어는 10개 중 7~9개). 코드 문제가 아님
 """
 from __future__ import annotations
 

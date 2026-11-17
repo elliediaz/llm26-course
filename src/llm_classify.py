@@ -4,7 +4,7 @@
   python src/llm_classify.py --task delivery                 # 배달 리뷰, 예시 0개, 개발셋(dev)으로 점검
   python src/llm_classify.py --task delivery --shots 5       # 라벨마다 예시 1개씩 앞에 붙임
   python src/llm_classify.py --task delivery --calibrate     # 라벨 쏠림 보정
-  python src/llm_classify.py --task delivery --prompt prompts/my_delivery.txt --tag 우리팀v2
+  python src/llm_classify.py --task delivery --prompt prompts/my_prompt.txt --tag 우리팀v2
   python src/llm_classify.py --task delivery --shots 5 --split test --tag 최종   # 시험셋은 마지막에 한 번만
   python src/llm_classify.py --task smishing --text "택배 주소 확인: http://a.example"
   python src/llm_classify.py --data data/s02/my_task.json    # 직접 만든 데이터
@@ -21,6 +21,11 @@
 결과
   results/llm_classify_<과제>_<태그>.json, results/fig/llm_classify_<과제>.png
   results/leaderboard.csv 에 한 줄씩 누적
+
+메모(11/17, 2코어 CPU)
+  - 개발셋 한 번 30초 안팎, 시험셋은 과제에 따라 25~90초
+  - 보정을 켜면 대개 오르지만 늘 그렇지는 않음(Base 모델 배달 리뷰는 0.68 → 0.62). 켜고 끈 값을 둘 다 적어 둘 것
+  - 지시문 예시는 prompts/예시_delivery.txt
 """
 from __future__ import annotations
 

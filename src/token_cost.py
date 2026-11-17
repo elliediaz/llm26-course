@@ -9,7 +9,7 @@
   Qwen3-0.6B     다국어 모델(2회차 실습용)
   KURE-v1        한국어 임베딩 모델(XLM-RoBERTa 계열, 6회차 검색용)
   GPT-2          2019년 영어 중심 모델(비교 기준)
-요금은 가상 단가(백만 토큰당 원)로 계산함. 실제 API 단가는 서비스마다 다르고 입력·출력 단가도 다름
+요금은 가상 단가(백만 토큰당 원)로 계산함. 2,000원은 비교용으로 정한 값일 뿐이고, 실제 API 단가는 서비스마다 다르며 입력·출력 단가도 다름
 결과: results/token_cost.json, results/fig/token_cost.png
 """
 from __future__ import annotations
