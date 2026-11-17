@@ -1,6 +1,6 @@
 """6회차 도전과제 ②: 재순위화(Reranker): 1차 검색 후보를 질문과 함께 다시 읽어 순위를 고친다.
 
-  python src/rerank.py                       # 1차 검색만 vs +재순위화: Recall@k, 질의당 추가 지연
+  python src/rerank.py                       # 1차 검색만 vs +재순위화: Recall@k, 질의당 추가 지연(처음 실행 때 재순위화 모델 약 2.3GB를 받음)
 
 Reranker는 질문과 문서를 한 번에 입력하는 Cross-Encoder 라 정확하지만 느리다.
 늘어난 지연만큼 정확도가 올랐는지 따져 보는 것이 이 과제의 핵심(실무에서 늘 하는 판단).
@@ -41,7 +41,8 @@ def main() -> None:
         r = retrieval.eval_retrieval(ret, items)
         rows.append({"방식": name, "Recall@1": r["recall@1"], "Recall@3": r["recall@3"], "MRR": r["mrr"]})
     lat = utils.latency_stats(rr.extra_sec)
-    rows[1]["추가 지연 p50(s)"] = lat["p50"]
+    rows[0]["질의당 추가 지연 p50(s)"] = "-"
+    rows[1]["질의당 추가 지연 p50(s)"] = lat["p50"]
     utils.print_table(rows)
     utils.write_json(utils.result_path("retrieval_rerank.json"), rows)
 

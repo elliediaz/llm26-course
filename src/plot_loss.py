@@ -33,6 +33,8 @@ def judge(train: list[float], valid: list[float]) -> list[str]:
         msgs.append(f"학습 Loss 감소 {drop:.0%}: 거의 안 내려감: 템플릿·데이터 형식·학습률 확인")
     else:
         msgs.append(f"학습 Loss {first:.3f} → {last:.3f} ({drop:.0%} 감소)")
+    if last > 1.0:
+        msgs.insert(0, f"Loss가 {last:.1f} 근처에 머묾(정답을 거의 못 따라 씀): 학습률이 너무 크면 이렇게 됨")
     if diffs and statistics.mean(half) > 0.05 and statistics.mean(diffs) > 0.4 * statistics.mean(half) and ups >= 0.4:
         msgs.append("뒤쪽에서 오르내림이 큼(널뛰기): 학습률을 낮춰 볼 것")
     if last < 0.02:
