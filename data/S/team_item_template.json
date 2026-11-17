@@ -1,0 +1,316 @@
+{
+ "domain": "S",
+ "allocation": {
+  "K": 8,
+  "R": 7,
+  "F": 5
+ },
+ "rules": [
+  "K(지식형): 코퍼스(corpus/*.md)의 특정 문서를 봐야만 답할 수 있는 질문. gold_doc_ids에 근거 문서 id를 반드시 적는다",
+  "R(추론형): 질문 문장 안에 계산·추출 근거가 모두 있는 질문. 정답 수치는 build/s_rules.py로 계산한다",
+  "F(형식·판단형): 기록실 답변 규약(policy_*)을 알아야 맞힐 수 있는 질문. 답하지 않는 질문과, 약칭이지만 단서가 있어 답할 수 있는 질문을 섞는다",
+  "gold는 schema.json을 통과해야 한다. 값이 없으면 null. 표기는 policy_format 문서를 따른다",
+  "시드 문항과 같은 문장·같은 사실을 다시 쓰지 않는다(표현만 바꾼 문항 금지)",
+  "실존 구단·선수·대회 이름을 넣지 않는다. 모두 가상 리그 기록에서 고른다"
+ ],
+ "example": {
+  "id": "S-S-01",
+  "type": "K",
+  "input": "백호 이번 시즌 정규리그 마지막 순위가 궁금해요. 야구요",
+  "gold": {
+   "league": "한빛프로야구",
+   "entity": "전주 백호",
+   "metric": "순위",
+   "value": "1위",
+   "as_of": "2026-09-27",
+   "answerable": true
+  },
+  "gold_doc_ids": [
+   "season_hpb_2026",
+   "team_b03"
+  ],
+  "family": "b_rank"
+ },
+ "items": [
+  {
+   "id": "S-T-01",
+   "type": "K",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-02",
+   "type": "K",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-03",
+   "type": "K",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-04",
+   "type": "K",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-05",
+   "type": "K",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-06",
+   "type": "K",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-07",
+   "type": "K",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-08",
+   "type": "K",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-09",
+   "type": "R",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-10",
+   "type": "R",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-11",
+   "type": "R",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-12",
+   "type": "R",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-13",
+   "type": "R",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-14",
+   "type": "R",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-15",
+   "type": "R",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-16",
+   "type": "F",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-17",
+   "type": "F",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-18",
+   "type": "F",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-19",
+   "type": "F",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  },
+  {
+   "id": "S-T-20",
+   "type": "F",
+   "input": "",
+   "gold": {
+    "league": null,
+    "entity": null,
+    "metric": null,
+    "value": null,
+    "as_of": null,
+    "answerable": true
+   },
+   "gold_doc_ids": []
+  }
+ ]
+}

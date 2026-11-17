@@ -1,6 +1,7 @@
 """복귀 점검·인계 점검: 회차 시작 전에 환경과 이전 산출물이 그대로 있는지 확인한다.
 
-  python src/resume_check.py              # 5·6·7회차 도입(복귀 점검): GPU·모델 로딩·이전 산출물
+  python src/resume_check.py              # 5·6·7회차 도입(복귀 점검): GPU·모델 로딩·팀 도메인 데이터
+  python src/resume_check.py --session 5  # 5회차 산출물(6회차 도입 때 확인)
   python src/resume_check.py --handover 2 # 2회차 끝(차승희 박사 회차 인계 전): 남겨야 할 파일 확인
   python src/resume_check.py --handover 7 # 7회차 끝(8회차 인계 전)
   python src/resume_check.py --quick      # 모델 로딩 없이 파일만
@@ -20,7 +21,9 @@ CHECKS = {
     "1회차 산출물": [R / "env_check.json", R / "faq_eval.json"],
     "2회차 산출물": [R / "xor_demo.json", R / "seq_limits.json", R / "polysemy.json", R / "token_cost.json",
                   R / "leaderboard.csv"],   # V3(11/17, 미션형)
-    "5회차 산출물": [D / "test_dataset.json", R / "base.json", R / "scoreboard.json"],
+    "도메인 데이터": [D / "schema.json", D / "scoring.yaml", D / "test_seed.json", D / "test_dataset.json",
+                 D / "probes.json", D / "corpus_manifest.json", D / "train_seed.jsonl"],
+    "5회차 산출물": [D / "test_dataset.json", R / "base.json", R / "scoreboard.json", R / "sweep_strategy.json"],
     "6회차 산출물": [R / "rag.json", R / "retrieval_compare.json"],
 }
 HANDOVER = {
@@ -45,7 +48,7 @@ def main() -> None:
     a = ap.parse_args()
     print(f"[설정] 도메인 {config.DOMAIN} · 모델 {config.MODEL_ID} · {config.QUANT}")
     print(f"[설정] GEN_SERVICE {config.GEN_SERVICE} · 이유: {config.GEN_SERVICE_REASON}")
-    groups = [f"{a.session}회차 산출물"] if a.session else HANDOVER[a.handover] if a.handover else list(CHECKS)
+    groups = [f"{a.session}회차 산출물"] if a.session else HANDOVER[a.handover] if a.handover else ["도메인 데이터"]
     rows = check_files(groups)
     if a.handover == 7:
         ads = sorted(p.parent for p in config.PATHS["adapters"].glob("*/*/adapter_config.json"))

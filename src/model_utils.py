@@ -12,6 +12,9 @@ import time
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers.utils import logging as hf_logging
+
+hf_logging.disable_progress_bar()       # 가중치 로딩 진행 막대가 로그를 덮지 않게 함
 
 import config
 import utils

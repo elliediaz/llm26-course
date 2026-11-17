@@ -279,6 +279,15 @@
   "chars": 186
  },
  {
+  "doc_id": "law_summary",
+  "title": "근거 조문 요지",
+  "file": "corpus/law_summary.md",
+  "source": "강사 작성 해설",
+  "license": "공공누리 제1유형 요약",
+  "as_of": "2026-11-01",
+  "chars": 710
+ },
+ {
   "doc_id": "rule_format",
   "title": "정산 JSON 작성 규약",
   "file": "corpus/rule_format.md",

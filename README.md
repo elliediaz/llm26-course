@@ -20,8 +20,9 @@ course/
 ├─ data/
 │  ├─ common/    공개 데이터(Fashion-MNIST·NSMC 리뷰), 금액 수사 생성기, 토큰 비교 문장
 │  ├─ s02/       2회차 미션 데이터(배달 리뷰·스미싱 문자·뉴스 제목·게임 문의·속담·토큰 표본·지시어 문장)
-│  └─ G · L · S  팀 도메인 데이터(README에 출처·라이선스·기준일). G에는 1회차 신경망 실습용 합성 데이터도 있음
-├─ prompts/      2회차 M5 지시문 파일(예시: 예시_delivery.txt)
+│  └─ G · L · S  팀 도메인 데이터(README에 출처·라이선스·기준일). G 게임 운영, L 알바 급여 정산, S 가상 스포츠 기록실
+├─ prompts/      2회차 M5 지시문 파일(예시_delivery.txt), 5회차 덧붙일 규칙 파일(s05/)
+├─ experiments/  회차별 보조 실험(sNN/): 원리를 눈으로 확인하는 짧은 완성 코드, 옵션으로 조건을 바꿔 봄
 ├─ results/      모든 산출물(JSON·표·그림): 볼륨에 남음
 ├─ ref/          회차별 참고 결과(학습이 늦을 때 `bash ref/s01/use_ref.sh`)
 ├─ index/        6회차 벡터 인덱스
@@ -56,6 +57,8 @@ course/
 | 2 | `inspect_tokenizer.py` `mini_transformer.py` `gen_params_sweep.py` `kv_cache_bench.py` | 토큰 비교, 미니 트랜스포머, 생성 설정 비교표, KV Cache 측정(부록·5·6회차) |
 | 5 | `prompt_utils.py` `scorer.py` `benchmark.py` `scoreboard.py` `dataset_tool.py` `judge.py` | 프롬프트(평가·학습 공용), 채점, 하네스, 성능 기록표, 문항 점검·병합, LLM 채점(도전) |
 | 5 | `field_report.py` | 필드별 점수를 분류·추출로 나눠 보고 1회차 분류기와 같은 문항에서 비교 |
+| 5~7 | `sweep.py` | 손잡이 실험: 설정 하나(형식 강제·예시 수·템플릿·온도·최대 길이·규칙 파일·모델·정밀도, 6회차 top-k·문맥 길이, 7회차 Adapter)를 바꿔 같은 문항으로 비교표·그림 |
+| 5~7 | `probe.py` | 문제 입력 점검: 오타·은어, 섞인 문의, 프롬프트 주입, 무관 질문, 영어, 긴 입력, 형식 유도, 정보 부족(`data/<도메인>/probes.json`) |
 | 6 | `retrieval.py` `index_builder.py` `rag.py` `hybrid_search.py` `rerank.py` | 분할·인덱스·검색, 검색 품질, 검색 기반 생성·오답 분류, 하이브리드·재순위화(도전) |
 | 7 | `build_train_data.py` `train_lora.py` `plot_loss.py` `merge_adapter.py` | 학습 데이터, LoRA/QLoRA 학습, Loss 판독, Adapter 병합(도전) |
 

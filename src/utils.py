@@ -32,6 +32,18 @@ def set_seed(seed: int = config.SEED) -> None:
         pass
 
 
+def free_gpu() -> None:
+    """모델을 바꿔 올리기 전에 GPU 메모리를 비움"""
+    import gc
+    gc.collect()
+    try:
+        import torch
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+    except ImportError:
+        pass
+
+
 def now() -> str:
     return _dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 

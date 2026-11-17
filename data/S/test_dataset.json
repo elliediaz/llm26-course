@@ -1,0 +1,170 @@
+[
+ {
+  "id": "S-S-01",
+  "type": "K",
+  "input": "백호 이번 시즌 정규리그 마지막 순위가 궁금해요. 야구요",
+  "gold": {
+   "league": "한빛프로야구",
+   "entity": "전주 백호",
+   "metric": "순위",
+   "value": "1위",
+   "as_of": "2026-09-27",
+   "answerable": true
+  },
+  "gold_doc_ids": [
+   "season_hpb_2026",
+   "team_b03"
+  ],
+  "family": "b_rank"
+ },
+ {
+  "id": "S-S-02",
+  "type": "K",
+  "input": "목포 고래 박지환 타점 몇이었는지 알려 주세요",
+  "gold": {
+   "league": "한빛프로야구",
+   "entity": "박지환",
+   "metric": "타점",
+   "value": "53점",
+   "as_of": "2026-09-27",
+   "answerable": true
+  },
+  "gold_doc_ids": [
+   "player_bp10",
+   "team_b04"
+  ],
+  "family": "b_player"
+ },
+ {
+  "id": "S-S-03",
+  "type": "K",
+  "input": "2026 한빛프로야구 한빛시리즈 승리 팀이 어디죠?",
+  "gold": {
+   "league": "한빛프로야구",
+   "entity": null,
+   "metric": "우승팀",
+   "value": "춘천 반달",
+   "as_of": "2026-10-21",
+   "answerable": true
+  },
+  "gold_doc_ids": [
+   "post_hpb_2026"
+  ],
+  "family": "b_post"
+ },
+ {
+  "id": "S-S-04",
+  "type": "K",
+  "input": "블루 하운즈 Hollow 선수 서머 KDA가 몇이에요?",
+  "gold": {
+   "league": "넥서스리그",
+   "entity": "Hollow",
+   "metric": "KDA",
+   "value": "2.93",
+   "as_of": "2026-08-30",
+   "answerable": true
+  },
+  "gold_doc_ids": [
+   "team_e03"
+  ],
+  "family": "e_kda"
+ },
+ {
+  "id": "S-S-05",
+  "type": "R",
+  "input": "7월 9일 기준 포항 해일 성적 26승 2무 38패. 승률 계산해 주세요",
+  "gold": {
+   "league": "한빛프로야구",
+   "entity": "포항 해일",
+   "metric": "승률",
+   "value": "0.406",
+   "as_of": "2026-07-09",
+   "answerable": true
+  },
+  "gold_doc_ids": [],
+  "family": "r_winrate"
+ },
+ {
+  "id": "S-S-06",
+  "type": "R",
+  "input": "우리 전주 백호 점수 먼저 적으면 1차전 8:5, 2차전 2:3, 3차전 6:7, 4차전 1:7. 몇 승 몇 패인가요?",
+  "gold": {
+   "league": "한빛프로야구",
+   "entity": "전주 백호",
+   "metric": "시리즈 결과",
+   "value": "1:3",
+   "as_of": null,
+   "answerable": true
+  },
+  "gold_doc_ids": [],
+  "family": "r_series"
+ },
+ {
+  "id": "S-S-07",
+  "type": "R",
+  "input": "넥서스리그 경기에서 Juno 선수가 14킬 9데스 0어시스트를 했어요. 이 경기 KDA는요?",
+  "gold": {
+   "league": "넥서스리그",
+   "entity": "Juno",
+   "metric": "KDA",
+   "value": "1.56",
+   "as_of": null,
+   "answerable": true
+  },
+  "gold_doc_ids": [],
+  "family": "r_kda"
+ },
+ {
+  "id": "S-S-08",
+  "type": "F",
+  "input": "월드 인비테이셔널 2026 우승팀 어디예요?",
+  "gold": {
+   "league": "월드인비테이셔널",
+   "entity": null,
+   "metric": "우승팀",
+   "value": null,
+   "as_of": null,
+   "answerable": false
+  },
+  "gold_doc_ids": [
+   "league_wiv",
+   "policy_answerable"
+  ],
+  "family": "f_future"
+ },
+ {
+  "id": "S-S-09",
+  "type": "F",
+  "input": "최서준 선수 이적 얘기 들었는데 사실이에요? 얼마예요?",
+  "gold": {
+   "league": "한빛프로야구",
+   "entity": "최서준",
+   "metric": "이적",
+   "value": null,
+   "as_of": null,
+   "answerable": false
+  },
+  "gold_doc_ids": [
+   "policy_answerable"
+  ],
+  "family": "f_private"
+ },
+ {
+  "id": "S-S-10",
+  "type": "F",
+  "input": "비룡 올해 성적 몇 위로 끝났는지 알려 주세요",
+  "gold": {
+   "league": null,
+   "entity": null,
+   "metric": "순위",
+   "value": null,
+   "as_of": null,
+   "answerable": false
+  },
+  "gold_doc_ids": [
+   "policy_entity",
+   "policy_answerable"
+  ],
+  "family": "f_ambiguous"
+ }
+]

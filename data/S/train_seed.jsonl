@@ -1,0 +1,174 @@
+{"id": "S-L-107", "type": "R", "input": "1차전 4:8, 2차전 7:9, 3차전 3:2, 4차전 4:3, 5차전 9:5(안동 두루미 점수 먼저) 이긴 수:진 수", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "시리즈 결과", "value": "3:2", "as_of": null, "answerable": true}}
+{"id": "S-L-074", "type": "R", "input": "제주 돌풍 7월 14일 현재 31승 25패 2무, 승률은?", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "승률", "value": "0.554", "as_of": "2026-07-14", "answerable": true}}
+{"id": "S-L-028", "type": "K", "input": "안동 두루미 2026 정규시즌 승률은?", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "승률", "value": "0.402", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-013", "type": "K", "input": "춘천 반달 5월 마지막 날 순위가 어땠지?", "gold": {"league": "한빛프로야구", "entity": "춘천 반달", "metric": "순위", "value": "3위", "as_of": "2026-05-31", "answerable": true}}
+{"id": "S-L-111", "type": "R", "input": "Heron 13/0/21, KDA 계산", "gold": {"league": "넥서스리그", "entity": "Heron", "metric": "KDA", "value": "34.00", "as_of": null, "answerable": true}}
+{"id": "S-L-073", "type": "R", "input": "승 31 패 18 무 2일 때 춘천 반달 승률(7월 21일 기준)", "gold": {"league": "한빛프로야구", "entity": "춘천 반달", "metric": "승률", "value": "0.633", "as_of": "2026-07-21", "answerable": true}}
+{"id": "S-L-101", "type": "R", "input": "맹보겸 92.2이닝 자책 27(5월 31일). 평균자책점은? 이닝 소수 자리는 아웃 수", "gold": {"league": "한빛프로야구", "entity": "맹보겸", "metric": "평균자책점", "value": "2.62", "as_of": "2026-05-31", "answerable": true}}
+{"id": "S-L-083", "type": "R", "input": "1위 원주 산매 46승 24패, 제주 돌풍 39승 28패(8월 20일). 제주 돌풍 게임차?", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "게임차", "value": "5.5", "as_of": "2026-08-20", "answerable": true}}
+{"id": "S-L-025", "type": "K", "input": "두루미 야구팀 시즌 승률 알려줘", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "승률", "value": "0.402", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-174", "type": "F", "input": "게임단 비룡 스프링 몇 위였지?", "gold": {"league": "넥서스리그", "entity": "비룡 게이밍", "metric": "순위", "value": "3위", "as_of": "2026-04-19", "answerable": true}}
+{"id": "S-L-015", "type": "K", "input": "4월 말 시점 안동 두루미 순위", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "순위", "value": "5위", "as_of": "2026-04-30", "answerable": true}}
+{"id": "S-L-164", "type": "F", "input": "비룡 최종 순위", "gold": {"league": null, "entity": null, "metric": "순위", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-084", "type": "R", "input": "1위 원주 산매 38승 24패, 춘천 반달 32승 27패(8월 20일). 춘천 반달 게임차?", "gold": {"league": "한빛프로야구", "entity": "춘천 반달", "metric": "게임차", "value": "4.5", "as_of": "2026-08-20", "answerable": true}}
+{"id": "S-L-116", "type": "R", "input": "넥서스리그 Saffron 킬 14 데스 3 어시 9일 때 KDA", "gold": {"league": "넥서스리그", "entity": "Saffron", "metric": "KDA", "value": "7.67", "as_of": null, "answerable": true}}
+{"id": "S-L-070", "type": "K", "input": "A조 폴라리스 유니언 몇 위로 끝났어?", "gold": {"league": "월드인비테이셔널", "entity": "폴라리스 유니언", "metric": "조별 순위", "value": "4위", "as_of": "2026-10-25", "answerable": true}}
+{"id": "S-L-094", "type": "R", "input": "6월 30일까지 문선율 안타 58 타수 277, 타율 계산", "gold": {"league": "한빛프로야구", "entity": "문선율", "metric": "타율", "value": "0.209", "as_of": "2026-06-30", "answerable": true}}
+{"id": "S-L-117", "type": "R", "input": "넥서스리그 Glint 킬 6 데스 9 어시 3일 때 KDA", "gold": {"league": "넥서스리그", "entity": "Glint", "metric": "KDA", "value": "1.00", "as_of": null, "answerable": true}}
+{"id": "S-L-042", "type": "K", "input": "플레이오프에서 청주 비룡 몇 승 몇 패였어?", "gold": {"league": "한빛프로야구", "entity": "청주 비룡", "metric": "시리즈 결과", "value": "0:3", "as_of": "2026-10-09", "answerable": true}}
+{"id": "S-L-162", "type": "F", "input": "비룡 최종 순위", "gold": {"league": null, "entity": null, "metric": "순위", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-152", "type": "F", "input": "2024년 야구 우승한 팀", "gold": {"league": "한빛프로야구", "entity": null, "metric": "우승팀", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-157", "type": "F", "input": "2025년 야구 우승한 팀", "gold": {"league": "한빛프로야구", "entity": null, "metric": "우승팀", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-124", "type": "R", "input": "실버 아울스 1세트 패, 2세트 승, 3세트 승, 4세트 승, 5세트 승. 세트 결과", "gold": {"league": "넥서스리그", "entity": "실버 아울스", "metric": "세트 결과", "value": "4:1", "as_of": null, "answerable": true}}
+{"id": "S-L-069", "type": "K", "input": "월드 인비테이셔널 조별 리그 선셋 바이퍼 순위", "gold": {"league": "월드인비테이셔널", "entity": "선셋 바이퍼", "metric": "조별 순위", "value": "1위", "as_of": "2026-10-25", "answerable": true}}
+{"id": "S-L-007", "type": "K", "input": "야구 두루미 올해 몇 등으로 시즌 마쳤어?", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "순위", "value": "8위", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-055", "type": "K", "input": "스텔라 나인 유격 Whit KDA는?", "gold": {"league": "넥서스리그", "entity": "Whit", "metric": "KDA", "value": "2.65", "as_of": "2026-08-30", "answerable": true}}
+{"id": "S-L-037", "type": "K", "input": "소지호 2026 정규시즌 홈런은?", "gold": {"league": "한빛프로야구", "entity": "소지호", "metric": "홈런", "value": "17개", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-050", "type": "K", "input": "청주 비룡 플레이오프 시리즈 결과", "gold": {"league": "한빛프로야구", "entity": "청주 비룡", "metric": "시리즈 결과", "value": "0:3", "as_of": "2026-10-09", "answerable": true}}
+{"id": "S-L-172", "type": "F", "input": "넥서스리그 비룡 스프링 정규 리그 순위는?", "gold": {"league": "넥서스리그", "entity": "비룡 게이밍", "metric": "순위", "value": "3위", "as_of": "2026-04-19", "answerable": true}}
+{"id": "S-L-150", "type": "F", "input": "오로라 게이밍 판정 논란 정리하면 누가 맞아?", "gold": {"league": "넥서스리그", "entity": "오로라 게이밍", "metric": "경기 결과", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-123", "type": "R", "input": "스텔라 나인 1세트 패, 2세트 승, 3세트 승, 4세트 승, 5세트 패. 세트 결과", "gold": {"league": "넥서스리그", "entity": "스텔라 나인", "metric": "세트 결과", "value": "3:2", "as_of": null, "answerable": true}}
+{"id": "S-L-146", "type": "F", "input": "제주 돌풍 2027 시즌 예상 순위", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "순위", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-089", "type": "R", "input": "전윤재 270타수 85안타(6월 30일). 타율?", "gold": {"league": "한빛프로야구", "entity": "전윤재", "metric": "타율", "value": "0.315", "as_of": "2026-06-30", "answerable": true}}
+{"id": "S-L-115", "type": "R", "input": "넥서스리그 Nimbus 킬 5 데스 4 어시 4일 때 KDA", "gold": {"league": "넥서스리그", "entity": "Nimbus", "metric": "KDA", "value": "2.25", "as_of": null, "answerable": true}}
+{"id": "S-L-030", "type": "K", "input": "춘천 반달 2026 정규시즌 승률은?", "gold": {"league": "한빛프로야구", "entity": "춘천 반달", "metric": "승률", "value": "0.561", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-017", "type": "K", "input": "원주 산매 7월 마지막 날 순위가 어땠지?", "gold": {"league": "한빛프로야구", "entity": "원주 산매", "metric": "순위", "value": "3위", "as_of": "2026-07-31", "answerable": true}}
+{"id": "S-L-131", "type": "F", "input": "2026 월드 인비테이셔널 최종 우승팀은?", "gold": {"league": "월드인비테이셔널", "entity": null, "metric": "우승팀", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-170", "type": "F", "input": "야구 비룡 정규시즌 승률 얼마야?", "gold": {"league": "한빛프로야구", "entity": "청주 비룡", "metric": "승률", "value": "0.506", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-128", "type": "F", "input": "월드 인비테이셔널 결승 결과 알려줘", "gold": {"league": "월드인비테이셔널", "entity": null, "metric": "경기 결과", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-082", "type": "R", "input": "1위 원주 산매 46승 30패, 안동 두루미 40승 31패(8월 20일). 안동 두루미 게임차?", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "게임차", "value": "3.5", "as_of": "2026-08-20", "answerable": true}}
+{"id": "S-L-086", "type": "R", "input": "1위 제주 돌풍 44승 29패, 원주 산매 42승 32패(8월 20일). 원주 산매 게임차?", "gold": {"league": "한빛프로야구", "entity": "원주 산매", "metric": "게임차", "value": "2.5", "as_of": "2026-08-20", "answerable": true}}
+{"id": "S-L-125", "type": "R", "input": "1세트 패, 2세트 패, 3세트 승, 4세트 승, 5세트 패(실버 아울스 기준) 세트 스코어", "gold": {"league": "넥서스리그", "entity": "실버 아울스", "metric": "세트 결과", "value": "2:3", "as_of": null, "answerable": true}}
+{"id": "S-L-132", "type": "F", "input": "월드 인비테이셔널 결승 결과 알려줘", "gold": {"league": "월드인비테이셔널", "entity": null, "metric": "경기 결과", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-155", "type": "F", "input": "2025 시즌 원주 산매 순위 알려줘", "gold": {"league": "한빛프로야구", "entity": "원주 산매", "metric": "순위", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-011", "type": "K", "input": "6월 말 시점 제주 돌풍 순위", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "순위", "value": "6위", "as_of": "2026-06-30", "answerable": true}}
+{"id": "S-L-031", "type": "K", "input": "문선율(춘천 반달) 홈런 기록 궁금", "gold": {"league": "한빛프로야구", "entity": "문선율", "metric": "홈런", "value": "28개", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-134", "type": "F", "input": "월드 인비테이셔널 결승 결과 알려줘", "gold": {"league": "월드인비테이셔널", "entity": null, "metric": "경기 결과", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-063", "type": "K", "input": "아이언 팽 8강 경기 결과(월드 인비테이셔널)", "gold": {"league": "월드인비테이셔널", "entity": "아이언 팽", "metric": "경기 결과", "value": "2:3", "as_of": "2026-10-31", "answerable": true}}
+{"id": "S-L-156", "type": "F", "input": "2025 한빛프로야구 우승팀", "gold": {"league": "한빛프로야구", "entity": null, "metric": "우승팀", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-102", "type": "R", "input": "5월 31일까지 백민혁 자책점 11, 이닝 40.0(소수 자리=아웃). 평균자책점", "gold": {"league": "한빛프로야구", "entity": "백민혁", "metric": "평균자책점", "value": "2.48", "as_of": "2026-05-31", "answerable": true}}
+{"id": "S-L-104", "type": "R", "input": "1차전 2:1, 2차전 1:2, 3차전 7:4(제주 돌풍 점수 먼저) 이긴 수:진 수", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "시리즈 결과", "value": "2:1", "as_of": null, "answerable": true}}
+{"id": "S-L-057", "type": "K", "input": "Quill(스텔라 나인) 서머 KDA", "gold": {"league": "넥서스리그", "entity": "Quill", "metric": "KDA", "value": "4.46", "as_of": "2026-08-30", "answerable": true}}
+{"id": "S-L-067", "type": "K", "input": "프로스트 바인 4강 경기 결과(월드 인비테이셔널)", "gold": {"league": "월드인비테이셔널", "entity": "프로스트 바인", "metric": "경기 결과", "value": "2:3", "as_of": "2026-11-08", "answerable": true}}
+{"id": "S-L-088", "type": "R", "input": "6월 30일까지 전윤재 안타 62 타수 241, 타율 계산", "gold": {"league": "한빛프로야구", "entity": "전윤재", "metric": "타율", "value": "0.257", "as_of": "2026-06-30", "answerable": true}}
+{"id": "S-L-021", "type": "K", "input": "산매 야구팀 시즌 승률 알려줘", "gold": {"league": "한빛프로야구", "entity": "원주 산매", "metric": "승률", "value": "0.494", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-065", "type": "K", "input": "월드 인비테이셔널 조별 리그 그레이 쿼츠 순위", "gold": {"league": "월드인비테이셔널", "entity": "그레이 쿼츠", "metric": "조별 순위", "value": "2위", "as_of": "2026-10-25", "answerable": true}}
+{"id": "S-L-020", "type": "K", "input": "5월 말 시점 안동 두루미 순위", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "순위", "value": "8위", "as_of": "2026-05-31", "answerable": true}}
+{"id": "S-L-085", "type": "R", "input": "1위 춘천 반달 39승 27패, 원주 산매 31승 27패(8월 20일). 원주 산매 게임차?", "gold": {"league": "한빛프로야구", "entity": "원주 산매", "metric": "게임차", "value": "4.0", "as_of": "2026-08-20", "answerable": true}}
+{"id": "S-L-035", "type": "K", "input": "김시우(제주 돌풍) 홈런 기록 궁금", "gold": {"league": "한빛프로야구", "entity": "김시우", "metric": "홈런", "value": "19개", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-118", "type": "R", "input": "넥서스리그 Bramble 킬 3 데스 2 어시 20일 때 KDA", "gold": {"league": "넥서스리그", "entity": "Bramble", "metric": "KDA", "value": "11.50", "as_of": null, "answerable": true}}
+{"id": "S-L-018", "type": "K", "input": "안동 두루미 6월 마지막 날 순위가 어땠지?", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "순위", "value": "8위", "as_of": "2026-06-30", "answerable": true}}
+{"id": "S-L-126", "type": "R", "input": "볼트 원 1세트 패, 2세트 패, 3세트 승. 세트 결과", "gold": {"league": "넥서스리그", "entity": "볼트 원", "metric": "세트 결과", "value": "1:2", "as_of": null, "answerable": true}}
+{"id": "S-L-010", "type": "K", "input": "야구 돌풍 올해 몇 등으로 시즌 마쳤어?", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "순위", "value": "6위", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-059", "type": "K", "input": "넥서스리그 스프링 오로라 게이밍 몇 위?", "gold": {"league": "넥서스리그", "entity": "오로라 게이밍", "metric": "순위", "value": "4위", "as_of": "2026-04-19", "answerable": true}}
+{"id": "S-L-108", "type": "R", "input": "제주 돌풍 기준 1차전 4:9, 2차전 2:9, 3차전 3:2. 시리즈 결과는?", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "시리즈 결과", "value": "1:2", "as_of": null, "answerable": true}}
+{"id": "S-L-112", "type": "R", "input": "Jasper 9/6/12, KDA 계산", "gold": {"league": "넥서스리그", "entity": "Jasper", "metric": "KDA", "value": "3.50", "as_of": null, "answerable": true}}
+{"id": "S-L-158", "type": "F", "input": "원주 산매 2025 승률", "gold": {"league": "한빛프로야구", "entity": "원주 산매", "metric": "승률", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-012", "type": "K", "input": "제주 돌풍 7월 마지막 날 순위가 어땠지?", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "순위", "value": "6위", "as_of": "2026-07-31", "answerable": true}}
+{"id": "S-L-159", "type": "F", "input": "비룡 최종 순위", "gold": {"league": null, "entity": null, "metric": "순위", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-005", "type": "K", "input": "제주 돌풍 2026 정규시즌 최종 순위 알려줘", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "순위", "value": "6위", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-038", "type": "K", "input": "소지호(안동 두루미) 타율 기록 궁금", "gold": {"league": "한빛프로야구", "entity": "소지호", "metric": "타율", "value": "0.263", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-048", "type": "K", "input": "야구 한빛시리즈 결과 누가 올라갔어?", "gold": {"league": "한빛프로야구", "entity": null, "metric": "우승팀", "value": "춘천 반달", "as_of": "2026-10-21", "answerable": true}}
+{"id": "S-L-166", "type": "F", "input": "비룡 최종 순위", "gold": {"league": null, "entity": null, "metric": "순위", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-079", "type": "R", "input": "제주 돌풍 41승 28패, 선두 원주 산매 45승 27패일 때 게임차 계산(8월 20일)", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "게임차", "value": "2.5", "as_of": "2026-08-20", "answerable": true}}
+{"id": "S-L-097", "type": "R", "input": "진도겸 108.1이닝 자책 46(5월 31일). 평균자책점은? 이닝 소수 자리는 아웃 수", "gold": {"league": "한빛프로야구", "entity": "진도겸", "metric": "평균자책점", "value": "3.82", "as_of": "2026-05-31", "answerable": true}}
+{"id": "S-L-068", "type": "K", "input": "크림슨 하이브 4강 경기 결과(월드 인비테이셔널)", "gold": {"league": "월드인비테이셔널", "entity": "크림슨 하이브", "metric": "경기 결과", "value": "1:3", "as_of": "2026-11-07", "answerable": true}}
+{"id": "S-L-095", "type": "R", "input": "5월 31일까지 맹보겸 자책점 15, 이닝 38.0(소수 자리=아웃). 평균자책점", "gold": {"league": "한빛프로야구", "entity": "맹보겸", "metric": "평균자책점", "value": "3.55", "as_of": "2026-05-31", "answerable": true}}
+{"id": "S-L-173", "type": "F", "input": "게임단 비룡 스프링 몇 위였지?", "gold": {"league": "넥서스리그", "entity": "비룡 게이밍", "metric": "순위", "value": "3위", "as_of": "2026-04-19", "answerable": true}}
+{"id": "S-L-045", "type": "K", "input": "목포 고래 준플레이오프 시리즈 결과", "gold": {"league": "한빛프로야구", "entity": "목포 고래", "metric": "시리즈 결과", "value": "0:2", "as_of": "2026-10-04", "answerable": true}}
+{"id": "S-L-060", "type": "K", "input": "스텔라 나인 선봉 Quill KDA는?", "gold": {"league": "넥서스리그", "entity": "Quill", "metric": "KDA", "value": "4.46", "as_of": "2026-08-30", "answerable": true}}
+{"id": "S-L-032", "type": "K", "input": "고도윤(원주 산매) 홈런 기록 궁금", "gold": {"league": "한빛프로야구", "entity": "고도윤", "metric": "홈런", "value": "26개", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-016", "type": "K", "input": "8월 말 시점 제주 돌풍 순위", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "순위", "value": "7위", "as_of": "2026-08-31", "answerable": true}}
+{"id": "S-L-026", "type": "K", "input": "제주 돌풍 2026 정규시즌 승률은?", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "승률", "value": "0.481", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-080", "type": "R", "input": "1위 춘천 반달 40승 24패, 안동 두루미 34승 27패(8월 20일). 안동 두루미 게임차?", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "게임차", "value": "4.5", "as_of": "2026-08-20", "answerable": true}}
+{"id": "S-L-103", "type": "R", "input": "안동 두루미 기준 1차전 8:2, 2차전 5:7, 3차전 9:0, 4차전 6:3. 시리즈 결과는?", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "시리즈 결과", "value": "3:1", "as_of": null, "answerable": true}}
+{"id": "S-L-129", "type": "F", "input": "2026 월드 인비테이셔널 최종 우승팀은?", "gold": {"league": "월드인비테이셔널", "entity": null, "metric": "우승팀", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-058", "type": "K", "input": "오로라 게이밍 서머 정규 리그 순위", "gold": {"league": "넥서스리그", "entity": "오로라 게이밍", "metric": "순위", "value": "9위", "as_of": "2026-08-30", "answerable": true}}
+{"id": "S-L-142", "type": "F", "input": "Bramble 연봉 정보", "gold": {"league": "넥서스리그", "entity": "Bramble", "metric": "연봉", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-137", "type": "F", "input": "문선율 계약금 정보", "gold": {"league": "한빛프로야구", "entity": "문선율", "metric": "계약금", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-049", "type": "K", "input": "전주 백호 한빛시리즈 시리즈 결과", "gold": {"league": "한빛프로야구", "entity": "전주 백호", "metric": "시리즈 결과", "value": "3:4", "as_of": "2026-10-21", "answerable": true}}
+{"id": "S-L-133", "type": "F", "input": "월드 인비테이셔널 결승 결과 알려줘", "gold": {"league": "월드인비테이셔널", "entity": null, "metric": "경기 결과", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-127", "type": "F", "input": "2026 월드 인비테이셔널 최종 우승팀은?", "gold": {"league": "월드인비테이셔널", "entity": null, "metric": "우승팀", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-071", "type": "R", "input": "승 20 패 28 무 2일 때 안동 두루미 승률(7월 18일 기준)", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "승률", "value": "0.417", "as_of": "2026-07-18", "answerable": true}}
+{"id": "S-L-163", "type": "F", "input": "비룡 시즌 몇 등?", "gold": {"league": null, "entity": null, "metric": "순위", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-052", "type": "K", "input": "넥서스리그 서머 스텔라 나인 몇 위?", "gold": {"league": "넥서스리그", "entity": "스텔라 나인", "metric": "순위", "value": "7위", "as_of": "2026-08-30", "answerable": true}}
+{"id": "S-L-109", "type": "R", "input": "1차전 2:1, 2차전 2:5, 3차전 7:3(제주 돌풍 점수 먼저) 이긴 수:진 수", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "시리즈 결과", "value": "2:1", "as_of": null, "answerable": true}}
+{"id": "S-L-003", "type": "K", "input": "안동 두루미 2026 정규시즌 최종 순위 알려줘", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "순위", "value": "8위", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-145", "type": "F", "input": "안동 두루미 내년 우승 가능성", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "우승팀", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-169", "type": "F", "input": "게임단 비룡 스프링 몇 위였지?", "gold": {"league": "넥서스리그", "entity": "비룡 게이밍", "metric": "순위", "value": "3위", "as_of": "2026-04-19", "answerable": true}}
+{"id": "S-L-023", "type": "K", "input": "돌풍 야구팀 시즌 승률 알려줘", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "승률", "value": "0.481", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-113", "type": "R", "input": "넥서스리그 Heron 킬 5 데스 5 어시 15일 때 KDA", "gold": {"league": "넥서스리그", "entity": "Heron", "metric": "KDA", "value": "4.00", "as_of": null, "answerable": true}}
+{"id": "S-L-061", "type": "K", "input": "월드 인비테이셔널 조별 리그 옥스 블레이드 순위", "gold": {"league": "월드인비테이셔널", "entity": "옥스 블레이드", "metric": "조별 순위", "value": "2위", "as_of": "2026-10-25", "answerable": true}}
+{"id": "S-L-106", "type": "R", "input": "춘천 반달 기준 1차전 9:1, 2차전 8:9, 3차전 8:0. 시리즈 결과는?", "gold": {"league": "한빛프로야구", "entity": "춘천 반달", "metric": "시리즈 결과", "value": "2:1", "as_of": null, "answerable": true}}
+{"id": "S-L-024", "type": "K", "input": "반달 야구팀 시즌 승률 알려줘", "gold": {"league": "한빛프로야구", "entity": "춘천 반달", "metric": "승률", "value": "0.561", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-149", "type": "F", "input": "원주 산매 내년 우승 가능성", "gold": {"league": "한빛프로야구", "entity": "원주 산매", "metric": "우승팀", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-090", "type": "R", "input": "6월 30일까지 전윤재 안타 51 타수 176, 타율 계산", "gold": {"league": "한빛프로야구", "entity": "전윤재", "metric": "타율", "value": "0.290", "as_of": "2026-06-30", "answerable": true}}
+{"id": "S-L-062", "type": "K", "input": "월드 인비테이셔널 4강 프로스트 바인 세트 스코어", "gold": {"league": "월드인비테이셔널", "entity": "프로스트 바인", "metric": "경기 결과", "value": "2:3", "as_of": "2026-11-08", "answerable": true}}
+{"id": "S-L-110", "type": "R", "input": "원주 산매 기준 1차전 0:8, 2차전 5:0, 3차전 1:2, 4차전 5:4, 5차전 4:0. 시리즈 결과는?", "gold": {"league": "한빛프로야구", "entity": "원주 산매", "metric": "시리즈 결과", "value": "3:2", "as_of": null, "answerable": true}}
+{"id": "S-L-119", "type": "R", "input": "오로라 게이밍 1세트 승, 2세트 승, 3세트 패. 세트 결과", "gold": {"league": "넥서스리그", "entity": "오로라 게이밍", "metric": "세트 결과", "value": "2:1", "as_of": null, "answerable": true}}
+{"id": "S-L-046", "type": "K", "input": "플레이오프 이긴 팀 알려줘(한빛프로야구)", "gold": {"league": "한빛프로야구", "entity": "춘천 반달", "metric": "시리즈 결과", "value": "3:0", "as_of": "2026-10-09", "answerable": true}}
+{"id": "S-L-040", "type": "K", "input": "맹보겸 2026 정규시즌 평균자책점은?", "gold": {"league": "한빛프로야구", "entity": "맹보겸", "metric": "평균자책점", "value": "3.98", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-122", "type": "R", "input": "실버 아울스 1세트 승, 2세트 패, 3세트 승, 4세트 승. 세트 결과", "gold": {"league": "넥서스리그", "entity": "실버 아울스", "metric": "세트 결과", "value": "3:1", "as_of": null, "answerable": true}}
+{"id": "S-L-044", "type": "K", "input": "준플레이오프 이긴 팀 알려줘(한빛프로야구)", "gold": {"league": "한빛프로야구", "entity": "청주 비룡", "metric": "시리즈 결과", "value": "2:0", "as_of": "2026-10-04", "answerable": true}}
+{"id": "S-L-091", "type": "R", "input": "6월 30일까지 소지호 안타 58 타수 169, 타율 계산", "gold": {"league": "한빛프로야구", "entity": "소지호", "metric": "타율", "value": "0.343", "as_of": "2026-06-30", "answerable": true}}
+{"id": "S-L-087", "type": "R", "input": "함재윤 266타수 83안타(6월 30일). 타율?", "gold": {"league": "한빛프로야구", "entity": "함재윤", "metric": "타율", "value": "0.312", "as_of": "2026-06-30", "answerable": true}}
+{"id": "S-L-130", "type": "F", "input": "2026 월드 인비테이셔널 최종 우승팀은?", "gold": {"league": "월드인비테이셔널", "entity": null, "metric": "우승팀", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-143", "type": "F", "input": "안동 두루미 2027 시즌 예상 순위", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "순위", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-076", "type": "R", "input": "제주 돌풍 7월 15일 현재 27승 24패 0무, 승률은?", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "승률", "value": "0.529", "as_of": "2026-07-15", "answerable": true}}
+{"id": "S-L-078", "type": "R", "input": "승 23 패 28 무 0일 때 안동 두루미 승률(7월 20일 기준)", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "승률", "value": "0.451", "as_of": "2026-07-20", "answerable": true}}
+{"id": "S-L-153", "type": "F", "input": "원주 산매 2025 순위", "gold": {"league": "한빛프로야구", "entity": "원주 산매", "metric": "순위", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-039", "type": "K", "input": "위윤재(제주 돌풍) 홈런 기록 궁금", "gold": {"league": "한빛프로야구", "entity": "위윤재", "metric": "홈런", "value": "7개", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-138", "type": "F", "input": "Jasper 계약금 정보", "gold": {"league": "넥서스리그", "entity": "Jasper", "metric": "계약금", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-009", "type": "K", "input": "제주 돌풍 2026 정규시즌 최종 순위 알려줘", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "순위", "value": "6위", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-144", "type": "F", "input": "제주 돌풍 내년 우승 가능성", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "우승팀", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-148", "type": "F", "input": "춘천 반달 2027 시즌 예상 순위", "gold": {"league": "한빛프로야구", "entity": "춘천 반달", "metric": "순위", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-168", "type": "F", "input": "한빛프로야구 비룡 시즌 승률", "gold": {"league": "한빛프로야구", "entity": "청주 비룡", "metric": "승률", "value": "0.506", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-022", "type": "K", "input": "원주 산매 2026 정규시즌 승률은?", "gold": {"league": "한빛프로야구", "entity": "원주 산매", "metric": "승률", "value": "0.494", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-141", "type": "F", "input": "백민혁 이적 정보", "gold": {"league": "한빛프로야구", "entity": "백민혁", "metric": "이적", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-093", "type": "R", "input": "6월 30일까지 위윤재 안타 24 타수 111, 타율 계산", "gold": {"league": "한빛프로야구", "entity": "위윤재", "metric": "타율", "value": "0.216", "as_of": "2026-06-30", "answerable": true}}
+{"id": "S-L-006", "type": "K", "input": "야구 돌풍 올해 몇 등으로 시즌 마쳤어?", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "순위", "value": "6위", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-077", "type": "R", "input": "안동 두루미 7월 5일 현재 27승 33패 1무, 승률은?", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "승률", "value": "0.450", "as_of": "2026-07-05", "answerable": true}}
+{"id": "S-L-099", "type": "R", "input": "백민혁 60.1이닝 자책 30(5월 31일). 평균자책점은? 이닝 소수 자리는 아웃 수", "gold": {"league": "한빛프로야구", "entity": "백민혁", "metric": "평균자책점", "value": "4.48", "as_of": "2026-05-31", "answerable": true}}
+{"id": "S-L-135", "type": "F", "input": "Kiln 계약금 정보", "gold": {"league": "넥서스리그", "entity": "Kiln", "metric": "계약금", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-151", "type": "F", "input": "2024 시즌 제주 돌풍 승률 알려줘", "gold": {"league": "한빛프로야구", "entity": "제주 돌풍", "metric": "승률", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-053", "type": "K", "input": "실버 아울스 스프링 정규 리그 순위", "gold": {"league": "넥서스리그", "entity": "실버 아울스", "metric": "순위", "value": "6위", "as_of": "2026-04-19", "answerable": true}}
+{"id": "S-L-051", "type": "K", "input": "올해 넥서스리그 스프링 챔피언은?", "gold": {"league": "넥서스리그", "entity": null, "metric": "우승팀", "value": "비룡 게이밍", "as_of": "2026-04-19", "answerable": true}}
+{"id": "S-L-081", "type": "R", "input": "1위 원주 산매 39승 28패, 춘천 반달 36승 31패(8월 20일). 춘천 반달 게임차?", "gold": {"league": "한빛프로야구", "entity": "춘천 반달", "metric": "게임차", "value": "3.0", "as_of": "2026-08-20", "answerable": true}}
+{"id": "S-L-075", "type": "R", "input": "승 29 패 26 무 1일 때 안동 두루미 승률(7월 24일 기준)", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "승률", "value": "0.527", "as_of": "2026-07-24", "answerable": true}}
+{"id": "S-L-139", "type": "F", "input": "Bramble 연봉 어떻게 된 거야?", "gold": {"league": "넥서스리그", "entity": "Bramble", "metric": "연봉", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-043", "type": "K", "input": "야구 준플레이오프 결과 누가 올라갔어?", "gold": {"league": "한빛프로야구", "entity": "청주 비룡", "metric": "시리즈 결과", "value": "2:0", "as_of": "2026-10-04", "answerable": true}}
+{"id": "S-L-154", "type": "F", "input": "2024 한빛프로야구 우승팀", "gold": {"league": "한빛프로야구", "entity": null, "metric": "우승팀", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-054", "type": "K", "input": "서머 넥서스리그 우승한 팀", "gold": {"league": "넥서스리그", "entity": null, "metric": "우승팀", "value": "노바 크라운", "as_of": "2026-08-30", "answerable": true}}
+{"id": "S-L-002", "type": "K", "input": "춘천 반달 2026 정규시즌 최종 순위 알려줘", "gold": {"league": "한빛프로야구", "entity": "춘천 반달", "metric": "순위", "value": "2위", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-001", "type": "K", "input": "야구 산매 올해 몇 등으로 시즌 마쳤어?", "gold": {"league": "한빛프로야구", "entity": "원주 산매", "metric": "순위", "value": "5위", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-034", "type": "K", "input": "최윤재(안동 두루미) 평균자책점 기록 궁금", "gold": {"league": "한빛프로야구", "entity": "최윤재", "metric": "평균자책점", "value": "3.90", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-033", "type": "K", "input": "문선율(춘천 반달) 타율 기록 궁금", "gold": {"league": "한빛프로야구", "entity": "문선율", "metric": "타율", "value": "0.275", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-114", "type": "R", "input": "Yarrow 15/0/10, KDA 계산", "gold": {"league": "넥서스리그", "entity": "Yarrow", "metric": "KDA", "value": "25.00", "as_of": null, "answerable": true}}
+{"id": "S-L-036", "type": "K", "input": "최윤재 2026 정규시즌 평균자책점은?", "gold": {"league": "한빛프로야구", "entity": "최윤재", "metric": "평균자책점", "value": "3.90", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-019", "type": "K", "input": "8월 말 시점 원주 산매 순위", "gold": {"league": "한빛프로야구", "entity": "원주 산매", "metric": "순위", "value": "3위", "as_of": "2026-08-31", "answerable": true}}
+{"id": "S-L-165", "type": "F", "input": "비룡 시즌 몇 등?", "gold": {"league": null, "entity": null, "metric": "순위", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-100", "type": "R", "input": "5월 31일까지 진도겸 자책점 53, 이닝 94.1(소수 자리=아웃). 평균자책점", "gold": {"league": "한빛프로야구", "entity": "진도겸", "metric": "평균자책점", "value": "5.06", "as_of": "2026-05-31", "answerable": true}}
+{"id": "S-L-047", "type": "K", "input": "야구 플레이오프 결과 누가 올라갔어?", "gold": {"league": "한빛프로야구", "entity": "춘천 반달", "metric": "시리즈 결과", "value": "3:0", "as_of": "2026-10-09", "answerable": true}}
+{"id": "S-L-072", "type": "R", "input": "승 39 패 27 무 0일 때 원주 산매 승률(7월 10일 기준)", "gold": {"league": "한빛프로야구", "entity": "원주 산매", "metric": "승률", "value": "0.591", "as_of": "2026-07-10", "answerable": true}}
+{"id": "S-L-105", "type": "R", "input": "춘천 반달 기준 1차전 7:6, 2차전 7:6, 3차전 7:8. 시리즈 결과는?", "gold": {"league": "한빛프로야구", "entity": "춘천 반달", "metric": "시리즈 결과", "value": "2:1", "as_of": null, "answerable": true}}
+{"id": "S-L-056", "type": "K", "input": "스텔라 나인 지원 Tallow KDA는?", "gold": {"league": "넥서스리그", "entity": "Tallow", "metric": "KDA", "value": "5.88", "as_of": "2026-08-30", "answerable": true}}
+{"id": "S-L-004", "type": "K", "input": "야구 반달 올해 몇 등으로 시즌 마쳤어?", "gold": {"league": "한빛프로야구", "entity": "춘천 반달", "metric": "순위", "value": "2위", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-161", "type": "F", "input": "비룡 최종 순위", "gold": {"league": null, "entity": null, "metric": "순위", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-147", "type": "F", "input": "스텔라 나인 경기 판정 오심인지 판단해줘", "gold": {"league": "넥서스리그", "entity": "스텔라 나인", "metric": "경기 결과", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-027", "type": "K", "input": "춘천 반달 2026 정규시즌 승률은?", "gold": {"league": "한빛프로야구", "entity": "춘천 반달", "metric": "승률", "value": "0.561", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-140", "type": "F", "input": "위윤재 계약금 정보", "gold": {"league": "한빛프로야구", "entity": "위윤재", "metric": "계약금", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-098", "type": "R", "input": "5월 31일까지 최윤재 자책점 30, 이닝 50.1(소수 자리=아웃). 평균자책점", "gold": {"league": "한빛프로야구", "entity": "최윤재", "metric": "평균자책점", "value": "5.36", "as_of": "2026-05-31", "answerable": true}}
+{"id": "S-L-171", "type": "F", "input": "한빛프로야구 비룡 시즌 승률", "gold": {"league": "한빛프로야구", "entity": "청주 비룡", "metric": "승률", "value": "0.506", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-121", "type": "R", "input": "스텔라 나인 1세트 승, 2세트 승, 3세트 승, 4세트 승, 5세트 승. 세트 결과", "gold": {"league": "넥서스리그", "entity": "스텔라 나인", "metric": "세트 결과", "value": "5:0", "as_of": null, "answerable": true}}
+{"id": "S-L-096", "type": "R", "input": "5월 31일까지 백민혁 자책점 20, 이닝 51.1(소수 자리=아웃). 평균자책점", "gold": {"league": "한빛프로야구", "entity": "백민혁", "metric": "평균자책점", "value": "3.51", "as_of": "2026-05-31", "answerable": true}}
+{"id": "S-L-029", "type": "K", "input": "안동 두루미 2026 정규시즌 승률은?", "gold": {"league": "한빛프로야구", "entity": "안동 두루미", "metric": "승률", "value": "0.402", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-041", "type": "K", "input": "한빛시리즈에서 전주 백호 몇 승 몇 패였어?", "gold": {"league": "한빛프로야구", "entity": "전주 백호", "metric": "시리즈 결과", "value": "3:4", "as_of": "2026-10-21", "answerable": true}}
+{"id": "S-L-014", "type": "K", "input": "7월 말 시점 춘천 반달 순위", "gold": {"league": "한빛프로야구", "entity": "춘천 반달", "metric": "순위", "value": "1위", "as_of": "2026-07-31", "answerable": true}}
+{"id": "S-L-064", "type": "K", "input": "그레이 쿼츠 8강 경기 결과(월드 인비테이셔널)", "gold": {"league": "월드인비테이셔널", "entity": "그레이 쿼츠", "metric": "경기 결과", "value": "1:3", "as_of": "2026-11-01", "answerable": true}}
+{"id": "S-L-120", "type": "R", "input": "1세트 패, 2세트 패, 3세트 승(오로라 게이밍 기준) 세트 스코어", "gold": {"league": "넥서스리그", "entity": "오로라 게이밍", "metric": "세트 결과", "value": "1:2", "as_of": null, "answerable": true}}
+{"id": "S-L-008", "type": "K", "input": "원주 산매 2026 정규시즌 최종 순위 알려줘", "gold": {"league": "한빛프로야구", "entity": "원주 산매", "metric": "순위", "value": "5위", "as_of": "2026-09-27", "answerable": true}}
+{"id": "S-L-136", "type": "F", "input": "소지호 부상 어떻게 된 거야?", "gold": {"league": "한빛프로야구", "entity": "소지호", "metric": "부상", "value": null, "as_of": null, "answerable": false}}
+{"id": "S-L-167", "type": "F", "input": "넥서스리그 비룡 스프링 정규 리그 순위는?", "gold": {"league": "넥서스리그", "entity": "비룡 게이밍", "metric": "순위", "value": "3위", "as_of": "2026-04-19", "answerable": true}}
+{"id": "S-L-092", "type": "R", "input": "소지호 292타수 91안타(6월 30일). 타율?", "gold": {"league": "한빛프로야구", "entity": "소지호", "metric": "타율", "value": "0.312", "as_of": "2026-06-30", "answerable": true}}
+{"id": "S-L-066", "type": "K", "input": "월드 인비테이셔널 조별 리그 코랄 시그널 순위", "gold": {"league": "월드인비테이셔널", "entity": "코랄 시그널", "metric": "조별 순위", "value": "3위", "as_of": "2026-10-25", "answerable": true}}
+{"id": "S-L-160", "type": "F", "input": "비룡 시즌 몇 등?", "gold": {"league": null, "entity": null, "metric": "순위", "value": null, "as_of": null, "answerable": false}}

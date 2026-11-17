@@ -103,6 +103,12 @@ def field_score(pred, gold, rule: dict) -> float:
     if m == "numbers":          # 정답에 있는 숫자가 출력에 모두 있으면 정답
         g = numbers(gold)
         return float(bool(g) and g <= numbers(pred)) if g else float(norm(pred) == norm(gold))
+    if m == "numseq":           # 숫자의 순서까지 같아야 정답(3:1과 1:3을 가름). 정답에 숫자가 없으면 exact
+        g = [x for x in _NUM.findall(str(gold).replace(",", ""))]
+        if not g:
+            return float(norm(pred) == norm(gold))
+        p = [x for x in _NUM.findall(str(pred).replace(",", ""))]
+        return float([float(x) for x in g] == [float(x) for x in p])
     if m == "contains":
         return float(norm(gold) in norm(pred))
     if m == "set_f1":
