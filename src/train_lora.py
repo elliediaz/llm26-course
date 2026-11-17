@@ -7,6 +7,8 @@
   python src/train_lora.py --team team3 --run lr1e3 --lr 1e-3     # 학습률 바꾸기
   python src/train_lora.py --team team3 --run qv --target qv       # LoRA를 붙일 층 바꾸기(qv · qkvo · all)
   python src/train_lora.py --team team3 --run noise30 --data train_noise30.jsonl   # build_train_data.py가 만든 다른 학습 파일
+  python src/train_lora.py --team team3 --run r16_s1 --seed 1  # 같은 설정, 다른 시드(흔들림 폭)
+  python src/train_lora.py --team team3 --run q4 --quant nf4      # 본체 4비트(QLoRA): 메모리와 점수 비교
 
 학습은 휴식 시간과 겹치게 돌린다. config.LORA["max_minutes"]를 넘기면 그때까지 학습한 Adapter를 저장하고 끝낸다.
 학습이 끝나지 않으면: 미리 학습해 둔 Adapter(adapters/_instructor/<도메인>/)로 재평가를 이어 간다.
@@ -66,8 +68,9 @@ def main() -> None:
     ap.add_argument("--target", choices=["qv", "qkvo", "all"], default="qkvo",
                     help="LoRA를 붙일 층: qv(q·v) · qkvo(어텐션 넷, 기본) · all(어텐션 + MLP)")
     ap.add_argument("--data", default="train.jsonl", help="data/<도메인>/ 안의 학습 파일 이름")
+    ap.add_argument("--seed", type=int, default=config.SEED, help="같은 설정을 시드만 바꿔 다시 학습하면 흔들림 폭이 보임")
     a = ap.parse_args()
-    utils.set_seed()
+    utils.set_seed(a.seed)
     out_dir = config.PATHS["adapters"] / a.team / a.run
     d = config.data_dir()
     ds = load_dataset("json", data_files={"train": str(d / a.data), "valid": str(d / "valid.jsonl")})
@@ -88,7 +91,7 @@ def main() -> None:
         max_length=a.max_length, per_device_train_batch_size=a.batch, per_device_eval_batch_size=a.batch,
         gradient_accumulation_steps=L["grad_accum"], learning_rate=a.lr, num_train_epochs=a.epochs,
         lr_scheduler_type="cosine", warmup_steps=5, logging_steps=5, eval_strategy="steps", eval_steps=20,
-        save_strategy="no", bf16=gpu, gradient_checkpointing=gpu, report_to="none", seed=config.SEED,
+        save_strategy="no", bf16=gpu, gradient_checkpointing=gpu, report_to="none", seed=a.seed,
     )
     timer = TimeLimit(a.max_minutes)
     trainer = SFTTrainer(model=model, args=args, train_dataset=train, eval_dataset=ds["valid"],
@@ -101,7 +104,7 @@ def main() -> None:
     tok.save_pretrained(out_dir)
     size_mb = sum(p.stat().st_size for p in out_dir.glob("adapter_model.*")) / 1024**2
     info = {"team": a.team, "run": a.run, "domain": config.DOMAIN, "base_model": config.MODEL_ID, "quant": a.quant,
-            "r": a.r, "alpha": a.alpha or 2 * a.r, "epochs": a.epochs, "lr": a.lr, "batch": a.batch, "target": a.target, "data": a.data,
+            "r": a.r, "alpha": a.alpha or 2 * a.r, "epochs": a.epochs, "lr": a.lr, "batch": a.batch, "target": a.target, "data": a.data, "seed": a.seed,
             "max_length": a.max_length, "n_train": len(train), "minutes": round(t.sec / 60, 2),
             "stopped_by_time_limit": timer.stopped, "trainable_params": trainable["trainable"],
             "adapter_mb": round(size_mb, 1), "vram_peak_gb": utils.vram_peak_gb(), "finished_at": utils.now()}
