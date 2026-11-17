@@ -4,7 +4,7 @@
 
 만드는 것(data/L/): schema.json, scoring.yaml, test_seed.json, test_dataset.json(처음에는 시드와 같음),
 team_item_template.json, corpus/*.md, corpus_manifest.json, train_seed.jsonl, tools_spec.md, build/wage_db.json
-강사 전용(solutions/data/L/): test_pool.json(현장 보정·교체 풀)
+교체 풀(solutions/data/L/, 공개 저장소에는 올리지 않음): test_pool.json(현장 보정용)
 모든 사업장·사례는 가상이며, 정답은 wage_rules.compute 로 계산한다.
 """
 from __future__ import annotations
@@ -20,7 +20,7 @@ DATA = HERE.parent
 SOL = HERE.parents[2] / "solutions" / "data" / "L"
 AS_OF = W.AS_OF
 LICENSE = "CC BY 4.0"
-SOURCE = "강사 제작 가상 상권 DB"
+SOURCE = "자체 제작 가상 상권 DB"
 
 # ------------------------------------------------------------------ 가상 사업장(한빛로)
 # use: eval(평가 문항용) / train(학습 문항용). 상시근로자 수는 사업주 제외
@@ -77,31 +77,31 @@ MW_DOCS = {
                 "- 업종 구분 없이 모든 사업장에 같은 금액을 적용함\n"),
 }
 RULE_DOCS = {
-    "rule_minwage": ("최저임금 미달 판단", "# 최저임금 미달 판단(강사 작성 해설)\n\n"
+    "rule_minwage": ("최저임금 미달 판단", "# 최저임금 미달 판단(자체 작성 해설)\n\n"
                      "- 약정 시급이 그해 최저시급보다 낮으면 최저임금법 제6조 위반임. 근로자는 최저시급 기준으로 계산한 금액을 받아야 함\n"
                      "- 차액 = (최저시급 - 약정 시급) × 근로시간. 주휴수당도 최저시급 기준으로 다시 계산함\n"
                      "- 적용 연도는 근무한 날짜로 정함. 이 과정의 문항은 한 해 안의 근무만 다룸\n"),
-    "rule_holiday": ("주휴수당 계산", "# 주휴수당 계산(강사 작성 해설)\n\n"
+    "rule_holiday": ("주휴수당 계산", "# 주휴수당 계산(자체 작성 해설)\n\n"
                      "- 근거: 근로기준법 제55조, 같은 법 시행령 제30조\n"
                      "- 1주 소정근로시간이 15시간 이상이고 그 주를 개근하면 유급 주휴일 하루분을 받음\n"
                      "- 1주 주휴수당 = (1주 소정근로시간 ÷ 40) × 8 × 시급. 소정근로시간이 40시간을 넘으면 40으로 계산(최대 8시간분)\n"
                      "- 1주 소정근로시간이 15시간 미만이면 주휴수당이 없음(근로기준법 제18조 제3항)\n"
                      "- 예: 주 18시간, 시급 10,700원 → 18 ÷ 40 × 8 × 10,700 = 38,520원\n"),
-    "rule_premium": ("연장·야간 가산수당", "# 연장·야간 가산수당(강사 작성 해설)\n\n"
+    "rule_premium": ("연장·야간 가산수당", "# 연장·야간 가산수당(자체 작성 해설)\n\n"
                      "- 근거: 근로기준법 제56조\n"
                      "- 1주 40시간을 넘는 연장근로, 22시~다음 날 6시의 야간근로에는 통상임금의 50%를 더 줌\n"
                      "- 이 과정의 문항은 하루 8시간 이하 근무만 다루고, 연장근로는 1주 40시간 초과분으로만 셈\n"
                      "- 상시근로자 5인 미만 사업장에는 가산수당 규정이 적용되지 않음(규칙 문서 rule_small 참고)\n"),
-    "rule_small": ("5인 미만 사업장", "# 5인 미만 사업장(강사 작성 해설)\n\n"
+    "rule_small": ("5인 미만 사업장", "# 5인 미만 사업장(자체 작성 해설)\n\n"
                    "- 근거: 근로기준법 제11조 제2항, 같은 법 시행령 제7조 [별표 1]\n"
                    "- 상시근로자 4명 이하인 사업장은 연장·야간·휴일 가산수당(제56조)을 적용하지 않음\n"
                    "- 최저임금과 주휴수당은 5인 미만 사업장에도 적용됨\n"
                    "- 상시근로자 수에는 사업주를 넣지 않음\n"),
-    "rule_hours": ("1주 소정근로시간", "# 1주 소정근로시간(강사 작성 해설)\n\n"
+    "rule_hours": ("1주 소정근로시간", "# 1주 소정근로시간(자체 작성 해설)\n\n"
                    "- 소정근로시간은 근로자와 사용자가 정한 근로시간이며 1주 40시간을 넘을 수 없음(근로기준법 제50조)\n"
                    "- 이 과정의 정산 JSON에서 weekly_hours는 1주 실제 근로시간과 40 중 작은 값으로 적음\n"
                    "- 40시간을 넘는 시간은 연장근로로 보고 5인 이상 사업장이면 가산수당 대상임\n"),
-    "law_summary": ("근거 조문 요지", "# 근거 조문 요지(강사 정리)\n\n"
+    "law_summary": ("근거 조문 요지", "# 근거 조문 요지(자체 정리)\n\n"
                     "조문 원문은 국가법령정보센터(law.go.kr)에서 확인함. 아래는 이 과정 문항에 필요한 부분만 줄여 적은 것임\n\n"
                     "| 조문 | 요지 | 쓰이는 쟁점 |\n|---|---|---|\n"
                     "| 최저임금법 제6조 | 사용자는 최저임금 이상의 임금을 지급해야 함. 최저임금보다 적게 정한 부분은 무효이고 최저임금으로 정한 것으로 봄 | 최저임금미달 |\n"
@@ -315,7 +315,7 @@ SEED = [
     dict(type="F", industry="동네 PC방", size=3, year=2027, start=(1, 18), weeks=3, days=["월", "화", "수"], shift=(22, 28), wage=10700, hol=True, prem=False, style=2),
 ]
 
-# ------------------------------------------------------------------ 교체 풀 20건(K8·R7·F5, 강사 전용)
+# ------------------------------------------------------------------ 교체 풀 20건(K8·R7·F5, 공개 저장소에는 올리지 않음)
 POOL = [
     dict(type="K", ws="ws02", year=2027, start=(2, 1), weeks=3, days=["월", "수", "금"], hours=5, hol=False),
     dict(type="K", ws="ws03", year=2026, start=(10, 5), weeks=4, days=["월", "화", "수"], shift=(22, 27), hol=True, prem=False),
@@ -411,7 +411,7 @@ def main() -> None:
                          "source": SOURCE, "license": LICENSE, "as_of": AS_OF, "chars": len(md)})
     for did, (title, md) in {**MW_DOCS, **RULE_DOCS}.items():
         (DATA / "corpus" / f"{did}.md").write_text(md, encoding="utf-8")
-        src = "최저임금 고시 요약(공공정보)" if did.startswith("mw_") else "강사 작성 해설"
+        src = "최저임금 고시 요약(공공정보)" if did.startswith("mw_") else "자체 작성 해설"
         manifest.append({"doc_id": did, "title": title, "file": f"corpus/{did}.md", "source": src,
                          "license": LICENSE if did.startswith("rule_") else "공공누리 제1유형 요약", "as_of": AS_OF, "chars": len(md)})
     (DATA / "corpus_manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")

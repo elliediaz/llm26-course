@@ -2,7 +2,7 @@
 #   패턴: 그대로 쓰면 포함(--include), 앞에 '-' 를 붙이면 제외(--exclude). 패턴이 없으면 저장소 전체.
 #   제외 방식을 기본으로 쓴다(포함 방식은 필요한 파일을 빠뜨리기 쉽다).
 # 용량은 2026-10 HF 저장소 기준 추정, 합계 약 44GB. 차승희 박사 회차 모델은 협의 후 추가.
-skt/A.X-4.0-Light                                   # ~15GB, Apache-2.0, 강사 지정 기본 LLM
+skt/A.X-4.0-Light                                   # ~15GB, Apache-2.0, 과정 기본 LLM
 Qwen/Qwen3-8B                                       # ~16.4GB, Apache-2.0, 백업 LLM
 Qwen/Qwen3-0.6B                                     # ~1.5GB(751.6M BF16), Apache-2.0, 2회차 Attention·KV Cache
 nlpai-lab/KURE-v1                                   # ~2.3GB, MIT, 임베딩 1순위

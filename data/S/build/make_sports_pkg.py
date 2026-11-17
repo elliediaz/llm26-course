@@ -5,7 +5,7 @@
 만드는 것(data/S/): schema.json, scoring.yaml, test_seed.json, test_dataset.json(처음에는 시드와 같음),
 team_item_template.json, corpus/*.md, corpus_manifest.json, corpus_updates/(6회차 시연용 결승 결과),
 train_seed.jsonl, tools_spec.md, build/sports_db.json
-강사 전용(solutions/data/S/): test_pool.json(현장 보정·교체 풀)
+교체 풀(solutions/data/S/, 공개 저장소에는 올리지 않음): test_pool.json(현장 보정용)
 
 리그·구단·선수·경기는 모두 가상임. 실존 구단·선수·대회와 관계없음
 """
@@ -24,7 +24,7 @@ DATA = HERE.parent
 SOL = HERE.parents[2] / "solutions" / "data" / "S"
 SNAPSHOT = "2026-11-08"            # 기록실 기준일. 이 날 이후 결과는 코퍼스에 없음
 LICENSE = "CC BY 4.0"
-SOURCE = "강사 제작 가상 스포츠 기록 DB"
+SOURCE = "자체 제작 가상 스포츠 기록 DB"
 LG_B, LG_E, LG_W = "한빛프로야구", "넥서스리그", "월드인비테이셔널"
 SEED = 7
 

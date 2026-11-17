@@ -15,4 +15,4 @@ bash ref/s01/use_ref.sh      # results/·runs/에 없는 파일만 복사
 | `cls_vs_reg.json`, `cls_vs_reg.png` | `python src/cls_vs_reg.py`(해보기 F) |
 | `attn_tiny_gru_attn.png` | `python src/viz_attention.py tiny --arch gru_attn --text "삼억 칠천이백만 오천 원"` |
 
-- 강사 서버에서 만든 값이라 각자 잰 값과 조금 다를 수 있음. 비교할 때는 내 결과를 기준으로 함
+- 실측 서버에서 만든 값이라 각자 잰 값과 조금 다를 수 있음. 비교할 때는 내 결과를 기준으로 함

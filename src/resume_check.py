@@ -7,7 +7,7 @@
   python src/resume_check.py --quick      # 모델 로딩 없이 파일만
   python src/resume_check.py --session 2  # 그 회차 산출물만(코랩처럼 회차마다 새로 시작하는 환경)
 
-판정이 '누락'이면 강사·TA에게 알린다. 볼륨(/workspace)에 있는 파일은 Pod를 꺼도 남는다.
+판정이 '누락'이면 TA에게 알린다. 볼륨(/workspace)에 있는 파일은 Pod를 꺼도 남는다.
 """
 from __future__ import annotations
 
@@ -64,7 +64,7 @@ def main() -> None:
         g = model_utils.generate(model, tok, [{"role": "user", "content": "한 문장으로 인사해 줘."}], {"do_sample": False, "max_new_tokens": 30})
         print(f"생성 확인: {g['text']!r} ({g['latency']}s)")
     miss = [r for r in rows if r["상태"] == "누락"]
-    print("\n판정:", "이상 없음" if not miss else f"누락 {len(miss)}건: 해당 회차 스크립트를 다시 실행하거나 강사·TA에게 알릴 것")
+    print("\n판정:", "이상 없음" if not miss else f"누락 {len(miss)}건: 해당 회차 스크립트를 다시 실행하거나 TA에게 알릴 것")
 
 
 if __name__ == "__main__":

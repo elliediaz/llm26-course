@@ -5,17 +5,17 @@
 > Pod 경로: `/workspace/course` · 커널: **LLM-PBL (course)** · 터미널: `source /workspace/activate.sh`
 > 모델·버전 기준일 2026-10. 설정은 `src/config.py` 한 곳에서만 바꿈
 >
-> **코랩·개인 PC로 실습**: [1회차 노트북을 코랩에서 열기](https://colab.research.google.com/github/elliediaz/llm26-course/blob/main/notebooks/s01_colab.ipynb) · [2회차 노트북을 코랩에서 열기](https://colab.research.google.com/github/elliediaz/llm26-course/blob/main/notebooks/s02_colab.ipynb)(런타임 T4 GPU 권장).
+> **코랩·개인 PC로 실습**: [1회차 노트북을 코랩에서 열기](https://colab.research.google.com/github/elliediaz/llm26-course/blob/main/notebooks/s01_colab.ipynb) · [2회차 노트북을 코랩에서 열기](https://colab.research.google.com/github/elliediaz/llm26-course/blob/main/notebooks/s02_colab.ipynb) · [6회차 검색 실험 노트북을 코랩에서 열기](https://colab.research.google.com/github/elliediaz/llm26-course/blob/main/notebooks/s06_colab.ipynb)(런타임 T4 GPU 권장).
 > 개인 PC의 주피터에서는 저장소를 받은 뒤 `notebooks/s01_colab.ipynb`·`s02_colab.ipynb`를 그대로 열어 씀
 
 ## 구조
 
 ```
 course/
-├─ setup/        Pod 환경 구성(venv·커널·모델 시딩): 수업 전 강사가 실행
+├─ setup/        Pod 환경 구성(venv·커널·모델 시딩): 수업 전에 미리 실행해 둠
 ├─ src/          단순 실행 스크립트(아래 표): 완성 코드를 실행하고 결과를 해석
 ├─ tasks/        해보기·사건 카드: 상황을 주고 값과 설정을 바꿔 판단하게 하는 카드(회차별)
-├─ notebooks/    1·2회차 실습 노트북(s01_colab·s02_colab, 코랩·개인 PC 공용), 1·2회차 발전사 확인 노트북(원본은 notebooks/src/*.py)
+├─ notebooks/    코랩·개인 PC 공용 실습 노트북(1회차 s01_colab, 2회차 s02_colab, 6회차 검색 실험 s06_colab), 1·2회차 발전사 확인 노트북(원본은 notebooks/src/*.py)
 ├─ data/
 │  ├─ common/    공개 데이터(Fashion-MNIST·NSMC 리뷰), 금액 수사 생성기, 토큰 비교 문장
 │  ├─ s02/       2회차 미션 데이터(배달 리뷰·스미싱 문자·뉴스 제목·게임 문의·속담·토큰 표본·지시어 문장)
@@ -59,6 +59,7 @@ course/
 | 5~7 | `sweep.py` | 손잡이 실험: 설정 하나(형식 강제·예시 수·템플릿·온도·최대 길이·규칙 파일·모델·정밀도, 6회차 top-k·문맥 길이, 7회차 Adapter)를 바꿔 같은 문항으로 비교표·그림 |
 | 5~7 | `probe.py` | 문제 입력 점검: 오타·은어, 섞인 문의, 프롬프트 주입, 무관 질문, 영어, 긴 입력, 형식 유도, 정보 부족(`data/<도메인>/probes.json`) |
 | 6 | `retrieval.py` `index_builder.py` `rag.py` `hybrid_search.py` `rerank.py` | 분할·인덱스·검색, 검색 품질, 검색 기반 생성·오답 분류, 하이브리드·재순위화(도전) |
+| 6 | `retrieval_sweep.py` | 검색 손잡이 실험: LLM 없이 조각 크기·겹침·분할 방식·임베딩·키워드 비중을 바꿔 Recall@k·MRR 비교(코랩 `notebooks/s06_colab.ipynb`) |
 | 7 | `build_train_data.py` `train_lora.py` `plot_loss.py` `merge_adapter.py` | 학습 데이터, LoRA/QLoRA 학습, Loss 판독, Adapter 병합(도전) |
 
 ## 실습 코드 세 종류

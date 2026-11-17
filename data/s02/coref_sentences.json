@@ -1,6 +1,6 @@
 {
  "name": "지시어·다의어 문장",
- "source": "강사 직접 작성(지시어 문장은 Winograd 스키마 형식을 빌림)",
+ "source": "자체 작성(지시어 문장은 Winograd 스키마 형식을 빌림)",
  "license": "CC BY 4.0",
  "coref": [
   {

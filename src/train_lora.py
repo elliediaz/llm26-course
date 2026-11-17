@@ -9,7 +9,7 @@
   python src/train_lora.py --team team3 --run noise30 --data train_noise30.jsonl   # build_train_data.py가 만든 다른 학습 파일
 
 학습은 휴식 시간과 겹치게 돌린다. config.LORA["max_minutes"]를 넘기면 그때까지 학습한 Adapter를 저장하고 끝낸다.
-학습이 끝나지 않으면: 강사가 미리 학습한 Adapter(adapters/_instructor/<도메인>/)로 재평가를 이어 간다.
+학습이 끝나지 않으면: 미리 학습해 둔 Adapter(adapters/_instructor/<도메인>/)로 재평가를 이어 간다.
 
 결과: adapters/<팀>/<run>/ (adapter_model.safetensors, train_config.json), results/train_log_<팀>_<run>.json
 다음: python src/plot_loss.py --log results/train_log_<팀>_<run>.json

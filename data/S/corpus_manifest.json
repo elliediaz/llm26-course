@@ -3,7 +3,7 @@
   "doc_id": "league_hpb",
   "title": "한빛프로야구 리그 안내",
   "file": "corpus/league_hpb.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 517
@@ -12,7 +12,7 @@
   "doc_id": "season_hpb_2026",
   "title": "2026 한빛프로야구 정규시즌",
   "file": "corpus/season_hpb_2026.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 1812
@@ -21,7 +21,7 @@
   "doc_id": "post_hpb_2026",
   "title": "2026 한빛프로야구 포스트시즌",
   "file": "corpus/post_hpb_2026.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-10-21",
   "chars": 1054
@@ -30,7 +30,7 @@
   "doc_id": "leaders_hpb_2026",
   "title": "2026 한빛프로야구 개인 기록 순위",
   "file": "corpus/leaders_hpb_2026.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 1033
@@ -39,7 +39,7 @@
   "doc_id": "team_b01",
   "title": "청주 비룡 (한빛프로야구)",
   "file": "corpus/team_b01.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 580
@@ -48,7 +48,7 @@
   "doc_id": "team_b02",
   "title": "포항 해일 (한빛프로야구)",
   "file": "corpus/team_b02.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 578
@@ -57,7 +57,7 @@
   "doc_id": "team_b03",
   "title": "전주 백호 (한빛프로야구)",
   "file": "corpus/team_b03.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 577
@@ -66,7 +66,7 @@
   "doc_id": "team_b04",
   "title": "목포 고래 (한빛프로야구)",
   "file": "corpus/team_b04.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 577
@@ -75,7 +75,7 @@
   "doc_id": "team_b05",
   "title": "안동 두루미 (한빛프로야구)",
   "file": "corpus/team_b05.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 579
@@ -84,7 +84,7 @@
   "doc_id": "team_b06",
   "title": "춘천 반달 (한빛프로야구)",
   "file": "corpus/team_b06.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 577
@@ -93,7 +93,7 @@
   "doc_id": "team_b07",
   "title": "제주 돌풍 (한빛프로야구)",
   "file": "corpus/team_b07.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 579
@@ -102,7 +102,7 @@
   "doc_id": "team_b08",
   "title": "원주 산매 (한빛프로야구)",
   "file": "corpus/team_b08.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 576
@@ -111,7 +111,7 @@
   "doc_id": "player_bp01",
   "title": "권지호 (청주 비룡)",
   "file": "corpus/player_bp01.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 190
@@ -120,7 +120,7 @@
   "doc_id": "player_bp02",
   "title": "이보겸 (청주 비룡)",
   "file": "corpus/player_bp02.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 189
@@ -129,7 +129,7 @@
   "doc_id": "player_bp03",
   "title": "반가람 (청주 비룡)",
   "file": "corpus/player_bp03.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 246
@@ -138,7 +138,7 @@
   "doc_id": "player_bp04",
   "title": "차건우 (포항 해일)",
   "file": "corpus/player_bp04.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 189
@@ -147,7 +147,7 @@
   "doc_id": "player_bp05",
   "title": "최서준 (포항 해일)",
   "file": "corpus/player_bp05.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 189
@@ -156,7 +156,7 @@
   "doc_id": "player_bp06",
   "title": "함시우 (포항 해일)",
   "file": "corpus/player_bp06.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 246
@@ -165,7 +165,7 @@
   "doc_id": "player_bp07",
   "title": "옥지호 (전주 백호)",
   "file": "corpus/player_bp07.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 190
@@ -174,7 +174,7 @@
   "doc_id": "player_bp08",
   "title": "주산하 (전주 백호)",
   "file": "corpus/player_bp08.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 190
@@ -183,7 +183,7 @@
   "doc_id": "player_bp09",
   "title": "노범수 (전주 백호)",
   "file": "corpus/player_bp09.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 245
@@ -192,7 +192,7 @@
   "doc_id": "player_bp10",
   "title": "박지환 (목포 고래)",
   "file": "corpus/player_bp10.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 187
@@ -201,7 +201,7 @@
   "doc_id": "player_bp11",
   "title": "탁하준 (목포 고래)",
   "file": "corpus/player_bp11.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 190
@@ -210,7 +210,7 @@
   "doc_id": "player_bp12",
   "title": "남재윤 (목포 고래)",
   "file": "corpus/player_bp12.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 246
@@ -219,7 +219,7 @@
   "doc_id": "player_bp13",
   "title": "소지호 (안동 두루미)",
   "file": "corpus/player_bp13.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 191
@@ -228,7 +228,7 @@
   "doc_id": "player_bp14",
   "title": "함재윤 (안동 두루미)",
   "file": "corpus/player_bp14.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 191
@@ -237,7 +237,7 @@
   "doc_id": "player_bp15",
   "title": "최윤재 (안동 두루미)",
   "file": "corpus/player_bp15.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 249
@@ -246,7 +246,7 @@
   "doc_id": "player_bp16",
   "title": "문선율 (춘천 반달)",
   "file": "corpus/player_bp16.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 189
@@ -255,7 +255,7 @@
   "doc_id": "player_bp17",
   "title": "구산하 (춘천 반달)",
   "file": "corpus/player_bp17.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 189
@@ -264,7 +264,7 @@
   "doc_id": "player_bp18",
   "title": "백민혁 (춘천 반달)",
   "file": "corpus/player_bp18.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 246
@@ -273,7 +273,7 @@
   "doc_id": "player_bp19",
   "title": "김시우 (제주 돌풍)",
   "file": "corpus/player_bp19.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 189
@@ -282,7 +282,7 @@
   "doc_id": "player_bp20",
   "title": "위윤재 (제주 돌풍)",
   "file": "corpus/player_bp20.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 189
@@ -291,7 +291,7 @@
   "doc_id": "player_bp21",
   "title": "진도겸 (제주 돌풍)",
   "file": "corpus/player_bp21.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 247
@@ -300,7 +300,7 @@
   "doc_id": "player_bp22",
   "title": "고도윤 (원주 산매)",
   "file": "corpus/player_bp22.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 189
@@ -309,7 +309,7 @@
   "doc_id": "player_bp23",
   "title": "전윤재 (원주 산매)",
   "file": "corpus/player_bp23.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 190
@@ -318,7 +318,7 @@
   "doc_id": "player_bp24",
   "title": "맹보겸 (원주 산매)",
   "file": "corpus/player_bp24.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-09-27",
   "chars": 245
@@ -327,7 +327,7 @@
   "doc_id": "game_chrono",
   "title": "크로노 아레나(가상 게임)",
   "file": "corpus/game_chrono.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 431
@@ -336,7 +336,7 @@
   "doc_id": "league_nxl",
   "title": "넥서스리그 안내",
   "file": "corpus/league_nxl.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 409
@@ -345,7 +345,7 @@
   "doc_id": "season_nxl_spring",
   "title": "2026 넥서스리그 스프링",
   "file": "corpus/season_nxl_spring.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-04-19",
   "chars": 765
@@ -354,7 +354,7 @@
   "doc_id": "season_nxl_summer",
   "title": "2026 넥서스리그 서머",
   "file": "corpus/season_nxl_summer.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 766
@@ -363,7 +363,7 @@
   "doc_id": "team_e01",
   "title": "노바 크라운 (넥서스리그)",
   "file": "corpus/team_e01.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 543
@@ -372,7 +372,7 @@
   "doc_id": "team_e02",
   "title": "비룡 게이밍 (넥서스리그)",
   "file": "corpus/team_e02.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 584
@@ -381,7 +381,7 @@
   "doc_id": "team_e03",
   "title": "블루 하운즈 (넥서스리그)",
   "file": "corpus/team_e03.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 549
@@ -390,7 +390,7 @@
   "doc_id": "team_e04",
   "title": "레드 펄스 (넥서스리그)",
   "file": "corpus/team_e04.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 541
@@ -399,7 +399,7 @@
   "doc_id": "team_e05",
   "title": "아이언 팽 (넥서스리그)",
   "file": "corpus/team_e05.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 540
@@ -408,7 +408,7 @@
   "doc_id": "team_e06",
   "title": "스텔라 나인 (넥서스리그)",
   "file": "corpus/team_e06.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 542
@@ -417,7 +417,7 @@
   "doc_id": "team_e07",
   "title": "볼트 원 (넥서스리그)",
   "file": "corpus/team_e07.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 542
@@ -426,7 +426,7 @@
   "doc_id": "team_e08",
   "title": "오로라 게이밍 (넥서스리그)",
   "file": "corpus/team_e08.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 545
@@ -435,7 +435,7 @@
   "doc_id": "team_e09",
   "title": "타이드 브레이커 (넥서스리그)",
   "file": "corpus/team_e09.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 549
@@ -444,7 +444,7 @@
   "doc_id": "team_e10",
   "title": "실버 아울스 (넥서스리그)",
   "file": "corpus/team_e10.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 545
@@ -453,7 +453,7 @@
   "doc_id": "player_ep01",
   "title": "Thistle (노바 크라운)",
   "file": "corpus/player_ep01.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 208
@@ -462,7 +462,7 @@
   "doc_id": "player_ep09",
   "title": "Wren (비룡 게이밍)",
   "file": "corpus/player_ep09.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 204
@@ -471,7 +471,7 @@
   "doc_id": "player_ep14",
   "title": "Ochre (블루 하운즈)",
   "file": "corpus/player_ep14.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 206
@@ -480,7 +480,7 @@
   "doc_id": "player_ep18",
   "title": "Pebble (레드 펄스)",
   "file": "corpus/player_ep18.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 205
@@ -489,7 +489,7 @@
   "doc_id": "player_ep25",
   "title": "Mire (아이언 팽)",
   "file": "corpus/player_ep25.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 202
@@ -498,7 +498,7 @@
   "doc_id": "player_ep27",
   "title": "Whit (스텔라 나인)",
   "file": "corpus/player_ep27.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 204
@@ -507,7 +507,7 @@
   "doc_id": "player_ep31",
   "title": "Bramble (볼트 원)",
   "file": "corpus/player_ep31.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 204
@@ -516,7 +516,7 @@
   "doc_id": "player_ep40",
   "title": "Nimbus (오로라 게이밍)",
   "file": "corpus/player_ep40.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 208
@@ -525,7 +525,7 @@
   "doc_id": "player_ep43",
   "title": "Jasper (타이드 브레이커)",
   "file": "corpus/player_ep43.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 212
@@ -534,7 +534,7 @@
   "doc_id": "player_ep50",
   "title": "Kiln (실버 아울스)",
   "file": "corpus/player_ep50.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-08-30",
   "chars": 205
@@ -543,7 +543,7 @@
   "doc_id": "league_wiv",
   "title": "월드 인비테이셔널 안내",
   "file": "corpus/league_wiv.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-11-08",
   "chars": 408
@@ -552,7 +552,7 @@
   "doc_id": "wiv_2026_groups",
   "title": "2026 월드 인비테이셔널 조별 리그",
   "file": "corpus/wiv_2026_groups.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-10-25",
   "chars": 758
@@ -561,7 +561,7 @@
   "doc_id": "wiv_2026_knockout",
   "title": "2026 월드 인비테이셔널 결선",
   "file": "corpus/wiv_2026_knockout.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-11-08",
   "chars": 405
@@ -570,7 +570,7 @@
   "doc_id": "policy_format",
   "title": "기록실 답변 규약 1 : 필드와 표기",
   "file": "corpus/policy_format.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-11-08",
   "chars": 1052
@@ -579,7 +579,7 @@
   "doc_id": "policy_answerable",
   "title": "기록실 답변 규약 2 : 답하지 않는 질문",
   "file": "corpus/policy_answerable.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-11-08",
   "chars": 504
@@ -588,7 +588,7 @@
   "doc_id": "policy_entity",
   "title": "기록실 답변 규약 3 : 이름과 약칭",
   "file": "corpus/policy_entity.md",
-  "source": "강사 제작 가상 스포츠 기록 DB",
+  "source": "자체 제작 가상 스포츠 기록 DB",
   "license": "CC BY 4.0",
   "as_of": "2026-11-08",
   "chars": 713

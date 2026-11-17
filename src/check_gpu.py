@@ -138,7 +138,7 @@ def main() -> None:
         verdict = (f"통과({env['where']} {dev}: 1·2회차 실습 가능. 미리 받은 모델이 없으므로 "
                    "LLM·임베딩 모델은 처음 실행할 때 내려받음)")
     else:
-        verdict = "확인 필요: 강사·TA에게 알릴 것"
+        verdict = "확인 필요: TA에게 알릴 것"
     env["verdict"] = verdict
     print("\n판정:", verdict)
     out = utils.write_json(utils.result_path("env_check.json"), env)

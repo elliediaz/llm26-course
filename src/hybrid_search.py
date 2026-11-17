@@ -1,6 +1,8 @@
 """6회차 도전과제 ①: 키워드 검색(BM25) + 벡터 검색을 함께 쓰면 검색 품질이 오르는가.
 
   python src/hybrid_search.py                  # 벡터만 / BM25만 / 결합(RRF) Recall@k 비교
+  python src/hybrid_search.py --strategy fixed # 다른 분할 전략의 인덱스로
+  결과: results/retrieval_rrf.json(retrieval_sweep.py hybrid의 결과 파일과 이름을 나눔)
 
 고유명사(서리칼날·녹스), 숫자(v1.4, 72회), 약어가 들어간 질문에서 키워드 검색이 강하다.
 결합 방식: RRF(Reciprocal Rank Fusion): 두 순위표에서 1/(60+순위)를 더해 다시 줄 세운다(점수 척도가 달라도 됨).
@@ -59,14 +61,19 @@ class _Adapter:
 
 
 def main() -> None:
-    h = Hybrid(retrieval.Retriever())
+    import argparse
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--strategy", choices=["fixed", "sentence"], help="기본: config.CHUNK_STRATEGY")
+    a = ap.parse_args()
+    h = Hybrid(retrieval.Retriever(a.strategy))
     items = utils.read_json(config.data_dir() / "test_dataset.json")
     rows = []
     for mode in ("vector", "bm25", "hybrid"):
         r = retrieval.eval_retrieval(_Adapter(h, mode), items)
         rows.append({"방식": mode, "Recall@1": r["recall@1"], "Recall@3": r["recall@3"], "Recall@5": r["recall@5"], "MRR": r["mrr"]})
     utils.print_table(rows)
-    utils.write_json(utils.result_path("retrieval_hybrid.json"), rows)
+    utils.write_json(utils.result_path("retrieval_rrf.json"), rows)
+    print("저장: results/retrieval_rrf.json")
 
 
 if __name__ == "__main__":

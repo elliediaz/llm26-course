@@ -6,7 +6,7 @@
   python src/dataset_tool.py stats                             # 현재 test_dataset.json 유형 분포
   python src/dataset_tool.py leak                              # 7회차: 학습 파일(train*.jsonl)과 시험 문항이 겹치는지 점검
 
-강사 전용(현장 보정): python src/dataset_tool.py swap G-T-07 G-P-K03 --pool solutions/data/G/test_pool.json
+현장 보정(교체 풀은 TA가 가짐): python src/dataset_tool.py swap G-T-07 G-P-K03 --pool solutions/data/G/test_pool.json
 """
 from __future__ import annotations
 
@@ -65,7 +65,7 @@ def main() -> None:
     ap.add_argument("cmd", choices=["check", "merge", "stats", "swap", "leak"])
     ap.add_argument("args", nargs="*")
     ap.add_argument("--team", default=None, help="기본: data/<DOMAIN>/team_items.json")
-    ap.add_argument("--pool", help="swap에 쓸 교체 풀(강사 전용)")
+    ap.add_argument("--pool", help="swap에 쓸 교체 풀(TA가 가짐)")
     ap.add_argument("--force", action="store_true", help="check 경고가 있어도 merge")
     a = ap.parse_args()
     d = config.data_dir()

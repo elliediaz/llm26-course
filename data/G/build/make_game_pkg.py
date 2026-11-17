@@ -9,7 +9,7 @@
   ../team_item_template.json                    5회차 팀 추가 20건 양식(K8·R7·F5)
   ../train_seed.jsonl                           7회차 학습 시드
   ../tools_spec.md                              8~10회차 Tool 후보
-  solutions/data/G/test_pool.json               강사 전용 보정·교체 풀(학생 배포 제외)
+  solutions/data/G/test_pool.json               현장 보정·교체 풀(공개 저장소에는 올리지 않음)
 
 실행: python data/G/build/make_game_pkg.py [--train-n 200] [--pool-n 20]
 
@@ -612,8 +612,8 @@ def readme(n_docs: int, n_train: int) -> str:
 
 | 항목 | 내용 |
 |---|---|
-| 출처 | 강사 자체 제작 가상 게임 DB(`build/game_db.json`). 실존 게임과 무관함 |
-| 라이선스 | CC BY 4.0(강사 저작). 학생 저장소·포트폴리오에 데이터 포함 가능 |
+| 출처 | 자체 제작 가상 게임 DB(`build/game_db.json`). 실존 게임과 무관함 |
+| 라이선스 | CC BY 4.0(자체 저작). 학생 저장소·포트폴리오에 데이터 포함 가능 |
 | 기준일 | {AS_OF} |
 | 생성 | `python data/G/build/make_game_pkg.py` (시드 고정, 다시 실행해도 같은 결과) |
 | 개인정보 | 없음. 닉네임은 가상 |
@@ -625,7 +625,7 @@ def readme(n_docs: int, n_train: int) -> str:
 | `faq.json`, `faq_queries.json` | 1 | FAQ {len(FAQ)}건, 시험 질의 {len(FAQ_QUERIES)}건(표현 변형·오타·은어·무관 질문) |
 | `gen_prompts.json` | 2 | 생성 설정 비교용 프롬프트 6건(사실형·창작형·형식형 각 2) |
 | `schema.json`, `scoring.yaml` | 5~7 | 출력 JSON 형식, 필드별 채점 규칙 |
-| `test_seed.json` | 5 | 강사 시드 10건(K4·R3·F3) |
+| `test_seed.json` | 5 | 시드 10건(K4·R3·F3) |
 | `team_item_template.json` | 5 | 팀 추가 20건 양식(K8·R7·F5)과 작성 규칙 |
 | `test_dataset.json` | 5~7 | `benchmark.py` 입력. 처음에는 시드 10건, 5회차에 팀 20건을 합쳐 30건 |
 | `corpus/*.md`, `corpus_manifest.json` | 6 | 위키형 문서 {n_docs}건 |
@@ -643,7 +643,7 @@ def readme(n_docs: int, n_train: int) -> str:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--train-n", type=int, default=200)
-    ap.add_argument("--pool-n", type=int, default=20, help="강사 교체 풀 유형별 문항 수")
+    ap.add_argument("--pool-n", type=int, default=20, help="교체 풀 유형별 문항 수")
     ap.add_argument("--seed", type=int, default=2026)
     a = ap.parse_args()
     rng = random.Random(a.seed)
@@ -658,7 +658,7 @@ def main() -> None:
     for d in docs:
         (cdir / f"{d['doc_id']}.md").write_text(d["text"], encoding="utf-8")
         manifest.append({"doc_id": d["doc_id"], "title": d["title"], "file": f"corpus/{d['doc_id']}.md",
-                         "source": "강사 제작 가상 게임 DB", "license": "CC BY 4.0", "as_of": AS_OF,
+                         "source": "자체 제작 가상 게임 DB", "license": "CC BY 4.0", "as_of": AS_OF,
                          "chars": len(d["text"])})
     w = lambda name, obj: (PKG / name).write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")  # noqa: E731
     w("corpus_manifest.json", manifest)

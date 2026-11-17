@@ -3,6 +3,7 @@
   python src/rag.py --q "서리칼날 공격력 왜 줄었어요? 버그 아닌가요"     # 근거 문서와 함께 답변
   python src/rag.py --q "..." --no-rag                                   # 같은 질문, 검색 없이(비교)
   python src/rag.py --q "..." --show-prompt                              # 모델에 실제로 들어간 프롬프트 확인
+  python src/rag.py --q "..." --search-only                              # LLM 없이 검색 결과만(개인 환경에서도 됨)
   python src/rag.py --eval-retrieval                                     # 현재 인덱스의 Recall@k·MRR
   python src/benchmark.py --mode rag                                     # 성능 기록표 두 번째 행
 
@@ -62,17 +63,27 @@ def main() -> None:
     ap.add_argument("--show-prompt", action="store_true")
     ap.add_argument("--eval-retrieval", action="store_true")
     ap.add_argument("--diagnose", metavar="RESULT_JSON")
+    ap.add_argument("--search-only", action="store_true", help="LLM을 올리지 않고 검색 결과만 봄")
+    ap.add_argument("--strategy", choices=["fixed", "sentence"], help="기본: config.CHUNK_STRATEGY")
+    ap.add_argument("--k", type=int, help="가져올 조각 수(기본: config.RAG_TOP_K)")
     a = ap.parse_args()
     if a.diagnose:
         diagnose(a.diagnose)
         return
-    retriever = retrieval.Retriever()
+    retriever = retrieval.Retriever(a.strategy)
+    if a.k:
+        config.RAG_TOP_K = a.k
     if a.eval_retrieval:
         r = retrieval.eval_retrieval(retriever, utils.read_json(config.data_dir() / "test_dataset.json"))
         print(json.dumps({k: v for k, v in r.items() if k != "misses"}, ensure_ascii=False, indent=2))
         return
     if not a.q:
         ap.error("--q 질문이 필요합니다")
+    if a.search_only:
+        for h in retriever.search(a.q):
+            print(f"  {h['rank']}. {h['doc_id']} {h['title']} (유사도 {h['score']:.4f})")
+            print("     " + h["text"][:160].replace("\n", " ") + ("…" if len(h["text"]) > 160 else ""))
+        return
     model, tok = model_utils.load_llm()
     res = answer(a.q, model, tok, retriever, scorer.load_schema(), not a.no_rag, a.show_prompt)
     print(f"\n[답변] {res['answer']}")
