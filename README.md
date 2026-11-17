@@ -1,6 +1,7 @@
 # GPU 기반 오픈소스 LLM·AI Agent 서비스 개발 PBL: 실습 저장소
 
 > **실습 접속 주소: [ACCESS.md](ACCESS.md)** (비밀번호는 접속 안내 카드)
+> **수업 자료(발표 PDF·워크북·안내서): [handouts/](handouts/)**
 > Pod 경로: `/workspace/course` · 커널: **LLM-PBL (course)** · 터미널: `source /workspace/activate.sh`
 > 모델·버전 기준일 2026-10. 설정은 `src/config.py` 한 곳에서만 바꿈
 >
@@ -18,7 +19,9 @@ course/
 ├─ notebooks/    1·2회차 실습 노트북(s01_colab·s02_colab, 코랩·개인 PC 공용), 1·2회차 발전사 확인 노트북(원본은 notebooks/src/*.py)
 ├─ data/
 │  ├─ common/    공개 데이터(Fashion-MNIST·NSMC 리뷰), 금액 수사 생성기, 토큰 비교 문장
+│  ├─ s02/       2회차 미션 데이터(배달 리뷰·스미싱 문자·뉴스 제목·게임 문의·속담·토큰 표본·지시어 문장)
 │  └─ G · L · S  팀 도메인 데이터(README에 출처·라이선스·기준일). G에는 1회차 신경망 실습용 합성 데이터도 있음
+├─ prompts/      2회차 M5 지시문 파일(예시: 예시_delivery.txt)
 ├─ results/      모든 산출물(JSON·표·그림): 볼륨에 남음
 ├─ ref/          회차별 참고 결과(학습이 늦을 때 `bash ref/s01/use_ref.sh`)
 ├─ index/        6회차 벡터 인덱스
@@ -45,7 +48,12 @@ course/
 | 1 | `ticket_classifier.py` | 고전 분류기·회귀기로 티켓 판정(category·action 분류, priority 분류 vs 회귀) |
 | 1 | `tiny_seq2seq_train.py` `viz_attention.py` `seq2seq_demo.py` | 세 구조(GRU·GRU+어텐션·트랜스포머) 학습, Attention 시각화, 구조별 비교표 |
 | 1·2 | `lineage.py` | 발전사 노트북용 함수(n-gram, BoW, BPE, 빈칸 vs 다음 토큰, 문맥 내 학습 등) |
-| 2 | `inspect_tokenizer.py` `mini_transformer.py` `gen_params_sweep.py` `kv_cache_bench.py` | 토큰 비교, 미니 트랜스포머, 생성 설정 비교표, KV Cache 측정 |
+| 2 | `xor_demo.py` | M0: AND·OR·XOR를 단층·층만 쌓기·층 + 활성화로 학습해 결정 경계 비교 |
+| 2 | `attention_probe.py` | M2: 다의어 낱말의 층별 벡터 유사도, 지시어 문장의 층별 어텐션, 모델에게 직접 묻기 |
+| 2 | `token_cost.py` | M3: 토크나이저 4종의 토큰 수와 글자/토큰, 챗봇 월 요금 어림 |
+| 2 | `next_word_game.py` | M4: 다음 토큰 후보와 확률, 속담 이어 말하기 채점(Instruct vs Base), 온도별 뽑기 |
+| 2 | `llm_sentiment.py` `llm_classify.py` | M5: 학습 없이 프롬프트로 분류(영화 리뷰, 데이터 5종), 예시·보정·라벨 단어, 리더보드 |
+| 2 | `inspect_tokenizer.py` `mini_transformer.py` `gen_params_sweep.py` `kv_cache_bench.py` | 토큰 비교, 미니 트랜스포머, 생성 설정 비교표, KV Cache 측정(부록·5·6회차) |
 | 5 | `prompt_utils.py` `scorer.py` `benchmark.py` `scoreboard.py` `dataset_tool.py` `judge.py` | 프롬프트(평가·학습 공용), 채점, 하네스, 성능 기록표, 문항 점검·병합, LLM 채점(도전) |
 | 5 | `field_report.py` | 필드별 점수를 분류·추출로 나눠 보고 1회차 분류기와 같은 문항에서 비교 |
 | 6 | `retrieval.py` `index_builder.py` `rag.py` `hybrid_search.py` `rerank.py` | 분할·인덱스·검색, 검색 품질, 검색 기반 생성·오답 분류, 하이브리드·재순위화(도전) |

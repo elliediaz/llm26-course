@@ -4,6 +4,7 @@
   python src/resume_check.py --handover 2 # 2회차 끝(차승희 박사 회차 인계 전): 남겨야 할 파일 확인
   python src/resume_check.py --handover 7 # 7회차 끝(8회차 인계 전)
   python src/resume_check.py --quick      # 모델 로딩 없이 파일만
+  python src/resume_check.py --session 2  # 그 회차 산출물만(코랩처럼 회차마다 새로 시작하는 환경)
 
 판정이 '누락'이면 강사·TA에게 알린다. 볼륨(/workspace)에 있는 파일은 Pod를 꺼도 남는다.
 """
@@ -39,11 +40,12 @@ def check_files(groups) -> list[dict]:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--handover", type=int, choices=list(HANDOVER))
+    ap.add_argument("--session", type=int, choices=[1, 2, 5, 6], help="그 회차 산출물만 확인")
     ap.add_argument("--quick", action="store_true")
     a = ap.parse_args()
     print(f"[설정] 도메인 {config.DOMAIN} · 모델 {config.MODEL_ID} · {config.QUANT}")
     print(f"[설정] GEN_SERVICE {config.GEN_SERVICE} · 이유: {config.GEN_SERVICE_REASON}")
-    groups = HANDOVER[a.handover] if a.handover else list(CHECKS)
+    groups = [f"{a.session}회차 산출물"] if a.session else HANDOVER[a.handover] if a.handover else list(CHECKS)
     rows = check_files(groups)
     if a.handover == 7:
         ads = sorted(p.parent for p in config.PATHS["adapters"].glob("*/*/adapter_config.json"))
@@ -51,7 +53,7 @@ def main() -> None:
         idx = sorted(config.PATHS["index"].glob(f"{config.DOMAIN}_*/meta.json"))
         rows.append({"구분": "6회차 산출물", "파일": "index/", "상태": f"{len(idx)}개" if idx else "누락"})
     utils.print_table(rows)
-    if not a.quick and not a.handover:
+    if not a.quick and not a.handover and not a.session:
         import torch
         import model_utils
         print(f"\nGPU: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else '없음'}")

@@ -79,7 +79,7 @@ def main():
             row[n] = sum(len(tok(t, add_special_tokens=False)["input_ids"]) for t in c["texts"])
         rows.append(row)
         per_cat[c["category"]] = {n: round(row["글자"] / row[n], 2) for n in toks}
-    print("토큰 수(문장 2개 합) — 적을수록 싸고 빠르고 길게 넣을 수 있음")
+    print("토큰 수(문장 2개 합): 적을수록 싸고 빠르고 길게 넣을 수 있음")
     utils.print_table(rows)
     print("\n토큰 하나가 담는 글자 수(클수록 효율적)")
     utils.print_table([{"종류": k, **v} for k, v in per_cat.items()])

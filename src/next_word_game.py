@@ -31,7 +31,7 @@ def load(model_id):
     hf_logging.disable_progress_bar()
     tok = AutoTokenizer.from_pretrained(model_id)
     dev = "cuda" if torch.cuda.is_available() else "cpu"
-    dtype = torch.bfloat16 if dev == "cuda" else torch.float32
+    dtype = torch.float32                       # T4는 bfloat16을 하드웨어로 지원하지 않으므로 float32로 통일
     model = AutoModelForCausalLM.from_pretrained(model_id, dtype=dtype).to(dev).eval()
     return tok, model
 

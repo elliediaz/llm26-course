@@ -387,9 +387,11 @@ code("""
 """)
 
 md("""
-## 결과 내려받기
-- 코랩은 연결이 끝나면 파일이 사라지므로 수업을 마치기 전에 실행함
+## 결과 확인과 내려받기
+- 오늘 남겨야 할 파일(M0·M1·M2·M3·M5)이 모두 있는지 확인함. '누락'이 있으면 해당 미션 셀을 다시 실행함
+- 코랩은 연결이 끝나면 파일이 사라지므로 수업을 마치기 전에 내려받음
 """)
+code("!python src/resume_check.py --session 2 --quick")
 code(r'''
 shutil.make_archive("s02_results", "zip", ".", "results")
 try:

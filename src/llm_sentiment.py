@@ -63,7 +63,7 @@ def main():
     a = ap.parse_args()
 
     dev = "cuda" if torch.cuda.is_available() else "cpu"
-    dtype = torch.float16 if dev == "cuda" else torch.float32
+    dtype = torch.float32                       # 0.6B는 T4에서도 float32로 충분하고 수치가 안정적임
     tok = AutoTokenizer.from_pretrained(a.model)
     model = AutoModelForCausalLM.from_pretrained(a.model, dtype=dtype).to(dev).eval()
 

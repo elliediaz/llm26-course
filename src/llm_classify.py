@@ -163,7 +163,7 @@ def main():
     model_id = MODELS.get(a.model, a.model)
     hf_logging.disable_progress_bar()
     dev = "cuda" if torch.cuda.is_available() else "cpu"
-    dtype = torch.float16 if dev == "cuda" else torch.float32
+    dtype = torch.float32                       # 0.6B는 T4에서도 float32로 충분하고 수치가 안정적임
     tok = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForCausalLM.from_pretrained(model_id, dtype=dtype).to(dev).eval()
     scorer = Scorer(model, tok, head, d["input_name"], d["answer_name"], words, a.norm)

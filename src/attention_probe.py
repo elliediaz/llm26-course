@@ -156,7 +156,7 @@ def main():
     if a.text:
         cands = [c.strip() for c in a.cands.split(",")]
         r = probe(tok, model, a.text, a.target, cands)
-        print("층별 어텐션 비율(헤드 평균) — 지시어 자리 / 문장 끝 단어 자리")
+        print("층별 어텐션 비율(헤드 평균): 지시어 자리 / 문장 끝 단어 자리")
         for l in range(r["from_last"].shape[0]):
             print(f"  {l:2d}층  " + "  ".join(f"{c} {r['from_target'][l, i]:.2f}/{r['from_last'][l, i]:.2f}" for i, c in enumerate(cands)))
         a_ = ask(tok, model, a.text, a.target, cands)
