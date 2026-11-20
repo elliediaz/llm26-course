@@ -1,7 +1,7 @@
 """1회차 실습 D·해보기 D: FAQ 의미 검색기. Encoder로 문장을 벡터로 바꾸고 코사인 유사도로 가장 가까운 FAQ를 찾는다.
 
   python src/faq_search.py                          # 시험 질의 10건 정확도(임베딩)
-  python src/faq_search.py --method tfidf           # 비교: 글자 단위 TF-IDF(키워드 겹침 기반)
+  python src/faq_search.py --method tfidf           # 비교: 글자 단위 TF-IDF(키워드 중첩 기반)
   python src/faq_search.py --q "돈 냈는데 아이템 안 와요"   # 한 문장 검색
   python src/faq_search.py --queries my_queries.json        # 직접 만든 질문 10건으로 측정(완료 기준: 8건 이상 1순위)
   python src/faq_search.py --threshold 0.45         # 과제 카드 B: 기준 미달이면 '해당 없음'

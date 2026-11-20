@@ -1,4 +1,4 @@
-"""5~7회차 손잡이 실험: 모델을 한 번만 올리고 설정 하나를 여러 값으로 바꿔 가며 같은 문항을 잼
+"""5~7회차 설정 비교 실험: 모델을 한 번만 올리고 설정 하나를 여러 값으로 바꿔 가며 같은 문항을 잼
 
   python src/sweep.py strategy plain instruction fewshot constrained --limit 10
   python src/sweep.py shots 0 1 2 4 8 --limit 10
@@ -16,12 +16,12 @@
 
 공통 옵션
   --dataset  다른 문항 파일(예: data/G/probes.json 대신 test_dataset.json이 기본)
-  --limit    앞에서 N건만. 손잡이 실험은 10건으로 방향을 보고, 고른 설정만 30건으로 다시 잼
-  --repeat   같은 값을 여러 번(temperature처럼 흔들리는 설정에서 평균·흔들림을 봄)
-  --tag      결과 파일 이름 꼬리표(같은 손잡이를 다른 조건에서 다시 돌릴 때)
+  --limit    앞에서 N건만. 설정 비교 실험은 10건으로 방향을 보고, 고른 설정만 30건으로 다시 잼
+  --repeat   같은 값을 여러 번(temperature처럼 달라지는 설정에서 평균·편차를 봄)
+  --tag      결과 파일 이름 태그(같은 설정을 다른 조건에서 다시 돌릴 때)
 
-결과: results/sweep_<손잡이>[_<꼬리표>].json, results/fig/sweep_<손잡이>[_<꼬리표>].png
-측정 원칙: 손잡이 하나만 바꿈. 나머지는 config.py 값 그대로임. 기록표(scoreboard)에는 남기지 않음
+결과: results/sweep_<설정>[_<태그>].json, results/fig/sweep_<설정>[_<태그>].png
+측정 원칙: 설정 하나만 바꿈. 나머지는 config.py 값 그대로임. 기록표(scoreboard)에는 남기지 않음
 
 메모: 10건 기준 한 문항이 0.1이므로 0.1 안팎 차이는 우연일 수 있음. 차이가 작으면 --limit을 늘리거나 --repeat로 다시 봄
 """
@@ -54,7 +54,7 @@ KNOBS = {
     "model": "모델",
     "quant": "가중치 정밀도",
 }
-RELOAD = {"adapter", "model", "quant"}      # 값마다 모델을 다시 올리는 손잡이
+RELOAD = {"adapter", "model", "quant"}      # 값마다 모델을 다시 올리는 설정
 
 
 def setting(knob: str, value: str, base: SimpleNamespace) -> SimpleNamespace:
@@ -89,7 +89,7 @@ def plot(rows: list[dict], knob: str, path) -> None:
     xs = [r["값"] for r in rows]
     fig, ax = plt.subplots(1, 2, figsize=(9.6, 3.4))
     acc = [r["Task Accuracy"] for r in rows]
-    err = [r.get("흔들림(표준편차)", 0) or 0 for r in rows]
+    err = [r.get("편차(표준편차)", 0) or 0 for r in rows]
     ax[0].bar(range(len(xs)), acc, 0.55, yerr=err, color="#8aa1c1", capsize=4, label="Task Accuracy")
     ax[0].plot(range(len(xs)), [r["JSON 성공률"] for r in rows], "o-", color="#c0622b", label="JSON 성공률")
     ax[0].set_xticks(range(len(xs)), xs, fontsize=8)
@@ -127,7 +127,7 @@ def main() -> None:
     schema, rules = scorer.load_schema(), scorer.load_rules()
     base = SimpleNamespace(strategy=a.strategy, no_template=False, score_mode="loose", shots=a.shots,
                            extra=read_extra(a.prompt), gen=None, top_k=None, context_tokens=None)
-    print(f"[손잡이 실험] {KNOBS[a.knob]} : {' · '.join(a.values)} | 도메인 {config.DOMAIN} · {len(items)}문항 · 반복 {a.repeat}")
+    print(f"[설정 비교 실험] {KNOBS[a.knob]} : {' · '.join(a.values)} | 도메인 {config.DOMAIN} · {len(items)}문항 · 반복 {a.repeat}")
 
     model = tok = None
     if a.knob not in RELOAD:
@@ -178,12 +178,12 @@ def main() -> None:
                "p50 지연(초)": m["latency"]["p50"], "입력 토큰": m.get("n_in_avg"), "출력 토큰": m.get("n_out_avg"),
                "VRAM(GB)": m.get("vram_peak_gb")}
         if a.repeat > 1:
-            row["흔들림(표준편차)"] = round(stat.pstdev(accs), 3)
+            row["편차(표준편차)"] = round(stat.pstdev(accs), 3)
             row["같은 출력 비율"] = same
         rows.append(row)
         detail[v] = {"runs": [x["metrics"] for x in runs], "items": runs[-1]["items"]}
         print(f"  {label(v):>14s} | 점수 {row['Task Accuracy']:.3f} | JSON {row['JSON 성공률']:.2f} | p50 {row['p50 지연(초)']}s | 입력 {row['입력 토큰']}토큰"
-              + (f" | 흔들림 {row['흔들림(표준편차)']} · 같은 출력 {same}" if a.repeat > 1 else ""))
+              + (f" | 편차 {row['편차(표준편차)']} · 같은 출력 {same}" if a.repeat > 1 else ""))
 
     print()
     utils.print_table(rows)

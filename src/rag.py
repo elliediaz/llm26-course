@@ -1,4 +1,4 @@
-"""6회차 실습 2: 검색 기반 생성: 질문과 가까운 문서 조각을 찾아 프롬프트에 넣고, 답과 함께 근거 문서를 보여 준다.
+"""6회차 실습 2: 검색 기반 생성: 질문과 가까운 문서 청크를 찾아 프롬프트에 넣고, 답과 함께 근거 문서를 보여 준다.
 
   python src/rag.py --q "서리칼날 공격력 왜 줄었어요? 버그 아닌가요"     # 근거 문서와 함께 답변
   python src/rag.py --q "..." --no-rag                                   # 같은 질문, 검색 없이(비교)
@@ -65,7 +65,7 @@ def main() -> None:
     ap.add_argument("--diagnose", metavar="RESULT_JSON")
     ap.add_argument("--search-only", action="store_true", help="LLM을 올리지 않고 검색 결과만 봄")
     ap.add_argument("--strategy", choices=["fixed", "sentence"], help="기본: config.CHUNK_STRATEGY")
-    ap.add_argument("--k", type=int, help="가져올 조각 수(기본: config.RAG_TOP_K)")
+    ap.add_argument("--k", type=int, help="가져올 청크 수(기본: config.RAG_TOP_K)")
     a = ap.parse_args()
     if a.diagnose:
         diagnose(a.diagnose)

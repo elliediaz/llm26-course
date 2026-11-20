@@ -3,7 +3,7 @@
 데이터  data/G/churn.csv: 가상 RPG 유저 20,000명의 최근 활동 12개(접속일수·플레이 시간·결제액·길드 여부·문의 수 …)
 문제    분류: 다음 14일 이탈(1)·유지(0)            출력층 2칸 + 교차 엔트로피
         회귀: 다음 7일 일평균 플레이 시간(분)      출력층 1칸 + 평균제곱오차
-몸통    입력 12 → Linear 64 → ReLU → Linear 32 → ReLU  (두 문제가 똑같이 씀. 다른 것은 출력층과 손실뿐)
+특징 추출부  입력 12 → Linear 64 → ReLU → Linear 32 → ReLU  (두 문제가 똑같이 씀. 다른 것은 출력층과 손실뿐)
 
   python src/nn_dense.py                         # 분류·회귀 둘 다(CPU 서버 약 20초)
   python src/nn_dense.py --task cls --hidden 128 64 --lr 0.003 --epochs 30
@@ -30,7 +30,7 @@ LOG_COLS = {"avg_play_min", "pay_30", "friends", "days_since_join"}       # 오�
 
 
 class DenseNet(nn.Module):
-    """몸통은 같고 머리(출력층)만 과제에 따라 다르다."""
+    """특징 추출부는 같고 출력층만 과제에 따라 다르다."""
 
     def __init__(self, n_in: int, hidden: list[int], n_out: int, dropout: float = 0.0):
         super().__init__()

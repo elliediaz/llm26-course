@@ -36,7 +36,7 @@ def load_corpus(domain: str | None = None, with_updates: bool = False) -> list[d
 
 
 def chunk_fixed(text: str, size: int, overlap: int) -> list[str]:
-    """글자 수 기준으로 자른다. 문장 중간이 끊길 수 있어 overlap으로 앞 조각 끝을 겹친다."""
+    """글자 수 기준으로 자른다. 문장 중간이 끊길 수 있어 overlap으로 앞 청크 끝을 겹친다."""
     step = max(1, size - overlap)
     return [text[i:i + size] for i in range(0, max(len(text) - overlap, 1), step) if text[i:i + size].strip()]
 
@@ -46,7 +46,7 @@ _SENT = re.compile(r"(?<=[.!?])\s+")
 
 def chunk_sentence(text: str, max_chars: int) -> list[str]:
     """문장·소제목 경계로 나눈 뒤 max_chars까지 이어 붙인다.
-    조각마다 문서 제목을 앞에 붙여, 조각만 떼어 봐도 무엇에 관한 내용인지 알 수 있게 한다."""
+    청크마다 문서 제목을 앞에 붙여, 청크만 떼어 봐도 무엇에 관한 내용인지 알 수 있게 한다."""
     lines = [ln.strip() for ln in text.splitlines()]
     title = next((ln.lstrip("# ").strip() for ln in lines if ln.startswith("# ")), "")
     units: list[tuple[str, str]] = []
@@ -59,7 +59,7 @@ def chunk_sentence(text: str, max_chars: int) -> list[str]:
         units += [("S", u.strip()) for u in _SENT.split(ln) if u.strip()]
     chunks, cur = [], ""
     for kind, u in units:
-        if kind == "H" and len(cur) >= max_chars * 0.4:      # 소제목에서 끊되, 너무 작은 조각은 만들지 않음
+        if kind == "H" and len(cur) >= max_chars * 0.4:      # 소제목에서 끊되, 너무 작은 청크는 만들지 않음
             chunks.append(cur)
             cur = ""
         if cur and len(cur) + 1 + len(u) > max_chars:
@@ -131,7 +131,7 @@ def build_index(chunks: list[dict], embedder, strategy: str, backend: str | None
 
 
 class Retriever:
-    """index/<도메인>_<전략>/을 열어 질의와 가까운 조각을 찾는다."""
+    """index/<도메인>_<전략>/을 열어 질의와 가까운 청크를 찾는다."""
 
     def __init__(self, strategy: str | None = None, embedder=None, domain: str | None = None):
         self.strategy = strategy or config.CHUNK_STRATEGY
@@ -177,7 +177,7 @@ class Retriever:
 
 # ---------------------------------------------------------------- 컨텍스트 조립
 def format_context(hits: list[dict], tok=None, max_tokens: int | None = None) -> str:
-    """검색 결과를 프롬프트에 넣을 문자열로 만든다. 토큰 상한을 넘으면 뒤쪽 조각부터 버린다."""
+    """검색 결과를 프롬프트에 넣을 문자열로 만든다. 토큰 상한을 넘으면 뒤쪽 청크부터 버린다."""
     max_tokens = max_tokens or config.CONTEXT_MAX_TOKENS
     parts, used = [], 0
     for h in hits:
@@ -192,7 +192,7 @@ def format_context(hits: list[dict], tok=None, max_tokens: int | None = None) ->
 
 # ---------------------------------------------------------------- 검색 품질
 def doc_ranking(hits: list[dict]) -> list[str]:
-    """조각 순위를 문서 순위로 바꾼다(같은 문서의 두 번째 조각부터는 건너뜀)."""
+    """청크 순위를 문서 순위로 바꾼다(같은 문서의 두 번째 청크부터는 건너뜀)."""
     seen, out = set(), []
     for h in hits:
         if h["doc_id"] not in seen:

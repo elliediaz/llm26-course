@@ -5,7 +5,7 @@
 1회차  bigram_lm·sentence_prob  n-gram 희소성(본 적 없는 조합 = 확률 0)
        bow                      단어 주머니 벡터의 어순 소실
        static_token_ids         단어 하나에 벡터 하나(정적 임베딩의 한계)
-       keyword_vs_meaning       키워드 겹침(TF-IDF) vs 문장 의미(임베딩) 유사도
+       keyword_vs_meaning       키워드 중첩(TF-IDF) vs 문장 의미(임베딩) 유사도
 2회차  rnn_vs_attention_timing  RNN 순차 처리 vs Self-Attention 병렬 처리, 길이 제곱 메모리
        oov_rate·MiniBPE         어휘집 밖 단어(OOV)와 서브워드 토큰화
        fill_mask·next_token     사전학습 목표의 분기: 빈칸 맞히기(MLM) vs 다음 토큰 예측
@@ -80,7 +80,7 @@ def static_token_ids(word: str, sentences: list[str], model_name: str | None = N
 
 
 def keyword_vs_meaning(query: str, candidates: list[str], embedder=None) -> list[dict]:
-    """같은 질의에 대해 글자 TF-IDF(키워드 겹침)와 문장 임베딩(의미)의 유사도를 나란히 본다."""
+    """같은 질의에 대해 글자 TF-IDF(키워드 중첩)와 문장 임베딩(의미)의 유사도를 나란히 본다."""
     from faq_search import TfidfIndex
     t = TfidfIndex(candidates)
     kw = (t.encode([query]) @ t.mat.T)[0]
@@ -213,7 +213,7 @@ def next_token(text: str, model, tok, k: int = 5) -> list[tuple[str, float]]:
             ids.append(int(nxt))
             extra += 1
             piece = tok.decode(ids[len(enc["input_ids"][0]):])
-        out.append((piece + ("(+조각)" if extra else ""), round(float(v), 3)))
+        out.append((piece + ("(+청크)" if extra else ""), round(float(v), 3)))
     return out
 
 

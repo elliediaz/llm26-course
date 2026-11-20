@@ -1,4 +1,4 @@
-"""7회차 실습 1 ①②: 학습 데이터 준비: 시드 + 팀 추가분 + 규칙 증강 → 중복·평가셋 겹침 검사 → 학습 형식 변환.
+"""7회차 실습 1 ①②: 학습 데이터 준비: 시드 + 팀 추가분 + 규칙 증강 → 중복·평가셋 중첩 검사 → 학습 형식 변환.
 
   python src/build_train_data.py                       # 시드만(약 200건)
   python src/build_train_data.py --augment 300         # 규칙 증강으로 300건 추가(권장 총 500건)
@@ -12,7 +12,7 @@
   - 메시지는 평가와 같은 prompt_utils.build_messages(instruction)로 만든다 → 템플릿 일치
   - 평가셋(test_dataset.json)과 같은 입력·너무 비슷한 입력(문자 3-gram 자카드 0.8 이상)은 뺀다
   - 지식(패치 수치 등)을 외우게 하려는 게 아니라 형식·판단 규칙을 맞추는 것이 목적이다
-결과: data/<도메인>/train[_꼬리표].jsonl, valid.jsonl(10%), results/train_data_report[_꼬리표].json
+결과: data/<도메인>/train[_태그].jsonl, valid.jsonl(10%), results/train_data_report[_태그].json
 """
 from __future__ import annotations
 
@@ -60,7 +60,7 @@ def main() -> None:
     ap.add_argument("--limit", type=int, help="학습 건수를 N건으로 줄임(데이터 양 실험)")
     ap.add_argument("--noise", type=float, default=0.0, help="학습 정답 중 이 비율의 첫 필드를 다른 값으로 바꿈(라벨 오류 사건)")
     ap.add_argument("--leak", action="store_true", help="평가 문항을 학습에 섞음(누수 사건: 점수가 부풀려지는지 확인)")
-    ap.add_argument("--out-tag", default="", help="train_<꼬리표>.jsonl로 따로 저장(기본 train.jsonl을 덮지 않음)")
+    ap.add_argument("--out-tag", default="", help="train_<태그>.jsonl로 따로 저장(기본 train.jsonl을 덮지 않음)")
     a = ap.parse_args()
     rng = random.Random(config.SEED)
     d = config.data_dir()

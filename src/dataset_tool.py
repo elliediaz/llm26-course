@@ -104,7 +104,7 @@ def main() -> None:
                 same += best >= 0.99
                 near += 0.8 <= best < 0.99
             flag = "  ← 시험 문항이 학습에 들어 있음" if same else ""
-            print(f"  {f.name:24s} 학습 {len(rows):4d}건 · 시험 문항과 같음 {same}건 · 매우 비슷(0.8 이상) {near}건{flag}")
+            print(f"  {f.name:24s} 학습 {len(rows):4d}건 · 시험 문항과 같음 {same}건 · 유사(0.8 이상) {near}건{flag}")
     if a.cmd == "swap":
         out_id, in_id = a.args
         pool = {p["id"]: p for p in utils.read_json(a.pool)}

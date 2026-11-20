@@ -41,7 +41,7 @@ def main() -> None:
             ids = tok(a.text, add_special_tokens=False)["input_ids"]
             print(f"\n[{m}] 어휘 크기 {len(tok):,} · {len(ids)}토큰")
             print("  ID     :", ids)
-            print("  조각   :", " | ".join(repr(p) for p in pieces(tok, a.text)))
+            print("  청크   :", " | ".join(repr(p) for p in pieces(tok, a.text)))
             print("  역변환 :", tok.decode(ids))
         return
     sents = utils.read_json(config.PATHS["common"] / "sentences.json")

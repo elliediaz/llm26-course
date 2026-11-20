@@ -1,7 +1,7 @@
 """1회차 해보기 E(5회차 비교 기준선): LLM 없이 '고전적인' 분류기·회귀기로 게임 문의 티켓을 판정한다.
 
   python src/ticket_classifier.py                    # 임베딩(KURE) 특징 + 로지스틱 회귀/릿지
-  python src/ticket_classifier.py --features tfidf   # 비교: 글자 2-gram TF-IDF 특징(키워드 겹침)
+  python src/ticket_classifier.py --features tfidf   # 비교: 글자 2-gram TF-IDF 특징(키워드 중첩)
   python src/ticket_classifier.py --features both    # 두 특징을 나란히(입력 표현이 좋아지면 분류가 좋아지는가)
 
 데이터  data/G/train_seed.jsonl(185건) → 학습 150 · 검증 35(시드 고정)

@@ -2,7 +2,7 @@
 
   python src/gen_params_sweep.py                    # 기본 6개 조합 × 프롬프트 6건 × 3회
   python src/gen_params_sweep.py --model Qwen/Qwen3-0.6B --ids G-GP-5 --repeats 10 --temperature 0.7 --top-p 0.9
-                                                    # 해보기 G: 같은 설정 10회 반복 시 흔들림(기본 비교표는 그대로 둠)
+                                                    # 해보기 G: 같은 설정 10회 반복 시 편차(기본 비교표는 그대로 둠)
   python src/gen_params_sweep.py --model Qwen/Qwen3-0.6B     # 작은 모델로 빠르게
   python src/gen_params_sweep.py --model Qwen/Qwen3-0.6B --kind 형식형 --temperature 0.5 --top-p 0.8
                                                     # 해보기 ②: 내 설정 하나를 greedy와 비교(결과는 gen_sweep_mine.md에 쌓임)
@@ -12,7 +12,7 @@
   JSON(느슨)    형식형 프롬프트에서 코드 울타리(```json … ```)를 벗기면 JSON으로 읽히는 비율
   JSON만(엄격)  울타리·설명 없이 JSON만 낸 비율("JSON으로만 답해"를 그대로 지켰나, 5회차 엄격 채점과 같은 기준)
 결정
-  평가(5~7회차)는 GEN_EVAL(greedy) 고정: 측정값이 흔들리면 개선을 판단할 수 없음
+  평가(5~7회차)는 GEN_EVAL(greedy) 고정: 측정값이 달라지면 개선을 판단할 수 없음
   서비스(8~10회차)는 팀이 정한 GEN_SERVICE → src/config.py에 기록하고 이유를 한 줄로 남김
 결과: results/gen_sweep.json, results/gen_sweep.md
 """

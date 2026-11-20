@@ -1,4 +1,4 @@
-"""5~7회차: 성능 기록표: 같은 잣대로 잰 네 구성(Baseline·RAG·LoRA·RAG+LoRA)을 한 표에 나란히 둔다.
+"""5~7회차: 성능 기록표: 같은 평가 기준으로 잰 네 구성(Baseline·RAG·LoRA·RAG+LoRA)을 한 표에 나란히 둔다.
 
   python src/scoreboard.py                    # 표 보기(results/scoreboard.md 갱신)
   python src/scoreboard.py --target 0.75      # 5회차: 개선 목표치 기록

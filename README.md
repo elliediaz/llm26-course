@@ -37,7 +37,7 @@ course/
 |---|---|---|
 | 공통 | `config.py` `utils.py` `model_utils.py` `run_model.py` `check_gpu.py` `resume_check.py` | 설정, 측정 도구, 모델 로딩·생성, 환경 점검, 복귀·인계 점검 |
 | 1 | `nn_tools.py` | 신경망 실습 공통 도구: 층별 모양 추적표, 분류·회귀 공용 학습 루프, 데이터 로더 |
-| 1 | `nn_dense.py` | Dense: 유저 이탈(분류)·다음 주 플레이 시간(회귀)을 같은 몸통, 다른 출력층으로 |
+| 1 | `nn_dense.py` | Dense: 유저 이탈(분류)·다음 주 플레이 시간(회귀)을 같은 특징 추출부(백본), 다른 출력층으로 |
 | 1 | `nn_cnn.py` | MLP vs CNN: 옷 사진 10종 분류, 첫 층 필터·특징 맵 그림 |
 | 1 | `nn_rnn.py` | RNN vs LSTM: 영화 리뷰 감성 분류(길이별 정확도), 시간별 동시 접속자 회귀 |
 | 1 | `seq_limits.py` | 첫 숫자 기억하기: 거리가 멀어질 때 RNN·LSTM·어텐션 비교(트랜스포머 이전 구조의 한계) |
@@ -47,19 +47,19 @@ course/
 | 1 | `cls_vs_reg.py` | 같은 문제(금액 수사 → 숫자)를 회귀·분류로 풀어 비교 |
 | 1 | `ticket_classifier.py` | 고전 분류기·회귀기로 티켓 판정(category·action 분류, priority 분류 vs 회귀) |
 | 1 | `tiny_seq2seq_train.py` `viz_attention.py` `seq2seq_demo.py` | 세 구조(GRU·GRU+어텐션·트랜스포머) 학습, Attention 시각화, 구조별 비교표 |
-| 1·2 | `lineage.py` | 발전사 노트북용 함수(n-gram, BoW, BPE, 빈칸 vs 다음 토큰, 문맥 내 학습 등) |
+| 1·2 | `lineage.py` | 발전사 노트북용 함수(n-gram, BoW, BPE, 빈칸 vs 다음 토큰, 문맥 내 학습) |
 | 2 | `xor_demo.py` | M0: AND·OR·XOR를 단층·층만 쌓기·층 + 활성화로 학습해 결정 경계 비교 |
 | 2 | `attention_probe.py` | M2: 다의어 낱말의 층별 벡터 유사도, 지시어 문장의 층별 어텐션, 모델에게 직접 묻기 |
-| 2 | `token_cost.py` | M3: 토크나이저 4종의 토큰 수와 글자/토큰, 챗봇 월 요금 어림 |
+| 2 | `token_cost.py` | M3: 토크나이저 4종의 토큰 수와 글자/토큰, 챗봇 월 요금 추정 |
 | 2 | `next_word_game.py` | M4: 다음 토큰 후보와 확률, 속담 이어 말하기 채점(Instruct vs Base), 온도별 뽑기 |
 | 2 | `llm_sentiment.py` `llm_classify.py` | M5: 학습 없이 프롬프트로 분류(영화 리뷰, 데이터 5종), 예시·보정·라벨 단어, 리더보드 |
 | 2 | `inspect_tokenizer.py` `mini_transformer.py` `gen_params_sweep.py` `kv_cache_bench.py` | 토큰 비교, 미니 트랜스포머, 생성 설정 비교표, KV Cache 측정(부록·5·6회차) |
 | 5 | `prompt_utils.py` `scorer.py` `benchmark.py` `scoreboard.py` `dataset_tool.py` `judge.py` | 프롬프트(평가·학습 공용), 채점, 하네스, 성능 기록표, 문항 점검·병합, LLM 채점(도전) |
 | 5 | `field_report.py` | 필드별 점수를 분류·추출로 나눠 보고 1회차 분류기와 같은 문항에서 비교 |
-| 5~7 | `sweep.py` | 손잡이 실험: 설정 하나(형식 강제·예시 수·템플릿·온도·최대 길이·규칙 파일·모델·정밀도, 6회차 top-k·문맥 길이, 7회차 Adapter)를 바꿔 같은 문항으로 비교표·그림 |
+| 5~7 | `sweep.py` | 설정 비교 실험: 설정 하나(형식 강제·예시 수·템플릿·온도·최대 길이·규칙 파일·모델·정밀도, 6회차 top-k·문맥 길이, 7회차 Adapter)를 바꿔 같은 문항으로 비교표·그림 |
 | 5~7 | `probe.py` | 문제 입력 점검: 오타·은어, 섞인 문의, 프롬프트 주입, 무관 질문, 영어, 긴 입력, 형식 유도, 정보 부족(`data/<도메인>/probes.json`) |
 | 6 | `retrieval.py` `index_builder.py` `rag.py` `hybrid_search.py` `rerank.py` | 분할·인덱스·검색, 검색 품질, 검색 기반 생성·오답 분류, 하이브리드·재순위화(도전) |
-| 6 | `retrieval_sweep.py` | 검색 손잡이 실험: LLM 없이 조각 크기·겹침·분할 방식·임베딩·키워드 비중을 바꿔 Recall@k·MRR 비교(코랩 `notebooks/s06_colab.ipynb`) |
+| 6 | `retrieval_sweep.py` | 검색 설정 비교 실험: LLM 없이 청크 크기·중첩·분할 방식·임베딩·키워드 비중을 바꿔 Recall@k·MRR 비교(코랩 `notebooks/s06_colab.ipynb`) |
 | 7 | `build_train_data.py` `train_lora.py` `plot_loss.py` `merge_adapter.py` | 학습 데이터, LoRA/QLoRA 학습, Loss 판독, Adapter 병합(도전) |
 
 ## 실습 코드 세 종류
@@ -68,7 +68,7 @@ course/
 |---|---|---|
 | 실행·비교 | `src/` | 완성 스크립트를 옵션을 바꿔 가며 실행 → 결과 숫자·그림을 비교해 해석 |
 | 보조 실험 | `experiments/sNN/` | 원리를 눈으로 확인하는 짧은 완성 코드(층별 모양, 다음 토큰 확률, Self-Attention, 생성 설정, Chat Template, 채점 규칙). 옵션으로 조건을 바꿔 봄 |
-| 해보기·사건 카드 | `tasks/` | 상황(문제)이 주어지고, 손잡이(하이퍼파라미터·설정)를 바꿔 돌린 결과로 팀이 판단해 근거와 함께 기록 |
+| 해보기·사건 카드 | `tasks/` | 상황(문제)이 주어지고, 설정(하이퍼파라미터·설정)를 바꿔 돌린 결과로 팀이 판단해 근거와 함께 기록 |
 
 ## 빠른 시작
 
@@ -79,5 +79,5 @@ python src/nn_dense.py                  # 1회차 실습 A
 python src/nn_cnn.py                    # 1회차 실습 B
 python experiments/s01/next_token.py    # 1회차 실습 E
 python src/benchmark.py --limit 3       # 하네스 동작 확인(5회차부터)
-python src/sweep.py shots 0 2 --limit 5  # 손잡이 실험(예시 개수 0 대 2)
+python src/sweep.py shots 0 2 --limit 5  # 설정 비교 실험(예시 개수 0 대 2)
 ```

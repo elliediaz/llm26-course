@@ -1,14 +1,14 @@
-"""6회차 검색 손잡이 실험: LLM 없이 검색만 바꿔 가며 Recall@k·MRR을 잼(개인 CPU 서버에서도 돌아감)
+"""6회차 검색 설정 비교 실험: LLM 없이 검색만 바꿔 가며 Recall@k·MRR을 잼(개인 CPU 서버에서도 돌아감)
 
-  python src/retrieval_sweep.py size 200 500 1000 2000                 # 고정 길이 조각 크기(겹침 100)
-  python src/retrieval_sweep.py overlap 0 50 100 250 --size 500        # 겹침 크기
+  python src/retrieval_sweep.py size 200 500 1000 2000                 # 고정 길이 청크 크기(중첩 100)
+  python src/retrieval_sweep.py overlap 0 50 100 250 --size 500        # 중첩 크기
   python src/retrieval_sweep.py strategy fixed sentence                # 분할 방식
   python src/retrieval_sweep.py embed nlpai-lab/KURE-v1 BAAI/bge-m3 keyword   # 임베딩 모델과 키워드(BM25)
   python src/retrieval_sweep.py hybrid 0 0.3 0.5 0.7 1                 # 키워드 비중(0 벡터만 ~ 1 키워드만)
   python src/retrieval_sweep.py size 300 1000 --dataset data/G/probes.json   # 다른 질문 묶음(gold_doc_ids가 있는 문항만)
 
-볼 것 : Recall@1·3·5(정답 문서가 상위 k 안에 든 비율), MRR(첫 정답 순위의 역수 평균), 조각 수, 인덱스 시간, 유형별 Recall@3
-결과 : results/retrieval_<손잡이>.json, results/fig/retrieval_<손잡이>.png
+볼 것 : Recall@1·3·5(정답 문서가 상위 k 안에 든 비율), MRR(첫 정답 순위의 역수 평균), 청크 수, 인덱스 시간, 유형별 Recall@3
+결과 : results/retrieval_<설정>.json, results/fig/retrieval_<설정>.png
 메모 : 인덱스를 파일로 만들지 않고 메모리에서만 비교함. 고른 설정은 config.py에 적고 index_builder.py로 실제 인덱스를 만듦
 """
 from __future__ import annotations
@@ -23,7 +23,7 @@ import config
 import retrieval
 import utils
 
-KNOBS = {"size": "고정 길이 조각 크기(글자)", "overlap": "조각 겹침(글자)", "strategy": "분할 방식",
+KNOBS = {"size": "고정 길이 청크 크기(글자)", "overlap": "청크 중첩(글자)", "strategy": "분할 방식",
          "embed": "임베딩 모델", "hybrid": "키워드(BM25) 비중"}
 
 
@@ -105,7 +105,7 @@ def main() -> None:
     ap.add_argument("--overlap", type=int, default=config.CHUNK["fixed"]["overlap"])
     ap.add_argument("--strategy", default="fixed", choices=["fixed", "sentence"])
     ap.add_argument("--embed", default=config.EMBED_MODEL)
-    ap.add_argument("--dataset", help="기본: data/<도메인>/test_dataset.json(gold_doc_ids가 있는 문항만 셈)")
+    ap.add_argument("--dataset", help="기본: data/<도메인>/test_dataset.json(gold_doc_ids가 있는 문항만 집계)")
     ap.add_argument("--with-updates", action="store_true", help="corpus_updates/의 새 문서도 넣음")
     ap.add_argument("--tag", default="")
     a = ap.parse_args()
@@ -113,7 +113,7 @@ def main() -> None:
     docs = retrieval.load_corpus(with_updates=a.with_updates)
     items = utils.read_json(a.dataset or config.data_dir() / "test_dataset.json")
     n_gold = sum(1 for it in items if it.get("gold_doc_ids"))
-    print(f"[검색 손잡이] {KNOBS[a.knob]} : {' · '.join(a.values)} | 도메인 {config.DOMAIN} · 문서 {len(docs)}건 · 근거 문서가 있는 문항 {n_gold}건")
+    print(f"[검색 설정] {KNOBS[a.knob]} : {' · '.join(a.values)} | 도메인 {config.DOMAIN} · 문서 {len(docs)}건 · 근거 문서가 있는 문항 {n_gold}건")
     import model_utils
     emb_cache = {}
 
@@ -142,12 +142,12 @@ def main() -> None:
         idx = MemIndex(chunks, embedder(emb_name), alpha)
         r = evaluate(idx, items)
         lens = [len(c["text"]) for c in chunks]
-        row = {"값": v.split("/")[-1], "조각 수": len(chunks), "조각 길이(중앙)": sorted(lens)[len(lens) // 2],
+        row = {"값": v.split("/")[-1], "청크 수": len(chunks), "청크 길이(중앙)": sorted(lens)[len(lens) // 2],
                "Recall@1": r.get("recall@1"), "Recall@3": r.get("recall@3"), "Recall@5": r.get("recall@5"), "MRR": r.get("mrr"),
                "인덱스(초)": idx.build_sec, **{f"R@3 {t}": x for t, x in (r.get("recall@3_by_type") or {}).items()}}
         rows.append(row)
         detail[v] = r
-        print(f"  {row['값']:>12s} | 조각 {len(chunks):4d}개 | R@1 {row['Recall@1']} · R@3 {row['Recall@3']} · MRR {row['MRR']} | {idx.build_sec}s")
+        print(f"  {row['값']:>12s} | 청크 {len(chunks):4d}개 | R@1 {row['Recall@1']} · R@3 {row['Recall@3']} · MRR {row['MRR']} | {idx.build_sec}s")
     print()
     utils.print_table(rows)
     name = f"retrieval_{a.knob}" + (f"_{a.tag}" if a.tag else "")
@@ -156,7 +156,7 @@ def main() -> None:
     fig = utils.fig_path(f"{name}.png")
     plot(rows, a.knob, fig)
     best = max(rows, key=lambda r: (r["Recall@3"] or 0, r["MRR"] or 0))
-    print(f"\nRecall@3 기준으로는 [{best['값']}] 설정이 가장 높음. 조각 수(인덱스 크기)와 프롬프트 길이도 같이 볼 것")
+    print(f"\nRecall@3 기준으로는 [{best['값']}] 설정이 가장 높음. 청크 수(인덱스 크기)와 프롬프트 길이도 같이 볼 것")
     print(f"저장: results/{name}.json · 그림: {fig}")
 
 

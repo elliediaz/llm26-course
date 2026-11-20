@@ -52,7 +52,7 @@ new = ["이번 패치 개꿀이네 너프 먹었네", "서리칼날 공격력 �
 utils.print_table([lineage.oov_rate(sents, new)]);
 
 # %% [markdown]
-# **해결: 서브워드(BPE, Sennrich et al. 2016).** 자주 붙어 나오는 글자 쌍을 반복해서 합쳐 어휘를 만든다. 처음 보는 단어도 아는 조각으로 쪼개지므로 OOV가 없어진다. 아래는 도메인 문서로 직접 학습한 미니 BPE다.
+# **해결: 서브워드(BPE, Sennrich et al. 2016).** 자주 붙어 나오는 글자 쌍을 반복해서 합쳐 어휘를 만든다. 처음 보는 단어도 아는 청크로 쪼개지므로 OOV가 없어진다. 아래는 도메인 문서로 직접 학습한 미니 BPE다.
 
 # %%
 bpe = lineage.MiniBPE(merges=400).fit(sents)
@@ -69,7 +69,7 @@ subprocess.run([sys.executable, os.path.join(os.path.dirname(config.__file__), "
 subprocess.run([sys.executable, os.path.join(os.path.dirname(config.__file__), "inspect_tokenizer.py"), "--text", "녹스 궁 쿨 몇초임", "--models", config.SMALL_MODEL_ID, config.EMBED_MODEL])
 
 # %% [markdown]
-# **읽는 법.** 바이트 단위 BPE(Qwen 등)는 한글 한 글자(3바이트)가 조각 2개로 갈라지기도 한다(조각을 하나씩 풀면 `�`로 보임). 같은 뜻이라도 한국어가 토큰을 더 쓰면 같은 컨텍스트에 덜 들어가고 비용은 더 든다.
+# **읽는 법.** 바이트 단위 BPE(Qwen 등)는 한글 한 글자(3바이트)가 청크 2개로 갈라지기도 한다(청크를 하나씩 풀면 `�`로 보임). 같은 뜻이라도 한국어가 토큰을 더 쓰면 같은 컨텍스트에 덜 들어가고 비용은 더 든다.
 #
 # - **실제 응용:** 모델 선택 기준(4회차)에 한국어 토큰 효율이 들어가는 이유. 6회차에서 검색 결과를 몇 개까지 넣을지 정할 때도 토큰으로 센다
 

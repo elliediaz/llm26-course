@@ -26,7 +26,7 @@ def judge(train: list[float], valid: list[float]) -> list[str]:
         return ["기록이 너무 짧음: 판단 보류"]
     first, last = statistics.mean(train[:3]), statistics.mean(train[-3:])
     drop = (first - last) / first if first else 0
-    half = train[len(train) // 2:]                     # 뒤쪽 절반의 흔들림만 봄(초반의 빠른 하강은 널뛰기가 아님)
+    half = train[len(train) // 2:]                     # 뒤쪽 절반의 편차만 봄(초반의 빠른 하강은 널뛰기가 아님)
     diffs = [abs(b - a) for a, b in zip(half, half[1:])]
     ups = sum(b > a for a, b in zip(half, half[1:])) / max(1, len(half) - 1)
     if drop < 0.1:

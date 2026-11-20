@@ -2,7 +2,7 @@
 
   python src/token_cost.py                                # 표본 문장 8종 × 토크나이저 4종
   python src/token_cost.py --text "점메추 해 줘" "Recommend lunch"   # 쪼개진 모양 보기
-  python src/token_cost.py --traffic delivery --daily 20000 --price 2000   # 우리 서비스 한 달 요금 어림
+  python src/token_cost.py --traffic delivery --daily 20000 --price 2000   # 우리 서비스 한 달 요금 추정
 
 토크나이저 4종
   A.X-4.0-Light  한국어 데이터를 많이 넣은 국내 모델(4회차 이후 메인 후보)
@@ -36,7 +36,7 @@ def pieces(tok, text: str) -> list[str]:
     out = []
     for i in ids:
         p = tok.decode([i])
-        out.append(p.replace("\ufffd", "·") or "_")      # ·: 한 글자가 여러 토큰으로 갈라진 조각, _: 띄어쓰기만 담은 토큰
+        out.append(p.replace("\ufffd", "·") or "_")      # ·: 한 글자가 여러 토큰으로 갈라진 청크, _: 띄어쓰기만 담은 토큰
     return out
 
 
@@ -55,7 +55,7 @@ def main():
     ap.add_argument("--text", nargs="*", help="쪼개진 모양을 볼 문장")
     ap.add_argument("--models", nargs="*", default=list(TOKENIZERS), choices=list(TOKENIZERS))
     ap.add_argument("--traffic", default="delivery", choices=["delivery", "smishing", "news", "game"],
-                    help="요금 어림에 쓸 문장 묶음(data/s02)")
+                    help="요금 추정에 쓸 문장 묶음(data/s02)")
     ap.add_argument("--daily", type=int, default=10000, help="하루 요청 수")
     ap.add_argument("--answer-ratio", type=float, default=3.0, help="답변 길이 = 질문 토큰 × 이 값")
     ap.add_argument("--system", help="요청마다 붙는 지시문(시스템 프롬프트) 텍스트 파일. 없으면 기본 상담원 지시문")
@@ -95,7 +95,7 @@ def main():
         month = per_req * a.daily * 30
         cost.append({"토크나이저": n, "지시문": sys_n, "질문 평균": f"{q:.1f}", "요청당": f"{per_req:.0f}",
                      "월 토큰": f"{month / 1e6:.1f}백만", "월 요금": f"{month / 1e6 * a.price:,.0f}원"})
-    print(f"\n월 요금 어림(토큰 수): 하루 {a.daily:,}건 · 지시문 {len(system)}자 · 답변 = 질문×{a.answer_ratio} · "
+    print(f"\n월 요금 추정(토큰 수): 하루 {a.daily:,}건 · 지시문 {len(system)}자 · 답변 = 질문×{a.answer_ratio} · "
           f"가상 단가 {a.price:,.0f}원/백만 토큰")
     utils.print_table(cost)
     utils.write_json(utils.result_path("token_cost.json"), {"rows": rows, "chars_per_token": per_cat, "cost": cost, "args": vars(a)})

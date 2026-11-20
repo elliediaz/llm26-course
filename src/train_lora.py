@@ -7,7 +7,7 @@
   python src/train_lora.py --team team3 --run lr1e3 --lr 1e-3     # 학습률 바꾸기
   python src/train_lora.py --team team3 --run qv --target qv       # LoRA를 붙일 층 바꾸기(qv · qkvo · all)
   python src/train_lora.py --team team3 --run noise30 --data train_noise30.jsonl   # build_train_data.py가 만든 다른 학습 파일
-  python src/train_lora.py --team team3 --run r16_s1 --seed 1  # 같은 설정, 다른 시드(흔들림 폭)
+  python src/train_lora.py --team team3 --run r16_s1 --seed 1  # 같은 설정, 다른 시드(편차 폭)
   python src/train_lora.py --team team3 --run q4 --quant nf4      # 본체 4비트(QLoRA): 메모리와 점수 비교
 
 학습은 휴식 시간과 겹치게 돌린다. config.LORA["max_minutes"]를 넘기면 그때까지 학습한 Adapter를 저장하고 끝낸다.
@@ -68,7 +68,7 @@ def main() -> None:
     ap.add_argument("--target", choices=["qv", "qkvo", "all"], default="qkvo",
                     help="LoRA를 붙일 층: qv(q·v) · qkvo(어텐션 넷, 기본) · all(어텐션 + MLP)")
     ap.add_argument("--data", default="train.jsonl", help="data/<도메인>/ 안의 학습 파일 이름")
-    ap.add_argument("--seed", type=int, default=config.SEED, help="같은 설정을 시드만 바꿔 다시 학습하면 흔들림 폭이 보임")
+    ap.add_argument("--seed", type=int, default=config.SEED, help="같은 설정을 시드만 바꿔 다시 학습하면 편차 폭이 보임")
     a = ap.parse_args()
     utils.set_seed(a.seed)
     out_dir = config.PATHS["adapters"] / a.team / a.run
