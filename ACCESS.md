@@ -49,14 +49,14 @@
 
 ## 팀 서버(5회차부터)
 
-> 갱신 2026-11-20 17:59(한국 시간). 비밀번호는 팀 카드에 있음. 사양을 바꾸면(8회차 A100) 주소가 바뀌므로 다시 확인함
+> 갱신 2026-11-20 20:40(한국 시간). 비밀번호는 팀 카드에 있음. 사양을 바꾸면(8회차 A100) 주소가 바뀌므로 다시 확인함
 
 | 팀 | 접속 주소 | 서버 |
 |---|---|---|
 | T1 | https://zlyxsq4q5cphjb-8888.proxy.runpod.net | RTX PRO 4500 Blackwell |
 | T2 | https://qlh0hpfv3i3l83-8888.proxy.runpod.net | RTX 4090 |
 | T3 | https://g8f1vzosekqbg2-8888.proxy.runpod.net | RTX 4090 |
-| T4 | https://gk0o4xr7qrgbt1-8888.proxy.runpod.net | RTX PRO 6000 Blackwell Server Edition |
+| T4 | https://hqgt8o5g68yef2-8888.proxy.runpod.net | L4 |
 | T5 | https://t0lycllzve1mml-8888.proxy.runpod.net | L4 |
 | T6 | https://cypyz879wkw45q-8888.proxy.runpod.net | L4 |
 | T7 | https://j50vvoiz57lnel-8888.proxy.runpod.net | RTX 4090 |
