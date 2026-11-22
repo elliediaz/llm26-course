@@ -1278,10 +1278,49 @@ def pack() -> None:
     sh("python src/pack_results.py", tail=6)
 
 
+def _self_update() -> None:
+    """수업 저장소에 새로 올라온 내용을 받아 옴(노트북 첫 셀에서 한 번).
+
+    서버를 켤 때도 받아 오지만, 내가 저장한 노트북과 새 노트북이 겹치면 그때는 아무것도 받지 못함.
+    그런 경우에만 내가 고친 파일을 my/notebooks_backup/ 에 남기고 새 내용으로 바꾼 뒤 다시 받음.
+    """
+    if os.environ.get("LAB_NO_UPDATE") or not (ROOT / ".git").exists():
+        return
+    import shutil
+
+    def git(*args):
+        return subprocess.run(["git", "-C", str(ROOT), "-c", "core.quotepath=false", *args], capture_output=True, text=True, timeout=25)
+
+    try:
+        before = (SRC / "lab.py").stat().st_mtime
+        r = git("pull", "-q", "--ff-only")
+        moved = []
+        if r.returncode != 0 and "overwritten" in r.stderr:
+            names = [n for n in git("diff", "--name-only").stdout.splitlines() if n.strip()]
+            backup = MY / "notebooks_backup"
+            backup.mkdir(parents=True, exist_ok=True)
+            stamp = time.strftime("%m%d_%H%M")
+            for n in names:
+                if (ROOT / n).is_file():
+                    shutil.copy2(ROOT / n, backup / f"{stamp}_{Path(n).name}")
+                    moved.append(Path(n).name)
+            if names:
+                git("checkout", "-q", "--", *names)
+                git("pull", "-q", "--ff-only")
+        if moved:
+            _msg("수업 자료가 새로 올라와 받았음. 내가 고친 파일(" + _e(", ".join(moved)) + ")은 <code>my/notebooks_backup/</code> 에 남기고 새 내용으로 바꿈. "
+                 "지금 연 노트북이 바뀐 파일이면 탭을 닫고 왼쪽 파일 창에서 다시 엶. 내 문서 · 설정 · 기록은 그대로 있음", "warn")
+        if (SRC / "lab.py").stat().st_mtime != before:
+            _msg("실습 도구가 새 버전으로 바뀜. 위쪽 메뉴 Kernel → Restart Kernel 을 누른 뒤 0단계 셀을 다시 실행함", "warn")
+    except Exception:
+        pass                                               # 갱신에 실패해도 실습은 지금 있는 파일로 계속함
+
+
 def start(session: int = 6) -> None:
     """노트북 첫 셀에서 부름: GPU 와 내 프로젝트 상태를 함께 보여 줌."""
     utils.set_seed()
     MY.mkdir(parents=True, exist_ok=True)
+    _self_update()
     c, ds, qz, rr, g = cfg(), _read_docs(), quiz(), runs(show=False), goal()
     v = gpu()
     def st(ok, text):
