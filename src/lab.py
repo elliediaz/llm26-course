@@ -22,7 +22,7 @@ import re
 import subprocess
 import sys
 import time
-from contextlib import nullcontext
+from contextlib import contextmanager, nullcontext, redirect_stderr, redirect_stdout
 from pathlib import Path
 
 if Path("/workspace/.cache/huggingface").exists():
@@ -98,6 +98,25 @@ _PAL = ["#2f6feb", "#d9730d", "#1a7f37", "#8250df", "#cf222e", "#0f8a8a", "#a850
 
 def _e(s) -> str:
     return html.escape(str(s))
+
+
+class Guide(Exception):
+    """앞 단계가 빠졌거나 값이 맞지 않을 때 내는 안내. 노트북 셀에는 긴 오류 대신 이 한 줄만 보임."""
+
+    def _render_traceback_(self):
+        return [f"실행하지 못함 : {self}"]
+
+
+def _md(s) -> str:
+    """모델의 답을 화면에 넣을 때 씀. HTML 로 안전하게 바꾼 뒤 **굵게** 표시만 살림."""
+    return re.sub(r"\*\*([^*\n]{1,80})\*\*", r"<b>\1</b>", _e(s))
+
+
+def _v(x, nd: int = 2) -> str:
+    """표와 보고서에 넣을 값. 비어 있으면 '-' 로 적음."""
+    if x is None or x == "":
+        return "-"
+    return f"{x:.{nd}f}" if isinstance(x, float) else str(x)
 
 
 class _Sink:
@@ -193,7 +212,8 @@ def _table(rows: list[dict], cols: list[str] | None = None, mark: int | None = N
         bg = "background:rgba(47,111,235,0.12);" if mark == i else ""
         tds = []
         for c in cols:
-            val = str(r.get(c, ""))
+            val = r.get(c, "")
+            val = "-" if val is None else str(val)
             raw = val.startswith("<")
             nowrap = ";white-space:nowrap" if (len(val) < 16 or val.startswith("<span style='display:inline-block")) else ""
             tds.append(f"<td style='text-align:left;padding:4px 10px;border-bottom:1px solid {_C['bd']};vertical-align:top{nowrap}'>{val if raw else _e(val)}</td>")
@@ -248,7 +268,7 @@ def _panel(controls: dict, run, button: str = "실행", auto: bool = False, layo
         try:
             run(**{k: w.value for k, w in controls.items()})
         except Exception as ex:                              # 학생 화면에는 긴 오류 대신 한 줄 원인만 보임
-            _msg(f"<b>실행하지 못함</b> : {_e(type(ex).__name__)} · {_e(ex)}", "bad")
+            _msg("<b>실행하지 못함</b> : " + ("" if isinstance(ex, Guide) else f"{_e(type(ex).__name__)} · ") + _e(ex), "bad")
         finally:
             if not _DIRECT:
                 _SINKS.pop()
@@ -333,13 +353,32 @@ def note(text: str) -> None:
 
 
 # ------------------------------------------------------------------ GPU · 모델
+@contextmanager
+def _quiet():
+    """모델을 올리는 동안 라이브러리가 내는 안내문(내려받기 경고 · 진행 표시)을 화면에 내지 않음. 결과는 lab 이 따로 보여 줌."""
+    import logging
+    import warnings
+    names = ["huggingface_hub", "transformers", "sentence_transformers", "peft", "accelerate"]
+    old = {n: logging.getLogger(n).level for n in names}
+    for n in names:
+        logging.getLogger(n).setLevel(logging.ERROR)
+    try:
+        with warnings.catch_warnings(), redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+            warnings.simplefilter("ignore")
+            yield
+    finally:
+        for n, lv in old.items():
+            logging.getLogger(n).setLevel(lv)
+
+
 def _vram() -> dict | None:
     try:
         import torch
         if not torch.cuda.is_available():
             return None
         free, total = torch.cuda.mem_get_info()
-        return {"name": torch.cuda.get_device_name(0), "total": total / 2**30, "used": (total - free) / 2**30, "free": free / 2**30}
+        return {"name": torch.cuda.get_device_name(0), "total": total / 2**30, "used": (total - free) / 2**30, "free": free / 2**30,
+                "mine": torch.cuda.memory_reserved() / 2**30}
     except Exception:
         return None
 
@@ -375,8 +414,11 @@ def gpu(show: bool = True) -> dict | None:
         fit = "올릴 수 있음" if m["gb"] + 2 <= v["free"] else ("4bit 로 올릴 수 있음" if m["gb"] * 0.4 + 2 <= v["free"] else "여유 부족")
         menu.append({"모델": m["id"], "필요 메모리": f"약 {m['gb']} GB", "지금 여유로": fit, "설명": m["note"]})
     usage = "사용 %.1f GB · 여유 %.1f GB" % (v["used"], v["free"])
+    other = v["used"] - v.get("mine", v["used"])
+    outside = (f"<div style='margin:0 0 8px;color:{_C['warn']}'>이 노트북 밖에서 GPU 메모리 약 {other:.0f} GB 를 쓰고 있음. 다른 노트북을 열어 두었다면 "
+               "왼쪽 세로 메뉴의 실행 목록(■ 모양)에서 쓰지 않는 노트북의 커널을 끄면(Shut Down) 비워짐</div>") if other >= 3 else ""
     body = (f"<div style='font-size:15px;font-weight:700'>{_e(v['name'])} · 전체 {v['total']:.0f} GB</div>"
-            f"<div style='margin:8px 0'>{_bar(frac, usage, col, 420)}</div>"
+            f"<div style='margin:8px 0'>{_bar(frac, usage, col, 420)}</div>" + outside
             + (_table(rows) if rows else f"<span style='color:{_C['mute']}'>아직 올린 모델이 없음</span>")
             + "<div style='height:8px'></div>" + _table(menu))
     _show(_card("GPU 계기판", body, col))
@@ -408,9 +450,11 @@ def load(model_id: str | None = None, quant: str = "bf16", name: str | None = No
             return None
         _msg(f"{_e(model_id)} 를 처음 내려받음. 크기에 따라 1~5분 걸림")
         from huggingface_hub import snapshot_download
-        snapshot_download(model_id)
+        with _quiet():
+            snapshot_download(model_id)
     import model_utils
-    model, tok = model_utils.load_llm(model_id, quant)
+    with _quiet():
+        model, tok = model_utils.load_llm(model_id, quant)
     tok.padding_side = "left"
     v1 = _vram()
     S.models[key] = {"id": model_id, "quant": quant, "model": model, "tok": tok,
@@ -435,7 +479,7 @@ def unload(name: str | None = None) -> None:
 def use(name: str) -> None:
     """올라와 있는 모델 가운데 지금 쓸 모델을 고름."""
     if name not in S.models:
-        raise ValueError(f"'{name}' 은 올라와 있지 않음. 올라온 모델: {list(S.models)}")
+        raise Guide(f"'{name}' 은 올라와 있지 않음. 올라온 모델: {list(S.models)}")
     S.current = name
     save_cfg(model=S.models[name]["id"], quant=S.models[name]["quant"])
 
@@ -443,12 +487,12 @@ def use(name: str) -> None:
 def _m(name: str | None = None) -> dict:
     if name:
         if name not in S.models:
-            raise ValueError(f"'{name}' 은 올라와 있지 않음. 올라온 모델: {list(S.models)}")
+            raise Guide(f"'{name}' 은 올라와 있지 않음. 올라온 모델: {list(S.models)}")
         return S.models[name]
     if S.current is None:
         c = cfg()
         if load(c["model"], c["quant"]) is None:
-            raise RuntimeError("모델을 올리지 못함. GPU 계기판(lab.gpu())을 확인함")
+            raise Guide("모델을 올리지 못함. GPU 계기판(lab.gpu())을 확인함")
     return S.models[S.current]
 
 
@@ -480,16 +524,18 @@ def _attach(entry: dict, run: str):
     from peft import PeftModel
     path = _adapter_dir(run)
     if not (path / "adapter_config.json").exists():
-        raise FileNotFoundError(f"Adapter '{run}' 이 없음. lab.runs() 로 이름을 확인함")
+        raise Guide(f"Adapter '{run}' 이 없음. lab.runs() 로 이름을 확인함")
     info = utils.read_json(path / "train_config.json") if (path / "train_config.json").exists() else {}
     if info.get("base_model") and info["base_model"] != entry["id"]:
-        raise ValueError(f"Adapter '{run}' 은 {info['base_model']} 로 학습했음. 지금 모델은 {entry['id']} 임. 같은 모델을 올린 뒤 씀")
+        raise Guide(f"Adapter '{run}' 은 {info['base_model']} 로 학습했음. 지금 모델은 {entry['id']} 임. 같은 모델을 올린 뒤 씀")
     if entry["peft"] is None:
-        entry["peft"] = PeftModel.from_pretrained(entry["model"], str(path), adapter_name=run)
+        with _quiet():
+            entry["peft"] = PeftModel.from_pretrained(entry["model"], str(path), adapter_name=run)
         entry["peft"].eval()
         entry["adapters"] = {run}
     elif run not in entry["adapters"]:
-        entry["peft"].load_adapter(str(path), adapter_name=run)
+        with _quiet():
+            entry["peft"].load_adapter(str(path), adapter_name=run)
         entry["adapters"].add(run)
     entry["peft"].set_adapter(run)
     return entry["peft"]
@@ -520,7 +566,7 @@ def _generate(entry: dict, convs: list[list[dict]], adapter: str | None = None, 
             enc = tok.apply_chat_template(part, add_generation_prompt=True, return_dict=True, return_tensors="pt",
                                           padding=True, **config.CHAT_TEMPLATE_KWARGS).to(model.device)
             t0 = time.perf_counter()
-            with torch.inference_mode():
+            with torch.inference_mode(), _quiet():
                 out = model.generate(**enc, **gen)
             sec = time.perf_counter() - t0
             width = enc["input_ids"].shape[1]
@@ -549,7 +595,7 @@ def _safe(name: str) -> str:
 def add_doc(title: str, text: str, source: str = "직접 작성") -> Path:
     """문서 한 건을 my/docs/ 에 넣음."""
     if len(text.strip()) < 20:
-        raise ValueError("본문이 너무 짧음(20자 이상)")
+        raise Guide("본문이 너무 짧음(20자 이상)")
     DOCS.mkdir(parents=True, exist_ok=True)
     p = DOCS / f"{_safe(title)}.md"
     p.write_text(f"# {title.strip()}\n\n{text.strip()}\n\n(출처: {source})\n", encoding="utf-8")
@@ -565,7 +611,7 @@ def add_wiki(title: str, max_chars: int = 15000, lang: str = "ko") -> Path:
     pages = r.json().get("query", {}).get("pages", [])
     text = (pages[0].get("extract") or "").strip() if pages else ""
     if len(text) < 100:
-        raise ValueError(f"위키백과에서 '{title}' 문서를 찾지 못함. 문서 제목을 정확히 적음")
+        raise Guide(f"위키백과에서 '{title}' 문서를 찾지 못함. 문서 제목을 정확히 적음")
     real = pages[0].get("title", title)
     text = re.sub(r"\n{3,}", "\n\n", re.sub(r"^=+\s*(.*?)\s*=+$", r"## \1", text, flags=re.M))[:max_chars]
     return add_doc(real, text, f"위키백과 「{real}」, CC BY-SA 4.0, https://{lang}.wikipedia.org/wiki/{real.replace(' ', '_')}")
@@ -664,7 +710,7 @@ def docs_panel():
     def f4():
         items = up.value if isinstance(up.value, (list, tuple)) else [{"name": k, "content": v["content"]} for k, v in up.value.items()]
         if not items:
-            raise ValueError("먼저 '파일 올리기' 단추로 파일을 고름")
+            raise Guide("먼저 '파일 올리기' 단추로 파일을 고름")
         DOCS.mkdir(parents=True, exist_ok=True)
         for it in items:
             (DOCS / _safe(Path(it["name"]).stem)).with_suffix(".md").write_bytes(bytes(it["content"]))
@@ -709,7 +755,8 @@ def _embedder():
     c = cfg()
     if S.embedder is None or S.embed_id != c["embed"]:
         import model_utils
-        S.embedder, S.embed_id = model_utils.load_embedder(c["embed"]), c["embed"]
+        with _quiet():
+            S.embedder, S.embed_id = model_utils.load_embedder(c["embed"]), c["embed"]
     return S.embedder
 
 
@@ -722,7 +769,7 @@ def _ensure_index() -> None:
         return
     chunks = _make_chunks(c)
     if not chunks:
-        raise RuntimeError("넣은 문서가 없음. '내 재료 넣기' 단계에서 문서를 먼저 넣음")
+        raise Guide("넣은 문서가 없음. '내 재료 넣기' 단계에서 문서를 먼저 넣음")
     from rank_bm25 import BM25Okapi
     emb = _embedder().encode([x["text"] for x in chunks], normalize_embeddings=True, batch_size=64, show_progress_bar=False)
     S.chunks, S.emb, S.bm25, S.sig = chunks, np.asarray(emb, dtype="float32"), BM25Okapi([_tok(x["text"]) for x in chunks]), sig
@@ -753,7 +800,7 @@ def _context(hits: list[dict]) -> str:
 
 
 def _mark(text: str, words: list[str], color: str = "#fff3a3") -> str:
-    out = _e(text)
+    out = _md(text)
     for w in sorted({w for w in words if len(w) >= 2}, key=len, reverse=True)[:30]:
         out = re.sub(re.escape(_e(w)), lambda m: f"<span style='background:{color};color:#111'>{m.group(0)}</span>", out)
     return out
@@ -763,12 +810,18 @@ def chunk_panel():
     """자르기 조절판: 방식 · 크기 · 겹침을 바꾸면 청크 경계와 길이 분포가 바로 바뀜."""
     c = cfg()
     names = [(d["title"][:30], d["doc_id"]) for d in _read_docs()] or [("(문서 없음)", "")]
+    pick = _drop("미리 볼 문서", names) if HAVE_W else None
 
     def run(method, size, overlap, doc, keep):
         cc = {**c, "method": method, "size": size, "overlap": overlap}
         chunks = _make_chunks(cc)
         if not chunks:
-            raise RuntimeError("넣은 문서가 없음")
+            raise Guide("넣은 문서가 없음. '내 재료 넣기' 단계에서 문서를 먼저 넣음")
+        now = [(d["title"][:30], d["doc_id"]) for d in _read_docs()]
+        if pick is not None and [o[1] for o in pick.options] != [o[1] for o in now]:      # 조절판을 띄운 뒤 문서가 바뀌었으면 목록을 새로 채움
+            pick.options = now
+        if doc not in [o[1] for o in now]:
+            doc = now[0][1]
         lens = [len(x["text"]) for x in chunks]
         mine = [x for x in chunks if x["doc_id"] == doc][:8]
         blocks = "".join(
@@ -790,7 +843,7 @@ def chunk_panel():
     return _panel({"method": _drop("자르는 방식", [("문장 경계로 묶기(sentence)", "sentence"), ("글자 수로 자르기(fixed)", "fixed")], c["method"]),
                    "size": _slider("청크 크기(글자)", int(c["size"]), 100, 1200, 50),
                    "overlap": _slider("겹침(글자, fixed)", int(c["overlap"]), 0, 300, 10),
-                   "doc": _drop("미리 볼 문서", names),
+                   "doc": pick if pick is not None else names[0][1],
                    "keep": _check("이 설정을 내 설정으로 저장", False)}, run, "잘라 보기", auto=bool(_read_docs()))
 
 
@@ -820,7 +873,7 @@ def map_panel():
         ax.set_title(f"청크 {len(S.chunks)}개의 의미 지도(가까울수록 뜻이 비슷함) · 문서 {len(ids)}건")
         ax.set_xticks([])
         ax.set_yticks([])
-        ax.legend(fontsize=8, loc="best", ncol=2)
+        ax.legend(fontsize=8, loc="upper center", bbox_to_anchor=(0.5, -0.02), ncol=5, frameon=False)
         _showfig(fig)
         if q.strip():
             _show(_table([{"순위": h["rank"], "문서": h["title"][:24], "의미 유사도": f"{h['vec']:.3f}", "내용": h["text"][:90] + "…"} for h in hits]))
@@ -834,7 +887,7 @@ def search_panel():
 
     def run(q, k, kw, keep):
         if not q.strip():
-            raise ValueError("질문을 적음")
+            raise Guide("질문을 적음")
         hits = search(q, k, kw)
         words = re.findall(r"[0-9A-Za-z가-힣]{2,}", q)
         rows = [{"순위": h["rank"], "문서": _e(h["title"][:22]),
@@ -883,7 +936,7 @@ def _answer_card(res: dict, title: str, color: str | None = None, marks: list[st
         src = "근거 : " + " · ".join(f"{h['rank']}. {_e(h['title'][:16])}({h['score']:.2f})" for h in res["hits"]) + "<br>"
     foot = f"{src}입력 {res['n_in']}토큰 · 출력 {res['n_out']}토큰 · {res['sec']}초 · 초당 {res['tps']}토큰" + \
            (f" · Adapter {_e(res['adapter'])}" if res.get("adapter") else "")
-    body = _mark(res["answer"], marks, "#c8f7c5") if marks else _e(res["answer"])
+    body = _mark(res["answer"], marks, "#c8f7c5") if marks else _md(res["answer"])
     return _card(title, f"<div style='max-height:260px;overflow-y:auto'>{body}</div>", color, foot)
 
 
@@ -893,7 +946,7 @@ def ask_panel():
 
     def run(q, k, kw, both, prompt):
         if not q.strip():
-            raise ValueError("질문을 적음")
+            raise Guide("질문을 적음")
         cards = []
         if both:
             cards.append(_answer_card(ask(q, rag=False, show=False), "문서 없이 답함", _C["warn"]))
@@ -945,7 +998,7 @@ def run_quiz(rag: bool = True, k: int | None = None, kw: float | None = None, mo
     """확인 질문 전체를 지금 설정으로 풀고 채점함. 점수는 기대 단어가 답에 들어간 비율."""
     items = quiz()
     if not items:
-        raise RuntimeError("확인 질문이 없음. '내 확인 질문' 단계에서 먼저 적음")
+        raise Guide("확인 질문이 없음. '내 확인 질문' 단계에서 먼저 적음")
     c = cfg()
     e = _m(model)
     adapter = c.get("adapter") if adapter == "내 설정" else adapter
@@ -971,7 +1024,8 @@ def run_quiz(rag: bool = True, k: int | None = None, kw: float | None = None, mo
         _log("확인 질문", label=res["label"], score=res["score"], found=res["found"], sec=res["sec"], n_in=res["n_in"], model=_short(e["id"], e["quant"]),
              adapter=adapter, rag=rag, k=int(k or c["k"]), kw=float(c["kw"] if kw is None else kw), method=c["method"], size=int(c["size"]))
     if show:
-        head = f"{res['label']} · 답 점수 {res['score']} · 검색 적중 {res['found']} · 평균 {res['sec']}초 · 입력 {res['n_in']}토큰"
+        head = (f"{res['label']} · 답 점수 {_v(res['score'])}" + (f" · 검색 적중 {_v(res['found'])}" if res["found"] is not None else "")
+                + f" · 평균 {res['sec']}초 · 입력 {res['n_in']}토큰")
         _show(_card(head, _table(rows)))
     return _q(res, show)
 
@@ -1021,7 +1075,7 @@ _PARAMS = {"k": "붙일 청크 수(top_k)", "kw": "키워드 비중", "size": "�
 def experiment(param: str, values: list, show: bool = True) -> list[dict]:
     """설정 하나만 여러 값으로 바꿔 가며 확인 질문을 풀고, 점수 · 검색 적중 · 응답 시간을 한 그림에 그림."""
     if param not in _PARAMS:
-        raise ValueError(f"바꿀 수 있는 설정: {list(_PARAMS)}")
+        raise Guide(f"바꿀 수 있는 설정: {list(_PARAMS)}")
     c = cfg()
     keep, keep_model = dict(c), S.current
     out = []
@@ -1078,7 +1132,7 @@ def experiment_panel():
     def run(param, text):
         vals = parse(param, text or presets[param])
         if len(vals) < 2:
-            raise ValueError("값을 둘 이상 적음(쉼표로 구분). 모델 비교는 모델을 둘 이상 올린 뒤 실행")
+            raise Guide("값을 둘 이상 적음(쉼표로 구분). 모델 비교는 모델을 둘 이상 올린 뒤 실행")
         experiment(param, vals)
 
     return _panel({"param": _drop("바꿀 설정", [(v, k) for k, v in _PARAMS.items()], "k"),
@@ -1127,7 +1181,7 @@ def chat(rag: bool = True):
             turns.append(f"<div style='text-align:right;margin:6px 0'><span style='display:inline-block;background:{_C['acc']};color:#fff;"
                          f"padding:6px 10px;border-radius:10px;max-width:75%;text-align:left'>{_e(q)}</span></div>"
                          f"<div style='margin:6px 0'><span style='display:inline-block;background:{_C['bg']};border:1px solid {_C['bd']};"
-                         f"padding:6px 10px;border-radius:10px;max-width:85%;white-space:pre-wrap'>{_e(r['answer'])}{src}"
+                         f"padding:6px 10px;border-radius:10px;max-width:85%;white-space:pre-wrap'>{_md(r['answer'])}{src}"
                          f"<br><span style='font-size:11px;color:{_C['mute']}'>{r['sec']}초 · 초당 {r['tps']}토큰</span></span></div>")
         except Exception as ex:
             turns.append(f"<div style='color:{_C['bad']}'>답하지 못함 : {_e(ex)}</div>")
@@ -1175,9 +1229,9 @@ def report(show: bool = True) -> Path:
     if g:
         L.append(f"- 학습 목표 : {g.get('name')} · 표지 단어 {', '.join(g.get('markers', []))}")
     if best:
-        L += ["", f"## 가장 좋았던 조건", f"- {best.get('label')} · 답 점수 {best.get('score')} · 검색 적중 {best.get('found')} · 평균 {best.get('sec')}초"]
+        L += ["", f"## 가장 좋았던 조건", f"- {best.get('label')} · 답 점수 {_v(best.get('score'))} · 검색 적중 {_v(best.get('found'))} · 평균 {_v(best.get('sec'))}초"]
     L += ["", "## 실험 기록", "| 시각 | 종류 | 조건 | 답 점수 | 검색 적중 | 말투 점수 | 평균 초 |", "|---|---|---|---|---|---|---|"]
-    L += [f"| {r['time']} | {r['kind']} | {r.get('label', '')} | {r.get('score', '')} | {r.get('found', '')} | {r.get('style', '')} | {r.get('sec', '')} |"
+    L += [f"| {r['time']} | {r['kind']} | {_v(r.get('label'))} | {_v(r.get('score'))} | {_v(r.get('found'))} | {_v(r.get('style'))} | {_v(r.get('sec'))} |"
           for r in logs if r["kind"] != "판단"][-40:]
     rr = runs(show=False)
     if rr:
@@ -1272,7 +1326,7 @@ def goal() -> dict:
 
 
 def set_goal(name: str, instruction: str, markers: list[str], examples: list[list[str]], rule: str = "any") -> dict:
-    """학습 목표를 저장함. markers 는 목표대로 답했는지 가려내는 표지 단어, rule 은 any(하나라도) · all(모두)."""
+    """학습 목표를 저장함. markers 는 목표대로 답했는지 판정하는 표지 단어, rule 은 any(하나라도) · all(모두)."""
     g = {"name": name.strip(), "instruction": instruction.strip(), "markers": [m for m in markers if m], "rule": rule,
          "examples": [[q.strip(), a.strip()] for q, a in examples if q.strip() and a.strip()]}
     MY.mkdir(parents=True, exist_ok=True)
@@ -1299,7 +1353,7 @@ def goal_panel():
     preset = _drop("준비된 목표", ["(직접 적음)"] + list(PRESETS), "(직접 적음)")
     name = _text("목표 이름", g.get("name", ""), "예: 우리 동아리 선배 말투")
     inst = _area("지시문", g.get("instruction", ""), "원하는 답의 말투 · 형식 · 길이를 구체적으로 적음. 이 지시문은 학습 데이터를 만들 때만 쓰고, 학습한 모델에는 주지 않음", rows=4)
-    marks = _text("표지 단어", ", ".join(g.get("markers", [])), "목표대로 답했는지 가려낼 단어 · 말끝(쉼표로 구분)")
+    marks = _text("표지 단어", ", ".join(g.get("markers", [])), "목표대로 답했는지 판정할 단어 · 말끝(쉼표로 구분)")
     rule = _drop("표지 판정", [("표지 단어가 하나라도 있으면 맞음", "any"), ("표지 단어가 모두 있어야 맞음", "all")], g.get("rule", "any"))
     ex = _area("예시", "\n".join(f"{q} => {a}" for q, a in g.get("examples", [])),
                "한 줄에 하나씩:  질문 => 내가 원하는 답   (답 안의 줄바꿈은 \\n 으로 적음. 3건 이상 권장)", rows=7)
@@ -1361,7 +1415,7 @@ def make_data(n: int = 200, model: str | None = None, doc_ratio: float = 0.4, st
     """
     g = goal()
     if not g.get("instruction") or not g.get("examples"):
-        raise RuntimeError("학습 목표가 없음. 목표 조절판에서 지시문과 예시를 먼저 저장함")
+        raise Guide("학습 목표가 없음. 목표 조절판에서 지시문과 예시를 먼저 저장함")
     e = _m(model)
     v = _vram()
     batch = batch or (32 if v and v["total"] >= 70 else (16 if v and v["total"] >= 40 else 8))
@@ -1454,7 +1508,7 @@ def train(run: str | None = None, r: int = 16, alpha: int | None = None, lr: flo
           seed: int = 42) -> str | None:
     """LoRA 학습을 돌리고 Loss 곡선을 실시간으로 그림. 끝나면 my/adapters/<이름>/ 에 Adapter 가 남음."""
     if not (MY / "train.jsonl").exists():
-        raise RuntimeError("학습 데이터가 없음. 데이터 조절판에서 먼저 만듦")
+        raise Guide("학습 데이터가 없음. 데이터 조절판에서 먼저 만듦")
     base = base or (S.models[S.current]["id"] if S.current else cfg()["model"])
     names = {p.name for p in ADAPTERS.glob("*")} if ADAPTERS.exists() else set()
     run = _safe(run) if run else f"v{len(names) + 1}"
@@ -1554,7 +1608,11 @@ def train_panel():
 
 def loss_plot(*names: str) -> None:
     """여러 번의 학습 Loss 곡선을 한 그림에 겹쳐 그림. 이름을 주지 않으면 전부."""
-    names = names or tuple(r["이름"] for r in runs(show=False))
+    asked = names
+    names = tuple(n for n in (names or tuple(r["이름"] for r in runs(show=False))) if (_adapter_dir(n) / "log.json").exists())
+    if not names:
+        return _msg(f"{_e(', '.join(asked))} 라는 이름의 학습 기록이 없음. <code>lab.runs()</code> 로 이름을 확인함" if asked
+                    else "아직 학습한 Adapter 가 없음. '첫 학습' 단계에서 학습을 한 번 마친 뒤 다시 실행함", "warn")
     plt = _plt()
     fig, ax = plt.subplots(figsize=(7.2, 3.4))
     for j, nme in enumerate(names):
@@ -1598,7 +1656,7 @@ def compare(q: str, names: list[str] | None = None, rag: bool = False, show: boo
 def compare_panel():
     def run(q, rag):
         if not q.strip():
-            raise ValueError("질문을 적음")
+            raise Guide("질문을 적음")
         compare(q, rag=rag)
     return _panel({"q": _text("질문", "", "학습 데이터에 없던 새 질문으로 물어봄"), "rag": _check("내 문서를 붙여서 묻기", False)}, run, "전후 비교")
 
@@ -1607,7 +1665,7 @@ def style_eval(names: list[str] | None = None, n: int = 20, show: bool = True) -
     """검증 질문(학습에 쓰지 않은 질문) n건으로 학습 전과 각 Adapter 의 말투 점수를 잼."""
     g, e = goal(), _m()
     if not (MY / "valid.jsonl").exists():
-        raise RuntimeError("검증 데이터가 없음. 데이터 조절판에서 먼저 만듦")
+        raise Guide("검증 데이터가 없음. 데이터 조절판에서 먼저 만듦")
     qs = [r["prompt"] for r in utils.read_jsonl(MY / "valid.jsonl")][:n]
     out = []
     for nme in [None] + _my_runs(e, names, limit=6):
@@ -1632,7 +1690,7 @@ def four(name: str | None = None, show: bool = True) -> list[dict]:
     e, g = _m(), goal()
     mine = _my_runs(e, [name] if name else None, limit=1)
     if not mine:
-        raise RuntimeError("지금 모델로 학습한 Adapter 가 없음")
+        raise Guide("지금 모델로 학습한 Adapter 가 없음")
     out = []
     for label, rag, ad in (("학습 전", False, None), ("문서 붙임(RAG)", True, None), ("Adapter(LoRA)", False, mine[-1]), ("문서 + Adapter", True, mine[-1])):
         r = run_quiz(rag=rag, adapter=ad, label=label, show=False, log=False)
@@ -1651,6 +1709,9 @@ def save_solution(adapter: str | None = "유지", persona: str | None = None) ->
     """지금 설정을 '내 솔루션'으로 저장함. 다음 회차에는 lab.load_solution() 한 줄로 그대로 불러옴."""
     kw = {}
     if adapter != "유지":
+        if adapter and not (_adapter_dir(adapter) / "adapter_config.json").exists():
+            have = [r["이름"] for r in runs(show=False)]
+            raise Guide(f"Adapter '{adapter}' 이 없음. " + (f"학습한 Adapter : {', '.join(have)}" if have else "먼저 학습을 한 번 마침"))
         kw["adapter"] = adapter
     if persona is not None:
         kw["persona"] = persona

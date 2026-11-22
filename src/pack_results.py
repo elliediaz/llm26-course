@@ -35,7 +35,8 @@ def main() -> None:
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
         for p in sorted(set(files)):
             z.write(p, p.relative_to(root))
-    print(f"{out.name} : 파일 {len(set(files))}개, {out.stat().st_size / 1e6:.1f}MB")
+    size = out.stat().st_size
+    print(f"{out.name} : 파일 {len(set(files))}개, " + (f"{size / 1e6:.1f}MB" if size >= 1e6 else f"{max(1, round(size / 1e3))}KB"))
     print("Jupyter 왼쪽 파일 창(course 폴더)에서 이 파일을 오른쪽 단추 → Download 로 내려받음")
 
 
