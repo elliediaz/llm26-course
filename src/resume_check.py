@@ -3,7 +3,7 @@
   python src/resume_check.py              # 5·6·7회차 도입(복귀 점검): GPU·모델 로딩·팀 도메인 데이터
   python src/resume_check.py --session 5  # 5회차 산출물(6회차 도입 때 확인)
   python src/resume_check.py --handover 2 # 2회차 끝(차승희 박사 회차 인계 전): 남겨야 할 파일 확인
-  python src/resume_check.py --handover 7 # 7회차 끝(8회차 인계 전)
+  python src/resume_check.py --handover 7 # 7회차 끝(8회차 인계 전). 개인 서버에서는 내 시험지·Baseline·RAG·Adapter를 확인
   python src/resume_check.py --quick      # 모델 로딩 없이 파일만
   python src/resume_check.py --session 2  # 그 회차 산출물만(코랩처럼 회차마다 새로 시작하는 환경)
 
@@ -30,6 +30,9 @@ HANDOVER = {
     2: ["1회차 산출물", "2회차 산출물"],
     7: ["5회차 산출물", "6회차 산출물"],
 }
+if config.MY:
+    # 개인 GPU 서버(6회차~): 5회차의 프롬프트 방식 비교(sweep_strategy.json)는 팀 서버에서 한 것이라 확인하지 않음
+    CHECKS["5회차 산출물"] = [D / "test_dataset.json", R / "base.json", R / "scoreboard.json"]
 
 
 def check_files(groups) -> list[dict]:
@@ -52,7 +55,7 @@ def main() -> None:
     rows = check_files(groups)
     if a.handover == 7:
         ads = sorted(p.parent for p in config.PATHS["adapters"].glob("*/*/adapter_config.json"))
-        rows.append({"구분": "7회차 산출물", "파일": "adapters/<팀>/<run>/", "상태": f"{len(ads)}개" if ads else "누락"})
+        rows.append({"구분": "7회차 산출물", "파일": "adapters/<이름>/<run>/", "상태": f"{len(ads)}개" if ads else "누락"})
         idx = sorted(config.PATHS["index"].glob(f"{config.DOMAIN}_*/meta.json"))
         rows.append({"구분": "6회차 산출물", "파일": "index/", "상태": f"{len(idx)}개" if idx else "누락"})
     utils.print_table(rows)

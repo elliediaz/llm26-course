@@ -20,8 +20,8 @@ def main() -> None:
     a = ap.parse_args()
     root, d = config.ROOT, config.data_dir()
     files = [p for p in config.PATHS["results"].rglob("*") if p.is_file() and p.suffix in (".json", ".md", ".csv", ".png", ".txt")]
-    files += [p for p in (root / "my_config.json", d / "test_dataset.json", d / "my_items.json") if p.exists()]
-    files += [p for p in (d / "corpus_updates").glob("my_*")] + [p for p in d.glob("train_my*.jsonl")]
+    files += [p for p in (root / "my_config.json", d / "test_dataset.json") if p.exists()]
+    files += [p for p in (d / "corpus_updates").glob("my_*")] + [p for p in d.glob("my_*") if p.is_file()]
     files += [p for p in (root / "prompts").rglob("my_*")] + [p for p in (root / "prompts").rglob("우리팀_*")]
     for cfg in config.PATHS["adapters"].glob("*/*/adapter_config.json"):
         files += [p for p in cfg.parent.iterdir() if p.is_file() and (a.with_adapter or p.suffix in (".json", ".md"))]
