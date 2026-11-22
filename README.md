@@ -3,6 +3,7 @@
 > **실습 접속 주소: [ACCESS.md](ACCESS.md)** (6회차부터 개인 GPU 서버 : 카드의 서버 번호 줄을 봄. 비밀번호는 카드)
 > **6 · 7회차 실습은 노트북에서** : 내 서버에서 `notebooks/s06_my_rag.ipynb`(내 문서 챗봇) · `notebooks/s07_my_lora.ipynb`(내 데이터로 학습)를 열고 셀을 차례로 실행함. 조절판으로 설정을 바꾸고, 끝날 때 `lab.pack()`으로 결과를 묶어 내려받음. 안내 : [6회차](tasks/s06_사건카드.md) · [7회차](tasks/s07_사건카드.md)
 > 5회차 내용을 혼자 다시 해 보려면 `notebooks/s05_my_prompt.ipynb`(지시문 · 예시 · 생성 설정 · 형식 · 문제 입력)를 엶. 설명은 handouts 의 `05회차_개인보충_워크북_V6.pdf`
+> **8 · 9 · 10회차(차승희 교수) 실습** : `yu-gpu-ai/` 폴더의 노트북 `03` · `04` · `05`를 엶. 차승희 교수 저장소(https://github.com/victoriouscha/yu-gpu-ai)를 고치지 않고 그대로 넣은 폴더임. 노트북을 열 때 잡히는 커널(Python 3)을 그대로 쓰고 `LLM-PBL (course)`로 바꾸지 않음. 9 · 10회차의 웹 화면은 내 실습 접속 주소에서 `-8888`을 `-8000`으로 바꾼 주소로 엶
 > **수업 자료(발표 PDF·워크북·안내서): [handouts/](handouts/)**
 > Pod 경로: `/workspace/course` · 커널: **LLM-PBL (course)** · 터미널: `source /workspace/activate.sh`
 > 모델·버전 기준일 2026-10. 설정은 `src/config.py` 한 곳에서만 바꿈
@@ -18,6 +19,7 @@ course/
 ├─ src/          단순 실행 스크립트(아래 표): 완성 코드를 실행하고 결과를 해석
 ├─ tasks/        해보기·사건 카드: 상황을 주고 값과 설정을 바꿔 판단하게 하는 카드(회차별)
 ├─ notebooks/    5 · 6 · 7회차 개인 샌드박스 노트북(s05_my_prompt · s06_my_rag · s07_my_lora, 원본은 build_sandbox.py), 코랩·개인 PC 공용 실습 노트북(1회차 s01_colab, 2회차 s02_colab, 6회차 검색 실험 s06_colab), 1·2회차 발전사 확인 노트북(원본은 notebooks/src/*.py)
+├─ yu-gpu-ai/   8 · 9 · 10회차(차승희 교수) 실습 자료. 원본 저장소를 그대로 둔 폴더라 파일을 고치지 않음
 ├─ data/
 │  ├─ common/    공개 데이터(Fashion-MNIST·NSMC 리뷰), 금액 수사 생성기, 토큰 비교 문장
 │  ├─ s02/       2회차 미션 데이터(배달 리뷰·스미싱 문자·뉴스 제목·게임 문의·속담·토큰 표본·지시어 문장)
