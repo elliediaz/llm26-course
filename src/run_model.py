@@ -19,7 +19,7 @@ def main() -> None:
     ap.add_argument("--system", default=None)
     ap.add_argument("--model", default=None)
     ap.add_argument("--quant", default=None, choices=["bf16", "nf4"])
-    ap.add_argument("--service", action="store_true", help="GEN_SERVICE(팀 확정 설정)로 생성")
+    ap.add_argument("--service", action="store_true", help="GEN_SERVICE(확정한 설정)로 생성")
     ap.add_argument("--raw", action="store_true", help="Chat Template 없이 입력")
     a = ap.parse_args()
     utils.set_seed()

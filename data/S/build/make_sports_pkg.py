@@ -3,7 +3,7 @@
   python data/S/build/make_sports_pkg.py
 
 만드는 것(data/S/): schema.json, scoring.yaml, test_seed.json, test_dataset.json(처음에는 시드와 같음),
-team_item_template.json, corpus/*.md, corpus_manifest.json, corpus_updates/(6회차 시연용 결승 결과),
+my_item_template.json, corpus/*.md, corpus_manifest.json, corpus_updates/(6회차 시연용 결승 결과),
 train_seed.jsonl, tools_spec.md, build/sports_db.json
 교체 풀(solutions/data/S/, 공개 저장소에는 올리지 않음): test_pool.json(현장 보정용)
 
@@ -1096,7 +1096,7 @@ def main() -> None:
             "items": [{"id": f"S-T-{k:02d}", "type": t, "input": "",
                        "gold": {"league": None, "entity": None, "metric": None, "value": None, "as_of": None, "answerable": True},
                        "gold_doc_ids": []} for k, t in enumerate(["K"] * 8 + ["R"] * 7 + ["F"] * 5, 1)]}
-    (DATA / "team_item_template.json").write_text(json.dumps(tmpl, ensure_ascii=False, indent=1), encoding="utf-8")
+    (DATA / "my_item_template.json").write_text(json.dumps(tmpl, ensure_ascii=False, indent=1), encoding="utf-8")
 
     tr = Maker(db, "train", random.Random(db["seed"] * 31 + 2))
     train_plan = [("K", f) for f in K_FNS for _ in range(10)] + [("R", f) for f in R_FNS for _ in range(8)] + \

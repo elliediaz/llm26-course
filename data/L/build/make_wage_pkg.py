@@ -3,7 +3,7 @@
   python data/L/build/make_wage_pkg.py
 
 만드는 것(data/L/): schema.json, scoring.yaml, test_seed.json, test_dataset.json(처음에는 시드와 같음),
-team_item_template.json, corpus/*.md, corpus_manifest.json, train_seed.jsonl, tools_spec.md, build/wage_db.json
+my_item_template.json, corpus/*.md, corpus_manifest.json, train_seed.jsonl, tools_spec.md, build/wage_db.json
 교체 풀(solutions/data/L/, 공개 저장소에는 올리지 않음): test_pool.json(현장 보정용)
 모든 사업장·사례는 가상이며, 정답은 wage_rules.compute 로 계산한다.
 """
@@ -440,7 +440,7 @@ def main() -> None:
             items.append({"id": f"L-T-{n:02d}", "type": t, "input": "",
                           "gold": {k2: None for k2 in SCHEMA["properties"]}, "gold_doc_ids": []})
     tmpl = {"domain": "L", "allocation": alloc, "rules": TEAM_RULES, "example": seed[0], "items": items}
-    (DATA / "team_item_template.json").write_text(json.dumps(tmpl, ensure_ascii=False, indent=1), encoding="utf-8")
+    (DATA / "my_item_template.json").write_text(json.dumps(tmpl, ensure_ascii=False, indent=1), encoding="utf-8")
 
     train = [make_item(f"L-L-{i:03d}", sc, rng, train=True) for i, sc in enumerate(random_train(rng, 180), 1)]
     with open(DATA / "train_seed.jsonl", "w", encoding="utf-8") as f:

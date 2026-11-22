@@ -113,7 +113,7 @@ PROMPTS = {"domain": ("서리칼날", "운영정책 POL-0"), "nsmc": ("이 영�
 
 
 def corpus_docs(name: str = "domain") -> list[str]:
-    """학습 글 목록. domain: 팀 도메인 문서(data/<도메인>/corpus/*.md) · nsmc: 영화 리뷰(data/common/nsmc/train.tsv)."""
+    """학습 글 목록. domain: 도메인 문서(data/<도메인>/corpus/*.md) · nsmc: 영화 리뷰(data/common/nsmc/train.tsv)."""
     if name == "nsmc":
         lines = (config.PATHS["common"] / "nsmc" / "train.tsv").read_text(encoding="utf-8").splitlines()[1:]
         reviews = [ln.rsplit("\t", 1)[0] for ln in lines]
@@ -308,7 +308,7 @@ def main() -> None:
     ap.add_argument("--context", type=int, default=128, help="한 번에 보는 글자 수")
     ap.add_argument("--lr", type=float, default=3e-3, help="학습률(한 번에 가중치를 얼마나 움직일지)")
     ap.add_argument("--dropout", type=float, default=0.0, help="학습 때 값을 0으로 만드는 비율(0~0.5)")
-    ap.add_argument("--corpus", choices=sorted(PROMPTS), default="domain", help="학습 글: domain(팀 도메인 문서) · nsmc(영화 리뷰)")
+    ap.add_argument("--corpus", choices=sorted(PROMPTS), default="domain", help="학습 글: domain(도메인 문서) · nsmc(영화 리뷰)")
     a = ap.parse_args()
     if a.d_model % a.heads:
         ap.error(f"d_model({a.d_model})이 헤드 수({a.heads})로 나눠 떨어지지 않음")

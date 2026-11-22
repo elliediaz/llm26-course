@@ -1,3 +1,5 @@
 my_config.json
 my_results_*.zip
 __pycache__/
+my/
+runs/

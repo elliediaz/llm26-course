@@ -4,11 +4,11 @@
   python src/benchmark.py --runs 2                 # 같은 명령 2회 → 점수가 같아야 완료(재현성)
   python src/benchmark.py --strategy fewshot --name fmt_fewshot --no-scoreboard   # 형식 강제 방법 비교
   python src/benchmark.py --no-template --name no_template --no-scoreboard          # Chat Template 전후 비교
-  python src/benchmark.py --prompt prompts/s05/주입방어.txt --name guard --no-scoreboard   # 팀 규칙을 덧붙여 비교
+  python src/benchmark.py --prompt prompts/s05/주입방어.txt --name guard --no-scoreboard   # 내 규칙을 덧붙여 비교
   설정 하나를 여러 값으로 바꿔 가며 비교하려면 sweep.py를 씀(모델을 한 번만 올림)
   python src/benchmark.py --mode rag                # 6회차: 검색 결과를 넣어 생성
-  python src/benchmark.py --mode lora --adapter adapters/<팀>/<run>        # 7회차
-  python src/benchmark.py --mode rag_lora --adapter adapters/<팀>/<run>    # 7회차
+  python src/benchmark.py --mode lora --adapter adapters/me/<run>        # 7회차
+  python src/benchmark.py --mode rag_lora --adapter adapters/me/<run>    # 7회차
 
 결과: results/<name>.json (문항별 출력·점수 포함) + results/scoreboard.md 한 행 추가
 측정 원칙: 한 번에 하나만 바꾼다. 프롬프트·채점 규칙·GEN_EVAL을 바꾸면 Baseline부터 다시 잰다.
@@ -29,7 +29,7 @@ MODE_LABEL = {"base": "Baseline", "rag": "RAG", "lora": "LoRA", "rag_lora": "RAG
 
 
 def read_extra(path: str | None) -> str | None:
-    """--prompt 파일(팀이 덧붙이는 규칙). 'base'나 빈 값이면 없음"""
+    """--prompt 파일(덧붙이는 규칙). 'base'나 빈 값이면 없음"""
     if not path or path == "base":
         return None
     from pathlib import Path

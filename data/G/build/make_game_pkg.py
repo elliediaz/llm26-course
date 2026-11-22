@@ -6,7 +6,7 @@
   ../gen_prompts.json                           2회차 생성 설정 비교
   ../schema.json, ../scoring.yaml               5~7회차 출력 형식·채점 규칙
   ../test_seed.json, ../test_dataset.json       5회차 시드 10건(K4·R3·F3), 하네스 입력
-  ../team_item_template.json                    5회차 팀 추가 20건 양식(K8·R7·F5)
+  ../my_item_template.json                    5회차 추가 문항 20건 양식(K8·R7·F5)
   ../train_seed.jsonl                           7회차 학습 시드
   ../tools_spec.md                              8~10회차 Tool 후보
   solutions/data/G/test_pool.json               현장 보정·교체 풀(공개 저장소에는 올리지 않음)
@@ -626,7 +626,7 @@ def readme(n_docs: int, n_train: int) -> str:
 | `gen_prompts.json` | 2 | 생성 설정 비교용 프롬프트 6건(사실형·창작형·형식형 각 2) |
 | `schema.json`, `scoring.yaml` | 5~7 | 출력 JSON 형식, 필드별 채점 규칙 |
 | `test_seed.json` | 5 | 시드 10건(K4·R3·F3) |
-| `team_item_template.json` | 5 | 팀 추가 20건 양식(K8·R7·F5)과 작성 규칙 |
+| `my_item_template.json` | 5 | 직접 추가하는 문항 20건 양식(K8·R7·F5)과 작성 규칙 |
 | `test_dataset.json` | 5~7 | `benchmark.py` 입력. 처음에는 시드 10건, 5회차에 팀 20건을 합쳐 30건 |
 | `corpus/*.md`, `corpus_manifest.json` | 6 | 위키형 문서 {n_docs}건 |
 | `train_seed.jsonl` | 7 | 학습 시드 {n_train}건(`input`·`gold` 쌍. 메시지 형식은 `build_train_data.py`가 평가와 같은 프롬프트로 만듦) |
@@ -677,7 +677,7 @@ def main() -> None:
     seed_out = [{k: it[k] for k in ("id", "type", "input", "gold", "gold_doc_ids")} for it in seed]
     w("test_seed.json", seed_out)
     w("test_dataset.json", seed_out)
-    w("team_item_template.json", team_template(seed_out))
+    w("my_item_template.json", team_template(seed_out))
 
     pool = []
     for t in ("K", "R", "F"):

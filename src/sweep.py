@@ -5,12 +5,12 @@
   python src/sweep.py template on off --limit 10
   python src/sweep.py temperature 0 0.3 0.7 1.2 --repeat 3 --limit 10
   python src/sweep.py max_tokens 24 48 96 256 --limit 10
-  python src/sweep.py prompt base prompts/s05/주입방어.txt prompts/s05/우리팀.txt --limit 10
+  python src/sweep.py prompt base prompts/s05/주입방어.txt prompts/s05/my_rule.txt --limit 10
   python src/sweep.py score_mode loose strict                  # 생성은 한 번, 채점만 두 가지
   python src/sweep.py mode base rag --limit 10                 # 6회차: 검색 결과를 넣기 전과 후
   python src/sweep.py top_k 1 2 4 8 --mode rag --limit 10      # 6회차
   python src/sweep.py context_tokens 300 800 1500 3000 --mode rag --limit 10   # 6회차
-  python src/sweep.py adapter none adapters/<팀>/r4 adapters/<팀>/r16 --limit 10  # 7회차
+  python src/sweep.py adapter none adapters/me/r4 adapters/me/r16 --limit 10  # 7회차
   python src/sweep.py model skt/A.X-4.0-Light Qwen/Qwen3-8B --limit 10            # 모델 바꾸기(값마다 다시 올림)
   python src/sweep.py quant bf16 nf4 --limit 10                                   # 4비트로 줄였을 때 점수·속도·메모리
 

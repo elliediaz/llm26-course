@@ -33,7 +33,7 @@ def _field_lines(schema: dict) -> str:
 
 
 def system_prompt(schema: dict, strategy: str = "instruction", extra: str | None = None) -> str:
-    """extra: 팀이 덧붙이는 규칙(prompts/*.txt). 사건 카드에서 프롬프트를 고칠 때 씀"""
+    """extra: 덧붙이는 규칙(prompts/*.txt). 사건 카드에서 프롬프트를 고칠 때 씀"""
     if strategy == "plain":
         return "질문을 읽고 JSON으로 답하세요."
     base = (
@@ -79,7 +79,7 @@ def fewshot_examples(domain: str | None = None, k: int = 2) -> list[dict]:
 
 def build_messages(text: str, schema: dict, strategy: str = "instruction", context: str | None = None,
                    domain: str | None = None, shots: int | None = None, extra: str | None = None) -> list[dict]:
-    """shots: 예시 개수(기본은 fewshot 2, 나머지 0). extra: 시스템 프롬프트에 덧붙일 팀 규칙"""
+    """shots: 예시 개수(기본은 fewshot 2, 나머지 0). extra: 시스템 프롬프트에 덧붙일 규칙"""
     if strategy not in STRATEGIES:
         raise ValueError(f"strategy는 {STRATEGIES} 중 하나")
     msgs = [{"role": "system", "content": system_prompt(schema, strategy, extra)}]

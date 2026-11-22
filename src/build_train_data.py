@@ -1,8 +1,7 @@
-"""7회차 실습 1 ①②: 학습 데이터 준비: 시드 + 팀 추가분 + 규칙 증강 → 중복·평가셋 중첩 검사 → 학습 형식 변환.
+"""7회차 실습 1 ①②: 학습 데이터 준비: 시드 + 내가 쓴 추가분 + 규칙 증강 → 중복·평가셋 중첩 검사 → 학습 형식 변환.
 
   python src/build_train_data.py                       # 시드만(약 200건)
   python src/build_train_data.py --augment 300         # 규칙 증강으로 300건 추가(권장 총 500건)
-  python src/build_train_data.py --team data/G/train_team.jsonl --augment 200
   python src/build_train_data.py --my data/G/my_train_items.jsonl --augment 300 --out-tag mine   # 내가 쓴 학습 문항을 더함 → train_mine.jsonl
   python src/build_train_data.py --augment 300 --out-tag n100 --limit 100     # 데이터 양 실험(train_n100.jsonl)
   사건 실험(일부러 문제를 만들어 결과를 비교, 사건 카드 7회차)
@@ -56,7 +55,7 @@ def augment(rows: list[dict], n: int, rng: random.Random) -> list[dict]:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--augment", type=int, default=0)
-    ap.add_argument("--team", "--my", dest="team", help="직접 쓴 학습 문항(jsonl: id, type, input, gold). 개인 실습에서는 --my data/<도메인>/my_train_items.jsonl")
+    ap.add_argument("--my", "--team", dest="my", help="직접 쓴 학습 문항(jsonl: id, type, input, gold). 예: --my data/<도메인>/my_train_items.jsonl")
     ap.add_argument("--max-sim", type=float, default=0.8)
     ap.add_argument("--limit", type=int, help="학습 건수를 N건으로 줄임(데이터 양 실험)")
     ap.add_argument("--noise", type=float, default=0.0, help="학습 정답 중 이 비율의 첫 필드를 다른 값으로 바꿈(라벨 오류 사건)")
@@ -67,8 +66,8 @@ def main() -> None:
     d = config.data_dir()
     schema = scorer.load_schema()
     rows = utils.read_jsonl(d / "train_seed.jsonl")
-    if a.team:
-        rows += utils.read_jsonl(a.team)
+    if a.my:
+        rows += utils.read_jsonl(a.my)
     rows += augment(rows, a.augment, rng)
 
     test = utils.read_json(d / "test_dataset.json")

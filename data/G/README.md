@@ -18,8 +18,8 @@
 | `gen_prompts.json` | 2 | 생성 설정 비교용 프롬프트 6건(사실형·창작형·형식형 각 2) |
 | `schema.json`, `scoring.yaml` | 5~7 | 출력 JSON 형식, 필드별 채점 규칙 |
 | `test_seed.json` | 5 | 시드 10건(K4·R3·F3) |
-| `team_item_template.json` | 5 | 팀 추가 20건 양식(K8·R7·F5)과 작성 규칙 |
-| `test_dataset.json` | 5~7 | `benchmark.py` 입력. 처음에는 시드 10건, 5회차에 팀 20건을 합쳐 30건 |
+| `my_item_template.json` | 5 | 직접 추가하는 문항 20건 양식(K8·R7·F5)과 작성 규칙 |
+| `test_dataset.json` | 5~7 | `benchmark.py` 입력. 시드 10건에 문항 풀(`item_pool.json`)에서 뽑은 20건을 합쳐 30건(`my_start.py`) |
 | `corpus/*.md`, `corpus_manifest.json` | 6 | 위키형 문서 63건 |
 | `train_seed.jsonl` | 7 | 학습 시드 185건(`input`·`gold` 쌍. 메시지 형식은 `build_train_data.py`가 평가와 같은 프롬프트로 만듦) |
 | `tools_spec.md` | 8~10 | Tool 후보 |

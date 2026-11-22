@@ -1,6 +1,6 @@
 """복귀 점검·인계 점검: 회차 시작 전에 환경과 이전 산출물이 그대로 있는지 확인한다.
 
-  python src/resume_check.py              # 5·6·7회차 도입(복귀 점검): GPU·모델 로딩·팀 도메인 데이터
+  python src/resume_check.py              # 5·6·7회차 도입(복귀 점검): GPU·모델 로딩·도메인 데이터
   python src/resume_check.py --session 5  # 5회차 산출물(6회차 도입 때 확인)
   python src/resume_check.py --handover 2 # 2회차 끝(차승희 박사 회차 인계 전): 남겨야 할 파일 확인
   python src/resume_check.py --handover 7 # 7회차 끝(8회차 인계 전). 개인 서버에서는 내 시험지·Baseline·RAG·Adapter를 확인
@@ -31,7 +31,7 @@ HANDOVER = {
     7: ["5회차 산출물", "6회차 산출물"],
 }
 if config.MY:
-    # 개인 GPU 서버(6회차~): 5회차의 프롬프트 방식 비교(sweep_strategy.json)는 팀 서버에서 한 것이라 확인하지 않음
+    # 개인 GPU 서버(6회차~): 5회차의 프롬프트 방식 비교(sweep_strategy.json)는 이전 서버에서 한 것이라 확인하지 않음
     CHECKS["5회차 산출물"] = [D / "test_dataset.json", R / "base.json", R / "scoreboard.json"]
 
 

@@ -17,8 +17,8 @@
 |---|---|---|
 | `schema.json`, `scoring.yaml` | 5~7 | 출력 JSON 형식, 필드별 채점 규칙 |
 | `test_seed.json` | 5 | 시드 10건(K4·R3·F3) |
-| `team_item_template.json` | 5 | 팀 추가 20건 양식(K8·R7·F5)과 작성 규칙 |
-| `test_dataset.json` | 5~7 | `benchmark.py` 입력. 처음에는 시드 10건, 5회차에 팀 20건을 합쳐 30건 |
+| `my_item_template.json` | 5 | 직접 추가하는 문항 20건 양식(K8·R7·F5)과 작성 규칙 |
+| `test_dataset.json` | 5~7 | `benchmark.py` 입력. 시드 10건에 문항 풀(`item_pool.json`)에서 뽑은 20건을 합쳐 30건(`my_start.py`) |
 | `corpus/*.md`, `corpus_manifest.json` | 6 | 기록 문서 66건(리그 안내 3, 시즌·대회 6, 개인 기록 순위 1, 구단 18, 선수 34, 게임 소개 1, 기록실 규약 3) |
 | `corpus_updates/` | 6 | 기준일 뒤에 나온 결승 결과 문서. 인덱스에 넣기 전후로 같은 질문의 답이 바뀌는지 봄 |
 | `train_seed.jsonl` | 7 | 학습 시드 174건(학습용 구단·선수, 평가와 다른 문장 틀) |

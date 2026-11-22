@@ -1,6 +1,6 @@
 """7회차 도전과제 ②: Adapter를 본체에 병합해 단일 모델로 내보낸다(서비스 배포 때 실제로 밟는 절차).
 
-  python src/merge_adapter.py --adapter adapters/team3/r16
+  python src/merge_adapter.py --adapter adapters/me/r16
 
 주의
   - 병합은 BF16 본체 위에서 한다(4-bit 본체에는 병합하지 않음). QLoRA로 학습한 Adapter 도 BF16 본체에 병합 가능

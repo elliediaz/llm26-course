@@ -1,22 +1,22 @@
 """7회차 실습 1 ③④⑤: LoRA/QLoRA 학습 → Adapter 저장.
 
   python src/build_train_data.py --augment 300                 # 먼저 학습 데이터 준비
-  python src/train_lora.py --run r16                            # 개인 서버: adapters/me/r16 (--team 을 빼면 me)
-  python src/train_lora.py --team team3 --run r16               # 기본: config.QUANT로 본체 로딩(nf4이면 QLoRA)
-  python src/train_lora.py --team team3 --run r8 --r 8          # 도전과제 ①: rank 바꾸기
-  python src/train_lora.py --team team3 --run n100 --limit 100  # 데이터 양 바꾸기
-  python src/train_lora.py --team team3 --run lr1e3 --lr 1e-3     # 학습률 바꾸기
-  python src/train_lora.py --team team3 --run qv --target qv       # LoRA를 붙일 층 바꾸기(qv · qkvo · all)
-  python src/train_lora.py --team team3 --run noise30 --data train_noise30.jsonl   # build_train_data.py가 만든 다른 학습 파일
-  python src/train_lora.py --team team3 --run r16_s1 --seed 1  # 같은 설정, 다른 시드(편차 폭)
-  python src/train_lora.py --team team3 --run q4 --quant nf4      # 본체 4비트(QLoRA): 메모리와 점수 비교
+  python src/train_lora.py --run r16                            # adapters/me/r16 에 저장
+  python src/train_lora.py --run r16               # 기본: config.QUANT로 본체 로딩(nf4이면 QLoRA)
+  python src/train_lora.py --run r8 --r 8          # 도전과제 ①: rank 바꾸기
+  python src/train_lora.py --run n100 --limit 100  # 데이터 양 바꾸기
+  python src/train_lora.py --run lr1e3 --lr 1e-3     # 학습률 바꾸기
+  python src/train_lora.py --run qv --target qv       # LoRA를 붙일 층 바꾸기(qv · qkvo · all)
+  python src/train_lora.py --run noise30 --data train_noise30.jsonl   # build_train_data.py가 만든 다른 학습 파일
+  python src/train_lora.py --run r16_s1 --seed 1  # 같은 설정, 다른 시드(편차 폭)
+  python src/train_lora.py --run q4 --quant nf4      # 본체 4비트(QLoRA): 메모리와 점수 비교
 
 학습은 휴식 시간과 겹치게 돌린다. config.LORA["max_minutes"]를 넘기면 그때까지 학습한 Adapter를 저장하고 끝낸다.
 학습이 끝나지 않으면: 미리 학습해 둔 Adapter(adapters/_instructor/<도메인>/)로 재평가를 이어 간다.
 
-결과: adapters/<팀>/<run>/ (adapter_model.safetensors, train_config.json), results/train_log_<팀>_<run>.json
-다음: python src/plot_loss.py --log results/train_log_<팀>_<run>.json
-      python src/benchmark.py --mode lora --adapter adapters/<팀>/<run>
+결과: adapters/me/<run>/ (adapter_model.safetensors, train_config.json), results/train_log_me_<run>.json
+다음: python src/plot_loss.py --log results/train_log_me_<run>.json
+      python src/benchmark.py --mode lora --adapter adapters/me/<run>
 """
 from __future__ import annotations
 
@@ -55,7 +55,7 @@ class TimeLimit(TrainerCallback):
 def main() -> None:
     L = config.LORA
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--team", default=config.MY_NAME, help="Adapter 폴더 이름(adapters/<이름>/<run>). 개인 서버 기본값은 me")
+    ap.add_argument("--name", "--team", dest="name", default=config.MY_NAME, help="Adapter 폴더 이름(adapters/<이름>/<run>). 기본값은 me")
     ap.add_argument("--run", default="r16")
     ap.add_argument("--r", type=int, default=L["r"])
     ap.add_argument("--alpha", type=int, default=None, help="기본: r의 2배")
@@ -72,7 +72,7 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=config.SEED, help="같은 설정을 시드만 바꿔 다시 학습하면 편차 폭이 보임")
     a = ap.parse_args()
     utils.set_seed(a.seed)
-    out_dir = config.PATHS["adapters"] / a.team / a.run
+    out_dir = config.PATHS["adapters"] / a.name / a.run
     d = config.data_dir()
     ds = load_dataset("json", data_files={"train": str(d / a.data), "valid": str(d / "valid.jsonl")})
     train = ds["train"].select(range(min(a.limit, len(ds["train"])))) if a.limit else ds["train"]
@@ -88,7 +88,7 @@ def main() -> None:
                       target_modules=TARGETS[a.target], task_type="CAUSAL_LM")
     gpu = torch.cuda.is_available()
     args = SFTConfig(
-        output_dir=str(config.PATHS["runs"] / "lora_tmp" / a.team / a.run),
+        output_dir=str(config.PATHS["runs"] / "lora_tmp" / a.name / a.run),
         max_length=a.max_length, per_device_train_batch_size=a.batch, per_device_eval_batch_size=a.batch,
         gradient_accumulation_steps=L["grad_accum"], learning_rate=a.lr, num_train_epochs=a.epochs,
         lr_scheduler_type="cosine", warmup_steps=5, logging_steps=5, eval_strategy="steps", eval_steps=20,
@@ -104,16 +104,16 @@ def main() -> None:
     trainer.model.save_pretrained(out_dir)
     tok.save_pretrained(out_dir)
     size_mb = sum(p.stat().st_size for p in out_dir.glob("adapter_model.*")) / 1024**2
-    info = {"team": a.team, "run": a.run, "domain": config.DOMAIN, "base_model": config.MODEL_ID, "quant": a.quant,
+    info = {"name": a.name, "run": a.run, "domain": config.DOMAIN, "base_model": config.MODEL_ID, "quant": a.quant,
             "r": a.r, "alpha": a.alpha or 2 * a.r, "epochs": a.epochs, "lr": a.lr, "batch": a.batch, "target": a.target, "data": a.data, "seed": a.seed,
             "max_length": a.max_length, "n_train": len(train), "minutes": round(t.sec / 60, 2),
             "stopped_by_time_limit": timer.stopped, "trainable_params": trainable["trainable"],
             "adapter_mb": round(size_mb, 1), "vram_peak_gb": utils.vram_peak_gb(), "finished_at": utils.now()}
     utils.write_json(out_dir / "train_config.json", info)
-    utils.write_json(utils.result_path(f"train_log_{a.team}_{a.run}.json"),
+    utils.write_json(utils.result_path(f"train_log_{a.name}_{a.run}.json"),
                      {"info": info, "log_history": trainer.state.log_history})
     print(f"\n[완료] {t.sec / 60:.1f}분{' (시간 제한으로 중단)' if timer.stopped else ''} · Adapter {size_mb:.1f}MB → {out_dir}")
-    print(f"다음: python src/plot_loss.py --log results/train_log_{a.team}_{a.run}.json")
+    print(f"다음: python src/plot_loss.py --log results/train_log_{a.name}_{a.run}.json")
 
 
 if __name__ == "__main__":

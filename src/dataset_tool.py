@@ -1,8 +1,8 @@
-"""5회차 실습 ③: 팀 문항 작성 → 점검 → 시드와 합쳐 Test Dataset 30건 완성.
+"""5회차 실습 ③: 내 문항 작성 → 점검 → 시드와 합쳐 Test Dataset 30건 완성.
 
-  cp data/G/team_item_template.json data/G/team_items.json     # 팀 작성 파일(복사본에 작성)
+  cp data/G/my_item_template.json data/G/my_items.json         # 내가 작성하는 파일(복사본에 작성)
   python src/dataset_tool.py check                             # 형식·유형 할당·정답 스키마·중복 점검
-  python src/dataset_tool.py merge                             # test_seed + team_items → test_dataset.json(30건)
+  python src/dataset_tool.py merge                             # test_seed + my_items → test_dataset.json(30건)
   python src/dataset_tool.py stats                             # 현재 test_dataset.json 유형 분포
   python src/dataset_tool.py leak                              # 7회차: 학습 파일(train*.jsonl)과 시험 문항이 겹치는지 점검
 
@@ -29,9 +29,9 @@ def similarity(a: str, b: str) -> float:
     return len(x & y) / len(x | y) if x | y else 0.0
 
 
-def check(team_path, seed, schema, alloc) -> list[str]:
-    team = utils.read_json(team_path)
-    items = team["items"] if isinstance(team, dict) else team
+def check(my_path, seed, schema, alloc) -> list[str]:
+    mine = utils.read_json(my_path)
+    items = mine["items"] if isinstance(mine, dict) else mine
     errs = []
     cnt = collections.Counter(it["type"] for it in items if it.get("input"))
     for t, k in alloc.items():
@@ -64,30 +64,30 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("cmd", choices=["check", "merge", "stats", "swap", "leak"])
     ap.add_argument("args", nargs="*")
-    ap.add_argument("--team", default=None, help="기본: data/<DOMAIN>/team_items.json")
+    ap.add_argument("--my", "--team", dest="my", default=None, help="기본: data/<DOMAIN>/my_items.json")
     ap.add_argument("--pool", help="swap에 쓸 교체 풀(TA가 가짐)")
     ap.add_argument("--force", action="store_true", help="check 경고가 있어도 merge")
     a = ap.parse_args()
     d = config.data_dir()
-    team_path = a.team or d / "team_items.json"
+    my_path = a.my or (d / "my_items.json" if (d / "my_items.json").exists() or not (d / "team_items.json").exists() else d / "team_items.json")
     seed = utils.read_json(d / "test_seed.json")
     schema = scorer.load_schema()
-    alloc = utils.read_json(d / "team_item_template.json")["allocation"]
+    alloc = utils.read_json(d / "my_item_template.json")["allocation"]
 
     if a.cmd == "check":
-        errs = check(team_path, seed, schema, alloc)
+        errs = check(my_path, seed, schema, alloc)
         print("\n".join(f"  [오류] {e}" for e in errs) if errs else "  [통과] 점검 통과")
         sys.exit(1 if errs else 0)
     if a.cmd == "merge":
-        errs = check(team_path, seed, schema, alloc)
+        errs = check(my_path, seed, schema, alloc)
         if errs and not a.force:
             print("\n".join(f"  [오류] {e}" for e in errs) + "\n점검 실패 → 고친 뒤 다시 실행(--force로 강제 가능)")
             sys.exit(1)
-        team = utils.read_json(team_path)
-        items = [it for it in (team["items"] if isinstance(team, dict) else team) if it.get("input")]
+        mine = utils.read_json(my_path)
+        items = [it for it in (mine["items"] if isinstance(mine, dict) else mine) if it.get("input")]
         merged = seed + [{k: it[k] for k in ("id", "type", "input", "gold", "gold_doc_ids")} for it in items]
         utils.write_json(d / "test_dataset.json", merged)
-        print(f"  test_dataset.json {len(merged)}건 저장 (시드 {len(seed)} + 팀 {len(items)})")
+        print(f"  test_dataset.json {len(merged)}건 저장 (시드 {len(seed)} + 내 문항 {len(items)})")
     if a.cmd == "stats":
         ds = utils.read_json(d / "test_dataset.json")
         print(f"  {len(ds)}건 {dict(collections.Counter(x['type'] for x in ds))}")

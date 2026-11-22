@@ -1,7 +1,7 @@
 """7회차 실습 1 ④: Loss 곡선 그리기와 판독.
 
-  python src/plot_loss.py --log results/train_log_team3_r16.json
-  python src/plot_loss.py --log results/train_log_team3_r16.json results/train_log_team3_lr1e3.json   # 여러 학습을 한 그림에
+  python src/plot_loss.py --log results/train_log_me_r16.json
+  python src/plot_loss.py --log results/train_log_me_r16.json results/train_log_me_lr1e3.json   # 여러 학습을 한 그림에
   python src/plot_loss.py --log <로그 셋> --out loss_lr      # 그림 이름을 나눠 저장(results/fig/loss_lr.png)
 
 판독표(대략적 기준: 최종 판단은 반드시 같은 하네스로 재평가해서 한다)
@@ -92,10 +92,10 @@ def main() -> None:
     if va:
         ax.plot(*zip(*va), marker="o", label="검증 Loss")
     info = data.get("info", {})
-    ax.set(xlabel="step", ylabel="Loss", title=f"{info.get('team', '')}/{info.get('run', '')} r={info.get('r')} · {info.get('n_train')}건")
+    ax.set(xlabel="step", ylabel="Loss", title=f"{info.get('name') or info.get('team', '')}/{info.get('run', '')} r={info.get('r')} · {info.get('n_train')}건")
     ax.legend()
     fig.tight_layout()
-    out = utils.fig_path(f"loss_{info.get('team', 'x')}_{info.get('run', 'x')}.png")
+    out = utils.fig_path(f"loss_{info.get('name') or info.get('team', 'x')}_{info.get('run', 'x')}.png")
     fig.savefig(out, dpi=150)
     print(f"그림: {out}")
 

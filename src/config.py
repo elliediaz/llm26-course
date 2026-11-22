@@ -6,7 +6,7 @@
 회차별로 학생이 고치는 곳
   1회차  EMBED_MODEL 교체 실험(선택)
   2회차  GEN_SERVICE 확정, CONTEXT_MAX_TOKENS 근거 측정(도전과제)
-  4회차  MODEL_ID, QUANT  ← 차승희 박사 회차에서 팀 모델 선정 결과로 교체
+  4회차  MODEL_ID, QUANT  ← 차승희 박사 회차의 모델 선정 결과로 교체
   5회차  DOMAIN 확정
   6회차~ 개인 GPU 서버에서는 python src/my_start.py 로 도메인·모델·프롬프트 방식을 정함(my_config.json)
   6회차  VECTOR_DB, RAG_TOP_K, CHUNK 설정
@@ -33,7 +33,7 @@ def _load_my() -> dict:
 
 
 MY = _load_my()
-MY_NAME = MY.get("name") or "me"            # Adapter·학습 기록 폴더 이름(train_lora.py --team 기본값)
+MY_NAME = MY.get("name") or "me"            # Adapter·학습 기록 폴더 이름(train_lora.py --name 기본값)
 MY_STRATEGY = MY.get("strategy") or "instruction"   # benchmark·sweep·probe 의 --strategy 기본값
 MY_SHOTS = MY.get("shots")                  # --shots 기본값(없으면 방식별 기본)
 MY_PROMPT = MY.get("prompt")                # --prompt 기본값(덧붙일 규칙 파일, 없으면 붙이지 않음)
@@ -60,7 +60,7 @@ CHAT_TEMPLATE_KWARGS = {"enable_thinking": False}
 # 평가용: 5~7회차의 모든 측정은 이 값으로 고정한다. 바꾸면 이전 측정과 비교할 수 없다.
 GEN_EVAL = {"do_sample": False, "max_new_tokens": 256}
 
-# 서비스용: 2회차 생성 설정 비교표로 팀이 확정한다. 8~10회차 Agent·Service에서 쓴다.
+# 서비스용: 2회차 생성 설정 비교표로 각자 확정한다. 8~10회차 Agent·Service에서 쓴다.
 GEN_SERVICE = {"do_sample": True, "temperature": 0.3, "top_p": 0.9, "max_new_tokens": 256}
 GEN_SERVICE_REASON = "(2회차에 한 줄로 기록)"
 

@@ -13,7 +13,7 @@
   JSON만(엄격)  울타리·설명 없이 JSON만 낸 비율("JSON으로만 답해"를 그대로 지켰나, 5회차 엄격 채점과 같은 기준)
 결정
   평가(5~7회차)는 GEN_EVAL(greedy) 고정: 측정값이 달라지면 개선을 판단할 수 없음
-  서비스(8~10회차)는 팀이 정한 GEN_SERVICE → src/config.py에 기록하고 이유를 한 줄로 남김
+  서비스(8~10회차)는 각자 정한 GEN_SERVICE → src/config.py에 기록하고 이유를 한 줄로 남김
 결과: results/gen_sweep.json, results/gen_sweep.md
 """
 from __future__ import annotations
@@ -102,7 +102,7 @@ def main() -> None:
     print()
     md = utils.print_table(rows)
     print(f"\n현재 서비스 설정 GEN_SERVICE = {json.dumps(config.GEN_SERVICE, ensure_ascii=False)}")
-    print("→ 팀 과제에 맞는 값과 이유 한 줄을 src/config.py의 GEN_SERVICE·GEN_SERVICE_REASON에 기록")
+    print("→ 내 과제에 맞는 값과 이유 한 줄을 src/config.py의 GEN_SERVICE·GEN_SERVICE_REASON에 기록")
     if a.temperature is not None:                       # 해보기: 기본 비교표를 덮어쓰지 않고 따로 쌓음
         log = utils.result_path("gen_sweep_mine.md")
         prev = log.read_text(encoding="utf-8") if log.exists() else "# 내 생성 설정 시험 기록(해보기 ②)\n"

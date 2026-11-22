@@ -16,8 +16,8 @@
 |---|---|---|
 | `schema.json`, `scoring.yaml` | 5~7 | 출력 JSON 형식, 필드별 채점 규칙(분류 2 · 회귀 4 · 추출 1) |
 | `test_seed.json` | 5 | 시드 10건(K4·R3·F3) |
-| `team_item_template.json` | 5 | 팀 추가 20건 양식(K8·R7·F5)과 작성 규칙 |
-| `test_dataset.json` | 5~7 | `benchmark.py` 입력. 처음에는 시드 10건, 5회차에 팀 20건을 합쳐 30건 |
+| `my_item_template.json` | 5 | 직접 추가하는 문항 20건 양식(K8·R7·F5)과 작성 규칙 |
+| `test_dataset.json` | 5~7 | `benchmark.py` 입력. 시드 10건에 문항 풀(`item_pool.json`)에서 뽑은 20건을 합쳐 30건(`my_start.py`) |
 | `corpus/*.md`, `corpus_manifest.json` | 6 | 사업장 문서 24, 최저임금 2, 해설 6, 근거 조문 요지 1 |
 | `train_seed.jsonl` | 7 | 학습 시드 180건(학습용 사업장 ws15~ws24, 평가와 다른 문장 틀) |
 | `tools_spec.md` | 8~10 | Tool 후보(급여 계산기·사업장 조회·최저시급 조회) |

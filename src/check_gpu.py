@@ -2,7 +2,7 @@
 
 실행: python src/check_gpu.py
 확인할 것
-  - CUDA 사용 가능 여부와 GPU 이름(개인 실습 서버는 CPU, 팀 서버는 회차에 따라 24~32GB급 → A100 80GB)
+  - CUDA 사용 가능 여부와 GPU 이름(6회차부터 개인 GPU 서버 : 96GB 또는 24~48GB급)
   - 전체·가용 VRAM, BF16 지원 여부
   - 사전 시딩된 모델이 캐시에 있는지(setup/models.txt 기준)
   - 간단한 행렬곱 속도(TFLOPS): 같은 GPU인지 대략 확인하는 용도
@@ -128,11 +128,11 @@ def main() -> None:
     models_ok = bool(env["models"]) and all(m["cached"] for m in env["models"])
     vram = env.get("vram_total_gb") or 0
     if env.get("cuda_available") and vram >= 70 and models_ok:
-        verdict = "통과(A100급 80GB: 큰 모델 학습·서비스 단계)"
+        verdict = f"통과(GPU {round(vram)}GB: 모델 여러 개 동시 로딩 · 큰 모델 학습 단계)"
     elif env.get("cuda_available") and models_ok:
         verdict = f"통과(GPU {round(vram)}GB: 7~8B 모델 추론·4비트 학습 단계)"
     elif models_ok:
-        verdict = "통과(개인 CPU 실습 서버: 소형 모델 단계, LLM 실행은 팀 GPU 서버에서)"
+        verdict = "통과(CPU 서버: 소형 모델 단계. LLM 실행은 GPU 서버에서)"
     elif env["where"] != "RunPod" and env.get("torch"):
         dev = f"GPU {env.get('name')}" if env.get("cuda_available") else "CPU"
         verdict = (f"통과({env['where']} {dev}: 1·2회차 실습 가능. 미리 받은 모델이 없으므로 "

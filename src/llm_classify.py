@@ -4,14 +4,14 @@
   python src/llm_classify.py --task delivery                 # 배달 리뷰, 예시 0개, 개발셋(dev)으로 점검
   python src/llm_classify.py --task delivery --shots 5       # 라벨마다 예시 1개씩 앞에 붙임
   python src/llm_classify.py --task delivery --calibrate     # 라벨 쏠림 보정
-  python src/llm_classify.py --task delivery --prompt prompts/my_prompt.txt --tag 우리팀v2
+  python src/llm_classify.py --task delivery --prompt prompts/my_prompt.txt --tag v2
   python src/llm_classify.py --task delivery --shots 5 --split test --tag 최종   # 시험셋은 마지막에 한 번만
   python src/llm_classify.py --task smishing --text "택배 주소 확인: http://a.example"
   python src/llm_classify.py --data data/s02/my_task.json    # 직접 만든 데이터
 
 과제(data/s02/)
   delivery  배달앱 리뷰 유형 5종      smishing  스미싱 문자 판별 2종
-  news      뉴스 제목 분야 5종        game      게임 고객 문의 유형 5종(팀 과제 G 데이터)
+  news      뉴스 제목 분야 5종        game      게임 고객 문의 유형 5종(도메인 G 데이터)
   nsmc      영화 리뷰 감정 2종(1회차 LSTM과 같은 데이터)
 
 방법
@@ -131,7 +131,7 @@ def main():
     ap.add_argument("--norm", default="sum", choices=["sum", "mean"], help="여러 토큰 라벨 점수: 합(sum)·평균(mean)")
     ap.add_argument("--model", default="small", help="small(Qwen3-0.6B) · base(Qwen3-0.6B-Base) · 허깅페이스 모델 이름")
     ap.add_argument("--limit", type=int, help="앞에서부터 이 건수만 평가(빠른 점검용)")
-    ap.add_argument("--tag", default="", help="리더보드에 남길 이름(팀명·시도 번호)")
+    ap.add_argument("--tag", default="", help="리더보드에 남길 이름(시도 번호 등)")
     ap.add_argument("--text", nargs="*", help="내 문장만 분류")
     ap.add_argument("--show-prompt", action="store_true", help="모델에 들어가는 앞부분을 출력")
     ap.add_argument("--list", action="store_true")
