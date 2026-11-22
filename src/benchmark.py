@@ -84,9 +84,9 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--mode", choices=list(MODE_LABEL), default="base")
     ap.add_argument("--adapter", help="LoRA Adapter 폴더(lora·rag_lora 모드)")
-    ap.add_argument("--strategy", choices=prompt_utils.STRATEGIES, default="instruction")
-    ap.add_argument("--shots", type=int, help="예시 개수(기본: fewshot 2, 나머지 0)")
-    ap.add_argument("--prompt", help="시스템 프롬프트에 덧붙일 규칙 파일(예: prompts/s05/주입방어.txt)")
+    ap.add_argument("--strategy", choices=prompt_utils.STRATEGIES, default=config.MY_STRATEGY)
+    ap.add_argument("--shots", type=int, default=config.MY_SHOTS, help="예시 개수(기본: fewshot 2, 나머지 0)")
+    ap.add_argument("--prompt", default=config.MY_PROMPT, help="시스템 프롬프트에 덧붙일 규칙 파일(예: prompts/s05/주입방어.txt). base면 붙이지 않음")
     ap.add_argument("--no-template", action="store_true", help="Chat Template 없이 입력(비교 실험용)")
     ap.add_argument("--score-mode", choices=["loose", "strict"], default="loose")
     ap.add_argument("--dataset", help="기본: data/<DOMAIN>/test_dataset.json")
@@ -106,6 +106,8 @@ def main() -> None:
     if a.limit:
         items = items[: a.limit]
     schema, rules = scorer.load_schema(), scorer.load_rules()
+    if config.MY:
+        print(config.my_line())
     print(f"[하네스] 도메인 {config.DOMAIN} · {len(items)}문항 · 모드 {MODE_LABEL[a.mode]} · 방식 {a.strategy}"
           f"{' · 템플릿 없음' if a.no_template else ''}")
 

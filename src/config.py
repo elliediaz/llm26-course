@@ -8,6 +8,7 @@
   2회차  GEN_SERVICE 확정, CONTEXT_MAX_TOKENS 근거 측정(도전과제)
   4회차  MODEL_ID, QUANT  ← 차승희 박사 회차에서 팀 모델 선정 결과로 교체
   5회차  DOMAIN 확정
+  6회차~ 개인 GPU 서버에서는 python src/my_start.py 로 도메인·모델·프롬프트 방식을 정함(my_config.json)
   6회차  VECTOR_DB, RAG_TOP_K, CHUNK 설정
   7회차  LORA 설정
 """
@@ -19,12 +20,30 @@ from pathlib import Path
 # ---------------------------------------------------------------- 저장소 위치
 ROOT = Path(__file__).resolve().parents[1]          # Pod: /workspace/course
 
-# ---------------------------------------------------------------- 팀 도메인
+# ---------------------------------------------------------------- 개인 설정(6회차부터, 개인 GPU 서버)
+# src/my_start.py 가 저장소 맨 위에 만드는 my_config.json(개인 파일, 저장소에 올리지 않음).
+# 한 번 정하면 새 터미널·노트북에서도 같은 도메인·모델·프롬프트 방식으로 돎. 환경변수가 있으면 환경변수가 우선함
+def _load_my() -> dict:
+    import json
+    p = ROOT / "my_config.json"
+    try:
+        return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+    except (OSError, ValueError):
+        return {}
+
+
+MY = _load_my()
+MY_NAME = MY.get("name") or "me"            # Adapter·학습 기록 폴더 이름(train_lora.py --team 기본값)
+MY_STRATEGY = MY.get("strategy") or "instruction"   # benchmark·sweep·probe 의 --strategy 기본값
+MY_SHOTS = MY.get("shots")                  # --shots 기본값(없으면 방식별 기본)
+MY_PROMPT = MY.get("prompt")                # --prompt 기본값(덧붙일 규칙 파일, 없으면 붙이지 않음)
+
+# ---------------------------------------------------------------- 도메인
 # G: 게임 운영 AI · L: 알바·자취 생활법률 · S: 스포츠·e스포츠 2026 시즌
-DOMAIN = os.environ.get("COURSE_DOMAIN", "G")
+DOMAIN = os.environ.get("COURSE_DOMAIN") or MY.get("domain") or "G"
 
 # ---------------------------------------------------------------- 모델 (2026-10 기준)
-MODEL_ID = os.environ.get("COURSE_MODEL_ID", "skt/A.X-4.0-Light")   # 메인 LLM. 4회차 선정 결과로 교체
+MODEL_ID = os.environ.get("COURSE_MODEL_ID") or MY.get("model_id") or "skt/A.X-4.0-Light"   # 메인 LLM. 4회차 선정 결과로 교체
 SMALL_MODEL_ID = "Qwen/Qwen3-0.6B"                  # 2회차 Attention·KV Cache 관찰용 소형 Decoder(Instruct)
 BASE_MODEL_ID = "Qwen/Qwen3-0.6B-Base"              # 2회차 정렬 전(Base) 모델 비교·문맥 내 학습 확인용
 MLM_MODEL_ID = "FacebookAI/xlm-roberta-base"        # 2회차 빈칸 맞히기(MLM) 확인용 인코더
@@ -32,7 +51,7 @@ ENC_DEC_MODEL = "Helsinki-NLP/opus-mt-ko-en"        # 1회차 Encoder-Decoder �
 EMBED_MODEL = "nlpai-lab/KURE-v1"                   # 1·6회차 임베딩(백업: BAAI/bge-m3)
 RERANK_MODEL = "dragonkue/bge-reranker-v2-m3-ko"    # 6회차 도전과제(백업: BAAI/bge-reranker-v2-m3)
 
-QUANT = os.environ.get("COURSE_QUANT", "bf16")      # "bf16" | "nf4"(4-bit, QLoRA·저메모리 추론)
+QUANT = os.environ.get("COURSE_QUANT") or MY.get("quant") or "bf16"      # "bf16" | "nf4"(4-bit, QLoRA·저메모리 추론)
 
 # Chat Template 추가 인자. Qwen3 계열은 생각 모드를 끈다(다른 모델 템플릿에서는 무시됨)
 CHAT_TEMPLATE_KWARGS = {"enable_thinking": False}
@@ -84,8 +103,15 @@ PATHS = {
 
 
 def data_dir(domain: str | None = None) -> Path:
-    """팀 도메인 데이터 폴더(data/G 등)."""
+    """도메인 데이터 폴더(data/G 등)."""
     return PATHS["data"] / (domain or DOMAIN)
+
+
+def my_line() -> str:
+    """측정 시작 때 한 줄로 보여 주는 개인 설정. 어떤 조건으로 쟀는지 화면에 남김."""
+    extra = f" · 규칙 파일 {MY_PROMPT}" if MY_PROMPT else ""
+    shots = f"({MY_SHOTS})" if MY_SHOTS is not None else ""
+    return f"[내 설정] 도메인 {DOMAIN} · 모델 {MODEL_ID} · {QUANT} · 방식 {MY_STRATEGY}{shots}{extra}"
 
 
 def summary() -> dict:

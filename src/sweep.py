@@ -113,9 +113,9 @@ def main() -> None:
     ap.add_argument("knob", choices=list(KNOBS))
     ap.add_argument("values", nargs="+")
     ap.add_argument("--mode", choices=["base", "rag"], default="base", help="rag면 검색 결과를 넣어 생성(6회차)")
-    ap.add_argument("--strategy", default="instruction")
-    ap.add_argument("--shots", type=int)
-    ap.add_argument("--prompt", help="모든 값에 공통으로 덧붙일 규칙 파일")
+    ap.add_argument("--strategy", default=config.MY_STRATEGY)
+    ap.add_argument("--shots", type=int, default=config.MY_SHOTS)
+    ap.add_argument("--prompt", default=config.MY_PROMPT, help="모든 값에 공통으로 덧붙일 규칙 파일(base면 붙이지 않음)")
     ap.add_argument("--dataset")
     ap.add_argument("--limit", type=int, default=10)
     ap.add_argument("--repeat", type=int, default=1)
@@ -127,6 +127,8 @@ def main() -> None:
     schema, rules = scorer.load_schema(), scorer.load_rules()
     base = SimpleNamespace(strategy=a.strategy, no_template=False, score_mode="loose", shots=a.shots,
                            extra=read_extra(a.prompt), gen=None, top_k=None, context_tokens=None)
+    if config.MY:
+        print(config.my_line())
     print(f"[설정 비교 실험] {KNOBS[a.knob]} : {' · '.join(a.values)} | 도메인 {config.DOMAIN} · {len(items)}문항 · 반복 {a.repeat}")
 
     model = tok = None

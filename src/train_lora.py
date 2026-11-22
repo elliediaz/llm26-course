@@ -1,6 +1,7 @@
 """7회차 실습 1 ③④⑤: LoRA/QLoRA 학습 → Adapter 저장.
 
   python src/build_train_data.py --augment 300                 # 먼저 학습 데이터 준비
+  python src/train_lora.py --run r16                            # 개인 서버: adapters/me/r16 (--team 을 빼면 me)
   python src/train_lora.py --team team3 --run r16               # 기본: config.QUANT로 본체 로딩(nf4이면 QLoRA)
   python src/train_lora.py --team team3 --run r8 --r 8          # 도전과제 ①: rank 바꾸기
   python src/train_lora.py --team team3 --run n100 --limit 100  # 데이터 양 바꾸기
@@ -54,7 +55,7 @@ class TimeLimit(TrainerCallback):
 def main() -> None:
     L = config.LORA
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--team", required=True)
+    ap.add_argument("--team", default=config.MY_NAME, help="Adapter 폴더 이름(adapters/<이름>/<run>). 개인 서버 기본값은 me")
     ap.add_argument("--run", default="r16")
     ap.add_argument("--r", type=int, default=L["r"])
     ap.add_argument("--alpha", type=int, default=None, help="기본: r의 2배")
