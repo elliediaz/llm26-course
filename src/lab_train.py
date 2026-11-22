@@ -3,6 +3,11 @@
 직접 돌릴 수도 있음:
   python src/lab_train.py --train my/train.jsonl --valid my/valid.jsonl --out my/adapters/v1 --base skt/A.X-4.0-Light --run v1
 학습 데이터는 한 줄에 {"prompt": [대화], "completion": [{"role": "assistant", "content": 답}]} 형식(답 부분만 학습함).
+
+메모(11/22 실측, A.X-4.0-Light · 학습 156건 · rank 16 · 에폭 3 · 배치 8)
+  - RTX PRO 6000(96GB) 약 38초, 학습 메모리 16.2GB, Adapter 38.5MB
+  - RTX PRO 4500(32GB) 약 224초. 노트북에 올려 둔 모델을 잠시 내렸다가 다시 올리는 시간이 들어간 값임
+  - 4bit 본체(QLoRA) · 배치 4 는 32GB 에서 약 151초, 학습 메모리 8.3GB
 """
 from __future__ import annotations
 
