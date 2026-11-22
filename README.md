@@ -1,6 +1,7 @@
 # GPU 기반 오픈소스 LLM·AI Agent 서비스 개발 PBL: 실습 저장소
 
-> **실습 접속 주소: [ACCESS.md](ACCESS.md)** (비밀번호는 접속 안내 카드)
+> **실습 접속 주소: [ACCESS.md](ACCESS.md)** (6회차부터 개인 GPU 서버 : 카드의 서버 번호 줄을 봄. 비밀번호는 카드)
+> **6회차부터 개인 실습** : 터미널에서 `source /workspace/activate.sh` → `python src/my_start.py`(내 도메인·시험지·진행 상태), 끝날 때 `python src/pack_results.py`(결과 묶어 내려받기)
 > **수업 자료(발표 PDF·워크북·안내서): [handouts/](handouts/)**
 > Pod 경로: `/workspace/course` · 커널: **LLM-PBL (course)** · 터미널: `source /workspace/activate.sh`
 > 모델·버전 기준일 2026-10. 설정은 `src/config.py` 한 곳에서만 바꿈
@@ -19,7 +20,7 @@ course/
 ├─ data/
 │  ├─ common/    공개 데이터(Fashion-MNIST·NSMC 리뷰), 금액 수사 생성기, 토큰 비교 문장
 │  ├─ s02/       2회차 미션 데이터(배달 리뷰·스미싱 문자·뉴스 제목·게임 문의·속담·토큰 표본·지시어 문장)
-│  └─ G · L · S  팀 도메인 데이터(README에 출처·라이선스·기준일). G 게임 운영, L 알바 급여 정산, S 가상 스포츠 기록실
+│  └─ G · L · S  도메인 데이터(README에 출처·라이선스·기준일, 6회차부터 각자 고름). G 게임 운영, L 알바 급여 정산, S 가상 스포츠 기록실
 ├─ prompts/      2회차 M5 지시문 파일(예시_delivery.txt), 5회차 덧붙일 규칙 파일(s05/)
 ├─ experiments/  회차별 보조 실험(sNN/): 원리를 눈으로 확인하는 짧은 완성 코드, 옵션으로 조건을 바꿔 봄
 ├─ results/      모든 산출물(JSON·표·그림): 볼륨에 남음
@@ -61,6 +62,7 @@ course/
 | 6 | `retrieval.py` `index_builder.py` `rag.py` `hybrid_search.py` `rerank.py` | 분할·인덱스·검색, 검색 품질, 검색 기반 생성·오답 분류, 하이브리드·재순위화(도전) |
 | 6 | `retrieval_sweep.py` | 검색 설정 비교 실험: LLM 없이 청크 크기·중첩·분할 방식·임베딩·키워드 비중을 바꿔 Recall@k·MRR 비교(코랩 `notebooks/s06_colab.ipynb`) |
 | 7 | `build_train_data.py` `train_lora.py` `plot_loss.py` `merge_adapter.py` | 학습 데이터, LoRA/QLoRA 학습, Loss 판독, Adapter 병합(도전) |
+| 6~7 | `my_start.py` `pack_results.py` | 개인 실습 : 내 도메인·개인 시험지(시드 10 + 문항 풀 20)·프롬프트 방식 저장과 진행 상태 확인, 결과 묶어 내려받기 |
 
 ## 실습 코드 세 종류
 
@@ -68,7 +70,7 @@ course/
 |---|---|---|
 | 실행·비교 | `src/` | 완성 스크립트를 옵션을 바꿔 가며 실행 → 결과 숫자·그림을 비교해 해석 |
 | 보조 실험 | `experiments/sNN/` | 원리를 눈으로 확인하는 짧은 완성 코드(층별 모양, 다음 토큰 확률, Self-Attention, 생성 설정, Chat Template, 채점 규칙). 옵션으로 조건을 바꿔 봄 |
-| 해보기·사건 카드 | `tasks/` | 상황(문제)이 주어지고, 설정(하이퍼파라미터·설정)를 바꿔 돌린 결과로 팀이 판단해 근거와 함께 기록 |
+| 해보기·사건 카드 | `tasks/` | 상황(문제)이 주어지고, 설정(하이퍼파라미터)을 바꿔 돌린 결과로 판단해 근거와 함께 기록(5회차까지 팀, 6회차부터 개인) |
 
 ## 빠른 시작
 
