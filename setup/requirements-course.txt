@@ -20,6 +20,7 @@ pygments
 matplotlib
 seaborn
 koreanize-matplotlib==0.1.1   # 그림 한글 글꼴(나눔고딕 포함): 1·2·6·7회차 그림
+diffusers==0.43.0             # 7회차 11단계 그림 모듈(sd-turbo). 11/23 추가 : 이미 만든 볼륨은 lab.image() 첫 실행 또는 seat_sync.py --prewarm 이 설치함
 xgrammar==0.2.8               # 5회차 디코딩 제약(형식 강제 3방식 중 하나)
 pandas
 scikit-learn                  # 1회차 고전 분류기·회귀기(로지스틱 회귀·릿지, 지표). sentence-transformers 의존성으로도 설치됨

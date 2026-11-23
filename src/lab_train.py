@@ -8,15 +8,22 @@
   - RTX PRO 6000(96GB) 약 38초, 학습 메모리 16.2GB, Adapter 38.5MB
   - RTX PRO 4500(32GB) 약 224초. 노트북에 올려 둔 모델을 잠시 내렸다가 다시 올리는 시간이 들어간 값임
   - 4bit 본체(QLoRA) · 배치 4 는 32GB 에서 약 151초, 학습 메모리 8.3GB
+
+11/23 보강 : 학습 도중의 Adapter 를 중간 저장함(--snaps). 0 이면 에폭이 끝날 때마다, N 이면 전체 단계를 N 등분한 지점마다.
+  저장 위치는 <out>/snaps/s0012/ 처럼 단계 번호를 붙인 폴더이고, 목록은 <out>/snaps/index.json. 노트북의 lab.progress_eval() 이 씀.
+  학습 기록(log.json)에 학습률 · 기울기 크기 · 토큰 정확도 · 에폭도 함께 남김(lab.train_report() 가 그림).
 """
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from pathlib import Path
 
+for _k in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS"):   # 11/23 : CPU 스레드 과다 방지(lab.py 와 같음)
+    os.environ.setdefault(_k, "8")
 import torch
 from datasets import load_dataset
 from peft import LoraConfig
@@ -35,8 +42,12 @@ def emit(**kw) -> None:
     print(json.dumps({"ev": kw.pop("ev"), **kw}, ensure_ascii=False), flush=True)
 
 
+KEEP = ("loss", "learning_rate", "grad_norm", "mean_token_accuracy", "entropy", "num_tokens",
+        "eval_loss", "eval_mean_token_accuracy", "eval_entropy")
+
+
 class Report(TrainerCallback):
-    """학습 기록이 생길 때마다 한 줄씩 내보냄."""
+    """학습 기록이 생길 때마다 한 줄씩 내보냄. 학습률 · 기울기 크기 · 토큰 정확도도 함께 남김."""
 
     def __init__(self):
         self.history: list[dict] = []
@@ -44,12 +55,45 @@ class Report(TrainerCallback):
     def on_log(self, args, state, control, logs=None, **kw):
         logs = logs or {}
         vram = round(torch.cuda.max_memory_allocated() / 2**30, 1) if torch.cuda.is_available() else None
-        if "loss" in logs:
-            self.history.append({"step": state.global_step, "loss": round(float(logs["loss"]), 4)})
-            emit(ev="log", step=state.global_step, total=state.max_steps, loss=round(float(logs["loss"]), 4), vram=vram)
-        if "eval_loss" in logs:
-            self.history.append({"step": state.global_step, "eval_loss": round(float(logs["eval_loss"]), 4)})
-            emit(ev="eval", step=state.global_step, total=state.max_steps, eval_loss=round(float(logs["eval_loss"]), 4), vram=vram)
+        row = {"step": state.global_step, "epoch": round(float(state.epoch or 0), 3)}
+        row.update({k: round(float(logs[k]), 6 if k == "learning_rate" else 4) for k in KEEP if isinstance(logs.get(k), (int, float))})
+        if "loss" in row:
+            self.history.append({k: v for k, v in row.items() if not k.startswith("eval_")})
+            emit(ev="log", step=state.global_step, total=state.max_steps, loss=row["loss"], epoch=row["epoch"],
+                 acc=row.get("mean_token_accuracy"), lr=row.get("learning_rate"), vram=vram)
+        if "eval_loss" in row:
+            self.history.append({k: v for k, v in row.items() if k in ("step", "epoch") or k.startswith("eval_")})
+            emit(ev="eval", step=state.global_step, total=state.max_steps, eval_loss=row["eval_loss"], epoch=row["epoch"],
+                 eval_acc=row.get("eval_mean_token_accuracy"), vram=vram)
+
+
+class Snap(TrainerCallback):
+    """학습 도중의 Adapter 를 중간 저장함. n=0 이면 에폭마다, n>0 이면 전체 단계를 n 등분한 지점마다."""
+
+    def __init__(self, out: Path, run: str, n: int):
+        self.dir, self.run, self.n, self.at, self.index = out / "snaps", run, n, set(), []
+
+    def on_train_begin(self, args, state, control, **kw):
+        if self.n > 0:
+            self.at = {max(1, round(state.max_steps * i / self.n)) for i in range(1, self.n + 1)}
+
+    def save(self, state, model):
+        step = state.global_step
+        if any(x["step"] == step for x in self.index):
+            return
+        d = self.dir / f"s{step:04d}"
+        model.save_pretrained(d)
+        self.index.append({"name": f"{self.run}@{step}", "step": step, "epoch": round(float(state.epoch or 0), 2)})
+        utils.write_json(self.dir / "index.json", self.index)
+        emit(ev="snap", step=step, epoch=round(float(state.epoch or 0), 2))
+
+    def on_step_end(self, args, state, control, model=None, **kw):
+        if self.n > 0 and state.global_step in self.at and model is not None:
+            self.save(state, model)
+
+    def on_epoch_end(self, args, state, control, model=None, **kw):
+        if self.n == 0 and model is not None:
+            self.save(state, model)
 
 
 def main() -> None:
@@ -69,6 +113,7 @@ def main() -> None:
     ap.add_argument("--target", choices=list(TARGETS), default="qkvo")
     ap.add_argument("--limit", type=int)
     ap.add_argument("--seed", type=int, default=config.SEED)
+    ap.add_argument("--snaps", type=int, default=0, help="중간 저장 횟수(0 이면 에폭마다, -1 이면 저장 안 함)")
     a = ap.parse_args()
 
     utils.set_seed(a.seed)
@@ -95,13 +140,18 @@ def main() -> None:
         report_to="none", seed=a.seed, disable_tqdm=True,
     )
     rep = Report()
+    out = Path(a.out)
+    out.mkdir(parents=True, exist_ok=True)
+    cbs = [rep] + ([Snap(out, a.run, a.snaps)] if a.snaps >= 0 else [])
     trainer = SFTTrainer(model=model, args=args, train_dataset=train, eval_dataset=valid, processing_class=tok,
-                         peft_config=lora, callbacks=[rep])
+                         peft_config=lora, callbacks=cbs)
+    per_epoch = max(1, -(-len(train) // a.batch))                 # 에폭당 단계 = 학습 건수 ÷ 배치(올림)
+    emit(ev="plan", total=max(1, round(per_epoch * a.epochs)), n_train=len(train), per_epoch=per_epoch, epochs=a.epochs,
+         warmup=args.warmup_steps, eval_every=args.eval_steps, log_every=args.logging_steps)
     cnt = model_utils.count_params(trainer.model)
     t0 = time.perf_counter()
     trainer.train()
     minutes = round((time.perf_counter() - t0) / 60, 2)
-    out = Path(a.out)
     trainer.model.save_pretrained(out)
     tok.save_pretrained(out)
     size_mb = round(sum(p.stat().st_size for p in out.glob("adapter_model.*")) / 2**20, 1)
@@ -109,6 +159,8 @@ def main() -> None:
     evals = [h["eval_loss"] for h in rep.history if "eval_loss" in h]
     info = {"run": a.run, "base_model": a.base, "quant": a.quant, "r": a.r, "alpha": a.alpha, "lr": a.lr, "epochs": a.epochs,
             "batch": a.batch, "target": a.target, "max_length": a.max_length, "seed": a.seed, "n_train": len(train),
+            "steps": trainer.state.global_step, "warmup": args.warmup_steps, "eval_every": args.eval_steps, "scheduler": "cosine",
+            "dropout": 0.05, "snaps": a.snaps,
             "minutes": minutes, "trainable_params": cnt["trainable"], "trainable_ratio": cnt["ratio"], "adapter_mb": size_mb,
             "final_loss": losses[-1] if losses else None, "eval_loss": evals[-1] if evals else None,
             "vram_peak_gb": utils.vram_peak_gb(), "finished_at": utils.now()}

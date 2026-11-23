@@ -34,11 +34,18 @@ from pathlib import Path
 
 if Path("/workspace/.cache/huggingface").exists():
     os.environ.setdefault("HF_HOME", "/workspace/.cache/huggingface")
+# 11/23 : 서버는 CPU 코어가 255개로 보이지만 실제로 쓸 수 있는 몫은 훨씬 작음. 기본값(255 스레드)으로 두면 작은 CPU 계산이
+# 수천 배 느려짐(실측 : 작은 행렬 곱 112번 34.6초 → 8스레드 0.02초). torch 를 불러오기 전에 스레드 수를 정해 둠(학습 프로세스에도 물려줌)
+for _k in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
+    os.environ.setdefault(_k, "8")
 
 import numpy as np
 
 import config
 import utils
+
+if "torch" in sys.modules:                          # 이미 불러온 경우(다른 모듈이 먼저 불렀을 때)
+    sys.modules["torch"].set_num_threads(min(sys.modules["torch"].get_num_threads(), int(os.environ.get("OMP_NUM_THREADS", "8"))))
 
 ROOT = config.ROOT
 MY = ROOT / "my"
@@ -90,6 +97,8 @@ class _State:
     sig = None
     cfg: dict | None = None
     history: list = []
+    image: dict | None = None  # 그림 모델 {"id","pipe","where"}
+    chara: dict = {}           # 캐릭터 설명(한국어) → 그림용 영어 묘사
 
 
 S = _State()
@@ -365,7 +374,7 @@ def _quiet():
     """모델을 올리는 동안 라이브러리가 내는 안내문(내려받기 경고 · 진행 표시)을 화면에 내지 않음. 결과는 lab 이 따로 보여 줌."""
     import logging
     import warnings
-    names = ["huggingface_hub", "transformers", "sentence_transformers", "peft", "accelerate"]
+    names = ["huggingface_hub", "transformers", "sentence_transformers", "peft", "accelerate", "diffusers"]
     old = {n: logging.getLogger(n).level for n in names}
     for n in names:
         logging.getLogger(n).setLevel(logging.ERROR)
@@ -522,8 +531,34 @@ def model_panel():
 
 
 def _adapter_dir(run: str) -> Path:
+    if "@" in run:                                          # 'v1@30' : v1 학습의 30단계 중간 저장본
+        base, step = run.split("@", 1)
+        return ADAPTERS / base / "snaps" / f"s{int(step):04d}"
     p = Path(run)
     return p if p.is_absolute() or p.exists() else ADAPTERS / run
+
+
+def _local_adapter(path: Path) -> Path:
+    """Adapter 를 서버의 로컬 디스크(/tmp)로 복사해 그 경로를 돌려줌.
+    네트워크 볼륨의 파일을 그대로 열면 조각 읽기가 느려 Adapter 하나 올리는 데 30초 넘게 걸렸음(11/23 실측). 한 번에 읽어 복사하면 1초 안쪽."""
+    import shutil
+    import tempfile
+    src = path / "adapter_model.safetensors"
+    if not src.exists():
+        return path
+    try:
+        rel = path.resolve().relative_to(ADAPTERS.resolve())
+        key = "__".join(rel.parts)
+    except ValueError:
+        key = _safe(str(path))
+    dst = Path(tempfile.gettempdir()) / "lab_adapters" / key
+    st = src.stat()
+    if not ((dst / src.name).exists() and (dst / src.name).stat().st_size == st.st_size and (dst / src.name).stat().st_mtime >= st.st_mtime):
+        dst.mkdir(parents=True, exist_ok=True)
+        for f in path.iterdir():
+            if f.is_file() and f.name.startswith("adapter_"):
+                (dst / f.name).write_bytes(f.read_bytes())
+    return dst
 
 
 def _attach(entry: dict, run: str):
@@ -533,6 +568,7 @@ def _attach(entry: dict, run: str):
     if not (path / "adapter_config.json").exists():
         raise Guide(f"Adapter '{run}' 이 없음. lab.runs() 로 이름을 확인함")
     info = utils.read_json(path / "train_config.json") if (path / "train_config.json").exists() else {}
+    path = _local_adapter(path)
     if info.get("base_model") and info["base_model"] != entry["id"]:
         raise Guide(f"Adapter '{run}' 은 {info['base_model']} 로 학습했음. 지금 모델은 {entry['id']} 임. 같은 모델을 올린 뒤 씀")
     if entry["peft"] is None:
@@ -1095,7 +1131,7 @@ def quiz_panel():
                    "mode": _drop("실행", ["둘 다", "문서 없이", "문서 붙여", "저장만"], "둘 다")}, run, "저장하고 풀기")
 
 
-def _bars(labels: list[str], series: dict, title: str = "", ymax: float | None = 1.05):
+def _bars(labels: list[str], series: dict, title: str = "", ymax: float | None = 1.15):
     plt = _plt()
     fig, ax = plt.subplots(figsize=(max(4.6, 1.3 * len(labels) + 1.5), 3.0))
     n = len(series)
@@ -1109,8 +1145,8 @@ def _bars(labels: list[str], series: dict, title: str = "", ymax: float | None =
     if ymax:
         ax.set_ylim(0, ymax)
     ax.set_title(title)
-    if n > 1:
-        ax.legend(fontsize=8)
+    if n > 1:                                               # 범례는 그림 아래(막대를 가리지 않게)
+        ax.legend(fontsize=8, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=min(n, 4), frameon=False)
     _showfig(fig)
 
 
@@ -1573,7 +1609,7 @@ def data_panel():
 
 
 def _run_info(run: str) -> dict:
-    p = _adapter_dir(run) / "train_config.json"
+    p = _adapter_dir(run.split("@")[0]) / "train_config.json"
     return utils.read_json(p) if p.exists() else {}
 
 
@@ -1593,9 +1629,14 @@ def runs(show: bool = True) -> list[dict]:
 
 def train(run: str | None = None, r: int = 16, alpha: int | None = None, lr: float = 2e-4, epochs: float = 3, batch: int = 8,
           quant: str = "bf16", target: str = "qkvo", n: int | None = None, base: str | None = None, max_length: int = 1024,
-          seed: int = 42) -> str | None:
-    """LoRA 학습을 돌리고 Loss 곡선을 실시간으로 그림. 끝나면 my/adapters/<이름>/ 에 Adapter 가 남음."""
-    if not (MY / "train.jsonl").exists():
+          seed: int = 42, snaps: int = 0, data: str | None = None, valid: str | None = None) -> str | None:
+    """LoRA 학습을 돌리고 Loss 곡선을 실시간으로 그림. 끝나면 my/adapters/<이름>/ 에 Adapter 가 남음.
+
+    snaps : 학습 도중 Adapter 를 몇 번 중간 저장할지. 0 이면 에폭이 끝날 때마다(기본), 6 이면 전체 단계를 6등분한 지점마다.
+    중간 저장본은 lab.progress_eval() 로 '단계가 지날수록 얼마나 목표를 따라오는지' 볼 때 씀.
+    """
+    data_p, valid_p = Path(data) if data else MY / "train.jsonl", Path(valid) if valid else MY / "valid.jsonl"
+    if not data_p.exists():
         raise Guide("학습 데이터가 없음. 데이터 조절판에서 먼저 만듦")
     base = base or (S.models[S.current]["id"] if S.current else cfg()["model"])
     names = {p.name for p in ADAPTERS.glob("*")} if ADAPTERS.exists() else set()
@@ -1609,15 +1650,20 @@ def train(run: str | None = None, r: int = 16, alpha: int | None = None, lr: flo
         reload_after = [(k, m["id"], m["quant"]) for k, m in S.models.items()]
         _msg(f"GPU 여유 {v['free']:.0f} GB 가 학습에 필요한 약 {need:.0f} GB 보다 작아, 올려 둔 모델을 잠시 내리고 학습함")
         unload()
+        image_unload()
     out_dir = ADAPTERS / run
-    cmd = [sys.executable, "-u", str(SRC / "lab_train.py"), "--train", str(MY / "train.jsonl"), "--valid", str(MY / "valid.jsonl"),
+    cmd = [sys.executable, "-u", str(SRC / "lab_train.py"), "--train", str(data_p), "--valid", str(valid_p),
            "--out", str(out_dir), "--base", base, "--quant", quant, "--r", str(r), "--alpha", str(alpha or 2 * r), "--lr", str(lr),
-           "--epochs", str(epochs), "--batch", str(batch), "--target", target, "--max-length", str(max_length), "--seed", str(seed), "--run", run]
+           "--epochs", str(epochs), "--batch", str(batch), "--target", target, "--max-length", str(max_length), "--seed", str(seed), "--run", run,
+           "--snaps", str(snaps)]
     if n:
         cmd += ["--limit", str(n)]
+    _show(f"<details style='font-size:12px'><summary>실제로 실행한 명령(lab_train.py)</summary><pre style='white-space:pre-wrap'>"
+          f"{_e(' '.join(Path(x).name if i in (1, 2) else x for i, x in enumerate(cmd)))}</pre></details>")
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1, cwd=str(ROOT),
                             env={**os.environ, "PYTHONPATH": str(SRC), "TOKENIZERS_PARALLELISM": "false"})
     tr, ev, tail, done, last, t0, total, mem = [], [], [], None, 0.0, time.time(), None, None
+    plan, sn = {}, []
     head = f"{run} · {base.split('/')[-1]}({quant}) · r={r} · 학습률 {lr} · 에폭 {epochs} · 배치 {batch}"
 
     def draw(final=False):
@@ -1629,7 +1675,15 @@ def train(run: str | None = None, r: int = 16, alpha: int | None = None, lr: flo
             ax.plot([x[0] for x in ev], [x[1] for x in ev], "o--", color=_PAL[1], label="검증 Loss")
         if total:
             ax.set_xlim(0, total)
-        ax.set_xlabel("학습 단계(step)")
+        per = plan.get("per_epoch")
+        if per and total:
+            for k in range(1, int(total // per) + 1):
+                if k * per < total:
+                    ax.axvline(k * per, color="#9aa4ae", lw=0.8, ls=":")
+                    ax.text(k * per, ax.get_ylim()[1], f" 에폭 {k} 끝", fontsize=7, va="top", color="#6e7781")
+        for st in sn:
+            ax.plot([st], [ax.get_ylim()[0]], marker="^", color=_PAL[2], ms=7, clip_on=False)
+        ax.set_xlabel("학습 단계(step)" + ("  · ▲ 중간 저장" if sn else ""))
         ax.set_ylabel("Loss")
         step = tr[-1][0] if tr else 0
         ax.set_title(f"{head}\n단계 {step}/{total or '?'} · {time.time() - t0:.0f}초" + (f" · 학습 GPU 메모리 {mem:.1f} GB" if mem else "")
@@ -1638,12 +1692,18 @@ def train(run: str | None = None, r: int = 16, alpha: int | None = None, lr: flo
             ax.legend(fontsize=8)
         _showfig(fig, live=True)
 
-    _msg(f"학습을 시작함 : {head}. 처음 20~40초는 모델을 올리는 시간임")
+    _msg(f"학습을 시작함 : {head}. 처음 1~3분은 학습 프로그램이 모델을 따로 올리는 시간임(서버마다 다름)")
     for line in proc.stdout:
         line = line.strip()
         if line.startswith('{"ev"'):
             d = json.loads(line)
             total, mem = d.get("total", total), d.get("vram", mem)
+            if d["ev"] == "plan":
+                plan = d
+                _msg(f"학습 계획 : 학습 {d['n_train']}건 ÷ 배치 {batch} = 에폭당 {d['per_epoch']}단계 × 에폭 {epochs} = 전체 {d['total']}단계 · "
+                     f"처음 {d['warmup']}단계는 학습률을 천천히 올림(워밍업) · {d['eval_every']}단계마다 검증 Loss 를 잼")
+            elif d["ev"] == "snap":
+                sn.append(d["step"])
             if d["ev"] == "log" and d.get("loss") is not None:
                 tr.append((d["step"], d["loss"]))
             elif d["ev"] == "eval":
@@ -1678,8 +1738,9 @@ def train_panel():
     bases = [(f"{m['id']} (약 {m['gb']} GB)", m["id"]) for m in MODEL_MENU if _cached(m["id"]) or m["id"] in {x["id"] for x in S.models.values()}]
     cur = S.models[S.current]["id"] if S.current else cfg()["model"]
 
-    def run(name, base, r, lr, epochs, batch, quant, target, n):
-        k = train(name.strip() or None, r=r, lr=float(lr), epochs=epochs, batch=batch, quant=quant, target=target, n=n or None, base=base)
+    def run(name, base, r, lr, epochs, batch, quant, target, n, snaps):
+        k = train(name.strip() or None, r=r, lr=float(lr), epochs=epochs, batch=batch, quant=quant, target=target, n=n or None, base=base,
+                  snaps=snaps)
         if k:
             runs()
 
@@ -1691,7 +1752,9 @@ def train_panel():
                    "batch": _drop("배치 크기", [2, 4, 8, 16, 32, 64] if big else [2, 4, 8, 16], 8),
                    "quant": _drop("본체 자료형", [("bf16(LoRA)", "bf16"), ("4bit(QLoRA, 메모리 절약)", "nf4")], "bf16"),
                    "target": _drop("LoRA 를 붙일 층", [("어텐션 q · v", "qv"), ("어텐션 넷(기본)", "qkvo"), ("어텐션 + MLP 전체", "all")], "qkvo"),
-                   "n": _slider("학습 건수 제한(0=전부)", 0, 0, 600, 10)}, run, "학습 시작")
+                   "n": _slider("학습 건수 제한(0=전부)", 0, 0, 600, 10),
+                   "snaps": _drop("중간 저장", [("에폭마다(기본)", 0), ("6번(단계별로 자세히)", 6), ("10번(더 자세히)", 10), ("저장 안 함", -1)], 0)},
+                  run, "학습 시작")
 
 
 def loss_plot(*names: str) -> None:
@@ -1793,6 +1856,972 @@ def four(name: str | None = None, show: bool = True) -> list[dict]:
               f"네 구성 비교 · Adapter {mine[-1]} · 확인 질문 {len(quiz())}건")
         _show(_table(out))
     return _q(out, show)
+
+
+# ------------------------------------------------------------------ 7회차 보강 : 학습 과정 들여다보기
+_MOD_ORDER = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+
+
+def _latest_run() -> str:
+    rs = runs(show=False)
+    if not rs:
+        raise Guide("아직 학습한 Adapter 가 없음. 4단계에서 학습을 한 번 마친 뒤 실행함")
+    return rs[-1]["이름"]
+
+
+def _snaps(run: str) -> list[dict]:
+    p = _adapter_dir(run) / "snaps" / "index.json"
+    return sorted(utils.read_json(p), key=lambda x: x["step"]) if p.exists() else []
+
+
+def _lora_tensors(run: str):
+    """Adapter 파일에서 층 · 행렬별 A, B 를 읽음(GPU 를 쓰지 않음)."""
+    d = _adapter_dir(run)
+    if not (d / "adapter_model.safetensors").exists():
+        raise Guide(f"Adapter '{run}' 의 파일이 없음. lab.runs() 로 이름을 확인함")
+    from safetensors.torch import load as _st_load
+    cj = utils.read_json(d / "adapter_config.json")
+    ts = {}
+    raw = _st_load((d / "adapter_model.safetensors").read_bytes())   # 네트워크 볼륨은 조각 읽기가 느려 한 번에 읽음(11/23 실측 36초 → 1초 안쪽)
+    for k, t in raw.items():
+        m = re.search(r"layers\.(\d+)\.(\w+?)\.(\w+?)\.lora_([AB])\.", k)
+        if m:
+            ts.setdefault((int(m.group(1)), m.group(2), m.group(3)), {})[m.group(4)] = t.float()
+    return cj, ts
+
+
+@contextmanager
+def _few_threads(n: int = 4):
+    """CPU 계산의 스레드 수를 잠시 줄임. 서버는 CPU 코어가 많이 보이지만 실제로 쓸 수 있는 몫이 작아,
+    기본 스레드 수로 작은 행렬 곱을 하면 오히려 수십 배 느렸음(11/23 실측 112개 35초 → 0.1초 안쪽)."""
+    import torch
+    n0 = torch.get_num_threads()
+    torch.set_num_threads(min(n, n0))
+    try:
+        yield
+    finally:
+        torch.set_num_threads(n0)
+
+
+def _delta_norm(ab: dict, scale: float) -> float:
+    """‖ΔW‖ = (α/r)·‖B·A‖. 큰 행렬을 만들지 않고 r × r 행렬로 계산함."""
+    A, B = ab["A"], ab["B"]
+    return float(scale * max(float(((B.T @ B) @ (A @ A.T)).trace()), 0.0) ** 0.5)
+
+
+def lora_view(run: str | None = None, show: bool = True) -> dict:
+    """학습한 Adapter 의 실제 구성 : 어느 층의 어느 행렬에 몇 개의 숫자가 붙었고, 학습 뒤 얼마나 바뀌었는가(‖ΔW‖)."""
+    run = run or _latest_run()
+    cj, ts = _lora_tensors(run)
+    r, alpha = int(cj["r"]), float(cj["lora_alpha"])
+    sc = alpha / r
+    mods = sorted({m for _, _, m in ts}, key=lambda m: _MOD_ORDER.index(m) if m in _MOD_ORDER else 99)
+    layers = sorted({l for l, _, _ in ts})
+    blk = {m: b for _, b, m in ts}
+    rows, total = [], 0
+    for m in mods:
+        ks = [k for k in ts if k[2] == m]
+        A, B = ts[ks[0]]["A"], ts[ks[0]]["B"]
+        per = A.numel() + B.numel()
+        total += per * len(ks)
+        rows.append({"행렬": m, "붙인 층": f"{len(ks)}개", "원래 행렬(얼림)": f"{B.shape[0]} × {A.shape[1]}",
+                     "A 모양": f"{A.shape[0]} × {A.shape[1]}", "B 모양": f"{B.shape[0]} × {B.shape[1]}",
+                     "층 하나당": f"{per:,}개", "합계": f"{per * len(ks):,}개"})
+    with _few_threads():
+        heat = np.array([[_delta_norm(ts[(l, blk[m], m)], sc) if (l, blk[m], m) in ts else np.nan for m in mods] for l in layers])
+    info = _run_info(run)
+    base_n = info["trainable_params"] / info["trainable_ratio"] if info.get("trainable_ratio") else None
+    mb = (_adapter_dir(run) / "adapter_model.safetensors").stat().st_size / 2**20
+    res = {"run": run, "r": r, "alpha": alpha, "scale": sc, "dropout": cj.get("lora_dropout"), "targets": mods, "layers": len(layers),
+           "params": total, "base_params": base_n, "mb": round(mb, 1), "delta": heat}
+    if show:
+        l0 = layers[0]
+        lines = [f"layers.{l0}.{blk[m]}.{m:<9}: 얼린 Linear({ts[(l0, blk[m], m)]['A'].shape[1]} → {ts[(l0, blk[m], m)]['B'].shape[0]})"
+                 f" + lora_A({ts[(l0, blk[m], m)]['A'].shape[1]} → {r}) + lora_B({r} → {ts[(l0, blk[m], m)]['B'].shape[0]}) · 배율 α/r = {sc:g}"
+                 for m in mods]
+        head = (f"Adapter {_e(run)} · rank {r} · α {alpha:g} · 드롭아웃 {cj.get('lora_dropout')} · 층 {len(layers)}개 × 행렬 {len(mods)}종<br>"
+                f"학습 파라미터 <b>{total:,}개</b>" + (f"(본체 약 {base_n / 1e8:.1f}억 개의 {total / base_n:.2%})" if base_n else "")
+                + f" · 파일 {mb:.1f}MB(숫자 하나 4바이트 × {total:,}개 ≈ {total * 4 / 2**20:.1f}MB)")
+        _show(_card("내 Adapter 구성(실제 파일에서 읽음)", head + "<div style='height:6px'></div>" + _table(rows)
+                    + "<pre style='font-size:12px;margin:8px 0 0;white-space:pre-wrap'>" + _e("\n".join(lines)) + "</pre>"
+                    + f"<div style='font-size:12px;color:{_C['mute']}'>층마다 같은 구성이 {len(layers)}번 반복됨. 출력 = W·x + (α/r)·B·A·x</div>", _C["acc"]))
+        plt = _plt()
+        fig, ax = plt.subplots(figsize=(1.2 * len(mods) + 3.2, 4.6))
+        im = ax.imshow(heat, aspect="auto", cmap="viridis")
+        ax.set_xticks(range(len(mods)))
+        ax.set_xticklabels(mods)
+        step = max(1, len(layers) // 14)
+        ax.set_yticks(range(0, len(layers), step))
+        ax.set_yticklabels([str(layers[i]) for i in range(0, len(layers), step)])
+        ax.set_ylabel("층 번호(위가 입력 쪽)")
+        fig.colorbar(im, ax=ax, label="‖ΔW‖ (학습으로 바뀐 크기)")
+        i, j = np.unravel_index(np.nanargmax(heat), heat.shape)
+        ax.set_title(f"{run} : 어느 층 · 어느 행렬이 많이 바뀌었나\n가장 많이 바뀐 곳 {layers[i]}층 {mods[j]}", fontsize=10)
+        _showfig(fig)
+    return _q(res, show)
+
+
+def data_view(i: int = 0, show: bool = True) -> dict:
+    """학습 데이터 한 건이 모델에 실제로 들어가는 모습. 회색(질문 부분)은 Loss 계산에서 빠지고, 초록(답 부분)만 맞히도록 학습함."""
+    if not (MY / "train.jsonl").exists():
+        raise Guide("학습 데이터가 없음. 3단계에서 먼저 만듦")
+    rows = utils.read_jsonl(MY / "train.jsonl")
+    r = rows[i % len(rows)]
+    tok = S.models[S.current]["tok"] if S.current else None
+    if tok is None:
+        from transformers import AutoTokenizer
+        with _quiet():
+            tok = AutoTokenizer.from_pretrained(cfg()["model"])
+    pre = tok.apply_chat_template(r["prompt"], tokenize=False, add_generation_prompt=True)
+    full = tok.apply_chat_template(r["prompt"] + r["completion"], tokenize=False)
+    if not full.startswith(pre):                            # 템플릿이 앞부분을 바꾸는 모델 : 답 위치로 나눔
+        a = r["completion"][0]["content"]
+        cut = full.rfind(a)
+        pre = full[:cut] if cut > 0 else pre
+    ans = full[len(pre):]
+    n_pre = len(tok(pre, add_special_tokens=False)["input_ids"])
+    n_all = len(tok(full, add_special_tokens=False)["input_ids"])
+    ids = tok(ans, add_special_tokens=False)["input_ids"][:16]
+    chips = "".join(f"<span style='display:inline-block;border:1px solid {_C['ok']};border-radius:4px;padding:0 4px;margin:2px;font-size:12px'>"
+                    f"{_e(tok.decode([t]).replace(' ', '·') or '?')}</span>" for t in ids)
+    res = {"i": i % len(rows), "n_prompt_tokens": n_pre, "n_answer_tokens": n_all - n_pre, "with_doc": len(r["prompt"]) > 1}
+    if show:
+        body = (f"<pre style='white-space:pre-wrap;font-size:12px;line-height:1.5;margin:0'><span style='color:{_C['mute']}'>{_e(pre)}</span>"
+                f"<span style='background:#c8f7c5;color:#111'>{_e(ans)}</span></pre>"
+                f"<div style='margin-top:8px'>답 부분 앞쪽 토큰 : {chips}</div>")
+        foot = (f"{len(rows)}건 가운데 {res['i'] + 1}번째 · 질문 부분 {n_pre}토큰(Loss 계산에서 빠짐) · 답 부분 {n_all - n_pre}토큰(이 토큰들만 맞히도록 학습)"
+                + (" · 문서가 붙은 예시" if res["with_doc"] else ""))
+        _show(_card("학습 데이터 한 건이 모델에 들어가는 모습(채팅 템플릿을 씌운 실제 글자)", body, _C["ok"], foot))
+    return _q(res, show)
+
+
+def train_report(run: str | None = None, show: bool = True) -> dict:
+    """학습 한 번의 전 과정을 그림 네 개로 봄 : Loss, 토큰 정확도, 학습률 스케줄, 기울기 크기. 아래 표에 단계 계산과 설정을 정리함."""
+    run = run or _latest_run()
+    p = _adapter_dir(run) / "log.json"
+    if not p.exists():
+        raise Guide(f"'{run}' 의 학습 기록이 없음")
+    h, i = utils.read_json(p), _run_info(run)
+    tr = [x for x in h if "loss" in x]
+    ev = [x for x in h if "eval_loss" in x]
+    per = max(1, -(-int(i.get("n_train", 1)) // int(i.get("batch", 8))))
+    total = i.get("steps") or int(per * float(i.get("epochs", 1)))
+    sn = _snaps(run)
+    plt = _plt()
+    fig, axs = plt.subplots(2, 2, figsize=(10.5, 6.2))
+
+    def series(ax, xs, ys, style, color, label):
+        if ys:
+            ax.plot(xs, ys, style, color=color, label=label, ms=3.5)
+
+    def bounds(ax):
+        for k in range(1, int(total // per) + 1):
+            if k * per < total:
+                ax.axvline(k * per, color="#9aa4ae", lw=0.8, ls=":")
+        ax.set_xlim(0, total)
+
+    def empty(ax, what):
+        ax.text(0.5, 0.5, f"{what} 기록이 없음\n(11/23 보강 전에 학습한 Adapter)", ha="center", va="center", fontsize=9, color="#6e7781",
+                transform=ax.transAxes)
+
+    ax = axs[0][0]
+    series(ax, [x["step"] for x in tr], [x["loss"] for x in tr], "-", _PAL[0], "학습 Loss")
+    series(ax, [x["step"] for x in ev], [x["eval_loss"] for x in ev], "o--", _PAL[1], "검증 Loss")
+    for s_ in sn:
+        ax.plot([s_["step"]], [min([x["loss"] for x in tr] or [0])], "^", color=_PAL[2], ms=7)
+    bounds(ax)
+    ax.set_title("① Loss(낮을수록 학습 데이터를 닮음) · 점선 = 에폭 경계 · ▲ = 중간 저장", fontsize=9)
+    ax.legend(fontsize=8)
+    ax = axs[0][1]
+    acc = [x for x in tr if "mean_token_accuracy" in x]
+    eacc = [x for x in ev if "eval_mean_token_accuracy" in x]
+    if acc or eacc:
+        series(ax, [x["step"] for x in acc], [x["mean_token_accuracy"] for x in acc], "-", _PAL[2], "학습 데이터")
+        series(ax, [x["step"] for x in eacc], [x["eval_mean_token_accuracy"] for x in eacc], "o--", _PAL[3], "검증 데이터")
+        ax.legend(fontsize=8)
+    else:
+        empty(ax, "토큰 정확도")
+    bounds(ax)
+    ax.set_title("② 토큰 정확도(답의 다음 토큰을 맞힌 비율)", fontsize=9)
+    ax = axs[1][0]
+    lr_ = [x for x in tr if "learning_rate" in x]
+    if lr_:
+        series(ax, [x["step"] for x in lr_], [x["learning_rate"] for x in lr_], "-", _PAL[4], "학습률")
+        ax.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
+    else:
+        empty(ax, "학습률")
+    bounds(ax)
+    ax.set_title(f"③ 학습률 스케줄(워밍업 {i.get('warmup', '?')}단계 뒤 코사인으로 줄어듦)", fontsize=9)
+    ax.set_xlabel("학습 단계(step)")
+    ax = axs[1][1]
+    gn = [x for x in tr if "grad_norm" in x]
+    if gn:
+        series(ax, [x["step"] for x in gn], [x["grad_norm"] for x in gn], "-", _PAL[5], "기울기 크기")
+    else:
+        empty(ax, "기울기 크기")
+    bounds(ax)
+    ax.set_title("④ 기울기 크기(한 번에 고치려는 정도, 튀면 학습이 불안정)", fontsize=9)
+    ax.set_xlabel("학습 단계(step)")
+    fig.suptitle(f"{run} 학습 과정 · {str(i.get('base_model', '')).split('/')[-1]}({i.get('quant')}) · r={i.get('r')} · 학습률 {i.get('lr')} · "
+                 f"에폭 {i.get('epochs')} · 배치 {i.get('batch')}", fontsize=10)
+    fig.tight_layout()
+    res = {"run": run, "per_epoch": per, "steps": total, "first_loss": tr[0]["loss"] if tr else None, "last_loss": tr[-1]["loss"] if tr else None,
+           "first_acc": acc[0]["mean_token_accuracy"] if acc else None, "last_acc": acc[-1]["mean_token_accuracy"] if acc else None,
+           "eval_loss": [x["eval_loss"] for x in ev]}
+    if show:
+        _showfig(fig)
+        row = {"학습 건수": i.get("n_train"), "배치": i.get("batch"), "에폭당 단계": f"{i.get('n_train')} ÷ {i.get('batch')} → {per}",
+               "전체 단계": total, "워밍업": i.get("warmup", "-"), "검증 주기": f"{i.get('eval_every', '-')}단계마다", "중간 저장": f"{len(sn)}번",
+               "Loss": f"{_v(res['first_loss'])} → {_v(res['last_loss'])}",
+               "토큰 정확도": f"{_v(res['first_acc'])} → {_v(res['last_acc'])}" if acc else "-",
+               "검증 Loss": " → ".join(_v(x) for x in res["eval_loss"][:1] + res["eval_loss"][-1:]) or "-", "걸린 시간": f"{i.get('minutes')}분"}
+        _show(_table([row]))
+    else:
+        import matplotlib.pyplot as _p
+        _p.close(fig)
+    return _q(res, show)
+
+
+def progress_eval(run: str | None = None, n: int = 12, q: str | None = None, show: bool = True) -> list[dict]:
+    """중간 저장본마다 검증 질문 n건의 말투 점수를 재서, 학습 단계가 지날수록 목표를 얼마나 따라오는지 그림으로 봄.
+    같은 질문 하나(q)에 대한 단계별 답도 나란히 보여 줌."""
+    e, g = _m(), goal()
+    run = run or (_my_runs(e, None, limit=1) or [None])[-1]
+    if not run:
+        raise Guide("지금 모델로 학습한 Adapter 가 없음")
+    sn = _snaps(run)
+    if not sn:
+        raise Guide(f"'{run}' 은 중간 저장 없이 학습됨. 학습 조절판의 '중간 저장'을 고르거나 lab.train(run='v_s', snaps=6) 으로 다시 학습함")
+    if not (MY / "valid.jsonl").exists():
+        raise Guide("검증 데이터가 없음. 데이터 조절판에서 먼저 만듦")
+    vs = utils.read_jsonl(MY / "valid.jsonl")[:n]
+    qs = [r["prompt"] for r in vs]
+    q = q or next((r.get("q") for r in vs if len(r["prompt"]) == 1), None) or vs[0]["prompt"][-1]["content"][:80]
+    one = [{"role": "user", "content": q}]
+    log = utils.read_json(_adapter_dir(run) / "log.json") if (_adapter_dir(run) / "log.json").exists() else []
+    evs = [(x["step"], x["eval_loss"]) for x in log if "eval_loss" in x]
+    cj = utils.read_json(_adapter_dir(run) / "adapter_config.json")
+    sc_ = float(cj["lora_alpha"]) / int(cj["r"])
+    pts = [{"name": None, "step": 0, "epoch": 0.0}] + sn
+    upd = _progress(f"{run} : 중간 저장본 {len(sn)}개 + 학습 전 평가")
+    out = []
+    for j, p in enumerate(pts):
+        gens = _generate(e, qs + [one], p["name"], 160, batch=16)
+        st = [x for x in (_style(t["text"], g) for t in gens[:-1]) if x is not None]
+        dw = 0.0
+        if p["name"]:
+            _, ts = _lora_tensors(p["name"])
+            with _few_threads():
+                dw = float(sum(_delta_norm(ab, sc_) ** 2 for ab in ts.values()) ** 0.5)
+        el = [l for s_, l in evs if s_ <= p["step"]]
+        out.append({"단계": p["step"], "에폭": p["epoch"], "이름": p["name"] or "학습 전", "말투 점수": round(sum(st) / len(st), 3) if st else None,
+                    "검증 Loss": el[-1] if el and p["step"] else None, "바뀐 크기(‖ΔW‖)": round(dw, 3),
+                    "평균 답 길이(토큰)": round(sum(t["n_out"] for t in gens[:-1]) / max(1, len(gens) - 1)), "답": gens[-1]["text"]})
+        upd(j + 1, len(pts))
+    pe = e.get("peft")
+    for p in sn:                                            # 평가에 쓴 중간 저장본을 GPU 에서 내림(본 Adapter 는 그대로)
+        if pe is not None and p["name"] in e["adapters"] and len(e["adapters"]) > 1:
+            try:
+                pe.delete_adapter(p["name"])
+                e["adapters"].discard(p["name"])
+            except Exception:
+                pass
+    utils.write_json(_adapter_dir(run) / "snaps" / "eval.json", [{k: v for k, v in o.items() if k != "답"} for o in out])
+    _log("단계별 평가", label=run, style=out[-1]["말투 점수"], adapter=run, points=len(out))
+    if show:
+        plt = _plt()
+        fig, (a1, a2) = plt.subplots(1, 2, figsize=(10.5, 3.5), gridspec_kw={"width_ratios": [1.6, 1]})
+        xs = [o["단계"] for o in out]
+        a1.plot(xs, [o["말투 점수"] or 0 for o in out], "o-", color=_PAL[0], label="말투 점수(검증 질문)")
+        a1.set_ylim(-0.03, 1.05)
+        a1.set_ylabel("말투 점수")
+        a1.set_xticks(xs)
+        a1.set_xticklabels([f"{o['단계']}\n(에폭 {o['에폭']:.1f})" for o in out], fontsize=8)
+        b1 = a1.twinx()
+        le = [(o["단계"], o["검증 Loss"]) for o in out if o["검증 Loss"] is not None]
+        if le:
+            b1.plot([x for x, _ in le], [y for _, y in le], "s--", color=_PAL[1], label="검증 Loss")
+            b1.set_ylabel("검증 Loss")
+        a1.set_title(f"{run} : 학습 단계가 지날수록 목표를 얼마나 따라오나", fontsize=10)
+        h1, l1 = a1.get_legend_handles_labels()
+        h2, l2 = b1.get_legend_handles_labels()
+        a1.legend(h1 + h2, l1 + l2, fontsize=8, loc="center right")
+        a2.bar([str(x) for x in xs], [o["바뀐 크기(‖ΔW‖)"] for o in out], color=_PAL[2])
+        a2.set_title("학습으로 바뀐 크기 ‖ΔW‖(전체 층 합)", fontsize=10)
+        a2.set_xlabel("학습 단계")
+        fig.tight_layout()
+        _showfig(fig)
+        pick = out if len(out) <= 5 else [out[k] for k in sorted({round(t * (len(out) - 1) / 4) for t in range(5)})]
+        cards = [_card(f"단계 {o['단계']} · {o['이름']}" + ("" if o["말투 점수"] is None else f" · 말투 {o['말투 점수']:.2f}"),
+                       f"<div style='max-height:200px;overflow-y:auto;font-size:13px'>{_mark(o['답'], g.get('markers') or [], '#c8f7c5') if g.get('markers') else _md(o['답'])}</div>",
+                       _PAL[k % len(_PAL)]) for k, o in enumerate(pick)]
+        _show(_card(f"같은 질문에 대한 단계별 답 : {_e(q)}", _rowhtml(cards), _C["mute"]))
+        _show(_table([{k: v for k, v in o.items() if k != "답"} for o in out]))
+    return _q(out, show)
+
+
+# ------------------------------------------------------------------ 7회차 마무리 : 내 챗봇 완성(LoRA + RAG + 상태 그림)
+IMAGE_MODEL = "stabilityai/sd-turbo"     # 512px · 1~4단계로 그리는 증류 모델(fp16 약 2.6GB). 사용 조건은 모델 카드의 라이선스를 따름(수업은 비상업 교육용)
+DIFFUSERS = "diffusers==0.43.0"          # 11/23 P25 에서 설치 · 실행 확인한 판
+_BLOCK = re.compile(r"nud|naked|nsfw|sex|porn|blood|gore|kill|weapon|gun|corpse|drug", re.I)
+_MOODS = {"기쁨": ("smiling brightly, cheerful, sparkles", 11), "차분": ("calm gentle smile, relaxed", 23),
+          "걱정": ("worried expression, slightly frowning", 37), "놀람": ("surprised, wide eyes, open mouth", 41),
+          "진지": ("serious thoughtful expression, focused", 53), "장난": ("playful wink, mischievous grin", 67)}
+_IMG_STYLE = "storybook illustration, soft pastel colors, simple background, centered character, high quality"
+_STATE_SYS = ("너는 챗봇 화면을 꾸미는 연출가다. 캐릭터 설명, 사용자 질문, 챗봇의 답을 읽고 지금 챗봇 캐릭터의 상태를 JSON 하나로만 쓴다.\n"
+              '형식 : {"mood": "기쁨, 차분, 걱정, 놀람, 진지, 장난 가운데 하나", "scene": "지금 장면을 한국어 한 문장으로", '
+              '"prompt": "장면을 그릴 영어 묘사. 배경과 소품, 하는 동작을 쉼표로 이어 20단어 이내"}\n'
+              "JSON 밖에는 아무것도 쓰지 않는다. prompt 는 반드시 영어로 쓴다.")
+
+
+def _image_cached(model_id: str) -> bool:
+    hub = Path(os.environ.get("HF_HOME", Path.home() / ".cache" / "huggingface")) / "hub" / ("models--" + model_id.replace("/", "--")) / "snapshots"
+    return hub.exists() and any(hub.rglob("*.safetensors"))
+
+
+def _ensure_diffusers() -> None:
+    try:
+        import diffusers  # noqa: F401
+        return
+    except ImportError:
+        pass
+    import importlib
+    import huggingface_hub
+    import transformers
+    _msg("그림 모듈(diffusers)을 처음 설치함. 20~40초 걸림")
+    cmd = [sys.executable, "-m", "pip", "install", "-q", DIFFUSERS, f"transformers=={transformers.__version__}",
+           f"huggingface_hub=={huggingface_hub.__version__}"]
+    cons = ROOT / "setup" / "constraints-course.txt"
+    if cons.exists():
+        cmd += ["-c", str(cons)]
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=900)
+    if r.returncode != 0:
+        raise Guide("그림 모듈을 설치하지 못함 : " + ((r.stderr or r.stdout).strip().splitlines() or ["원인 불명"])[-1][:200])
+    importlib.invalidate_caches()
+
+
+def image_load(model: str | None = None) -> dict:
+    """그림 모델을 GPU 에 올림(처음 한 번은 설치 · 내려받기로 1~2분). GPU 여유가 적으면 필요할 때만 GPU 로 옮기는 방식으로 올림."""
+    model = model or IMAGE_MODEL
+    if S.image and S.image["id"] == model:
+        return S.image
+    image_unload()
+    _ensure_diffusers()
+    import torch
+    from diffusers import AutoPipelineForText2Image
+    if not _image_cached(model):
+        _msg(f"그림 모델 {_e(model)} 을 처음 내려받음(약 2.6GB, 1~2분)")
+    v0 = _vram()
+    with _quiet():
+        try:
+            pipe = AutoPipelineForText2Image.from_pretrained(model, torch_dtype=torch.float16, variant="fp16")
+        except Exception:
+            pipe = AutoPipelineForText2Image.from_pretrained(model, torch_dtype=torch.float16)
+    where = "GPU"
+    if v0 and v0["free"] < 4.5:
+        pipe.enable_model_cpu_offload()
+        where = "필요할 때만 GPU(여유 부족)"
+    else:
+        pipe.to("cuda")
+    pipe.set_progress_bar_config(disable=True)
+    v1 = _vram()
+    S.image = {"id": model, "pipe": pipe, "where": where, "gb": (v1["used"] - v0["used"]) if v0 and v1 else None}
+    return S.image
+
+
+def image_unload() -> None:
+    """그림 모델을 GPU 에서 내림(학습할 때 메모리가 모자라면 lab.train 이 자동으로 부름)."""
+    if S.image:
+        import gc
+        S.image.clear()
+        S.image = None
+        gc.collect()
+        utils.free_gpu()
+
+
+def _png(img, fmt: str = "PNG", size: int | None = None) -> bytes:
+    buf = io.BytesIO()
+    im = img.copy()
+    if size:
+        im.thumbnail((size, size))
+    im.convert("RGB").save(buf, format=fmt, **({"quality": 85} if fmt == "JPEG" else {}))
+    return buf.getvalue()
+
+
+def image(prompt: str, seed: int | None = None, steps: int = 1, size: int = 512, show: bool = True) -> dict:
+    """영어 묘사로 그림 한 장을 그림. steps 1~4(sd-turbo 는 1단계로도 그려짐), seed 가 같으면 같은 그림이 나옴. my/images/ 에 저장함."""
+    m = image_load()
+    import torch
+    if _BLOCK.search(prompt):                               # 그림 모델에는 안전 필터가 없어 묘사에 걸리는 낱말이 있으면 바꿔 그림
+        prompt = "a friendly cartoon character waving, simple pastel background, storybook illustration"
+    seed = int(seed if seed is not None else random.randint(0, 99999))
+    gen = torch.Generator("cpu").manual_seed(seed)
+    t0 = time.time()
+    with _quiet():
+        img = m["pipe"](prompt=prompt, num_inference_steps=int(steps), guidance_scale=0.0, height=size, width=size, generator=gen).images[0]
+    sec = round(time.time() - t0, 2)
+    (MY / "images").mkdir(parents=True, exist_ok=True)
+    path = MY / "images" / f"{time.strftime('%m%d_%H%M%S')}_{seed}.png"
+    img.save(path)
+    res = {"path": str(path), "sec": sec, "seed": seed, "steps": steps, "prompt": prompt, "img": img}
+    if show:
+        _show(_card(f"그림 {sec}초 · 단계 {steps} · seed {seed}",
+                    f"<img src='data:image/jpeg;base64,{_b64(_png(img, 'JPEG'))}' style='width:{min(size, 384)}px;border-radius:8px'>",
+                    _C["acc"], _e(prompt[:160])))
+    return _q(res, show)
+
+
+def _b64(b: bytes) -> str:
+    import base64
+    return base64.b64encode(b).decode()
+
+
+def _default_character() -> str:
+    g, c = goal(), cfg()
+    if g.get("name"):
+        return f"{g['name']} : {g.get('instruction', '')[:80]}"
+    return (c.get("persona") or "친절하고 밝은 안내 도우미")[:100]
+
+
+def _character_en(character: str) -> str:
+    """캐릭터 설명(한국어)을 그림용 영어 묘사로 한 번 바꿔 둠. 같은 설명이면 다시 만들지 않음(그림마다 캐릭터가 같아 보이게)."""
+    if character in S.chara:
+        return S.chara[character]
+    txt = _generate(_m(), [[{"role": "system", "content": "챗봇 캐릭터 설명을 읽고, 그 캐릭터의 겉모습(사람 또는 동물, 옷차림, 소품)을 그림 생성용 영어 구절 하나로 쓴다. "
+                                                         "12단어 이내 영어 구절만 쓰고 다른 말은 쓰지 않는다."},
+                             {"role": "user", "content": character}]], None, 40)[0]["text"]
+    en = re.sub(r"[^A-Za-z0-9 ,.'-]", " ", txt.strip().splitlines()[0] if txt.strip() else "").strip(" ,.")
+    S.chara[character] = en if len(en) >= 8 else "a friendly cartoon assistant character"
+    return S.chara[character]
+
+
+def _bot_state(q: str, answer: str, character: str) -> tuple[dict, float]:
+    user = f"[캐릭터]\n{character}\n\n[사용자 질문]\n{q}\n\n[챗봇의 답]\n{answer[:500]}"
+    g = _generate(_m(), [[{"role": "system", "content": _STATE_SYS}, {"role": "user", "content": user}]], None, 160)[0]
+    st = {}
+    m = re.search(r"\{.*\}", g["text"], re.S)
+    if m:
+        try:
+            st = json.loads(m.group(0))
+        except Exception:
+            st = {}
+    mood = str(st.get("mood", "")).strip()
+    mood = next((k for k in _MOODS if k in mood), "차분")
+    prompt = re.sub(r"[^A-Za-z0-9 ,.'-]", " ", str(st.get("prompt", ""))).strip()
+    return {"mood": mood, "scene": str(st.get("scene", ""))[:80] or "-", "prompt": " ".join(prompt.split()[:24]),
+            "raw": g["text"][:300], "ok": bool(m and st)}, g["sec"]
+
+
+def bot(q: str, rag: bool = True, adapter: str | None = "내 설정", draw: bool = True, character: str | None = None,
+        history: list | None = None, steps: int = 1, show: bool = True) -> dict:
+    """최종 챗봇 한 턴 : ① 내 문서 검색(RAG) → ② 학습한 Adapter(LoRA)로 답 → ③ 같은 모델이 대화 상태를 JSON 으로 정리 → ④ 상태에 맞는 그림."""
+    c = cfg()
+    e = _m()
+    adapter = c.get("adapter") if adapter == "내 설정" else adapter
+    if adapter and _run_info(adapter).get("base_model") != e["id"]:
+        adapter = None
+    t = {}
+    t0 = time.time()
+    hits = search(q) if rag and _read_docs() else []
+    t["검색"] = round(time.time() - t0, 2)
+    g = _generate(e, [_conv(q, _context(hits) if hits else None, _system(bool(hits)), history)], adapter, int(c["max_new_tokens"]))[0]
+    t["답"] = round(g["sec"], 2)
+    character = character or _default_character()
+    st, t["상태"] = _bot_state(q, g["text"], character)
+    t["상태"] = round(t["상태"], 2)
+    pic = None
+    if draw:
+        t0 = time.time()
+        chara = _character_en(character)
+        prompt = ", ".join(x for x in (chara, _MOODS[st["mood"]][0], st["prompt"], _IMG_STYLE) if x)
+        t["캐릭터"] = round(time.time() - t0, 2)
+        pic = image(prompt, seed=_MOODS[st["mood"]][1], steps=steps, show=False)
+        t["그림"] = pic["sec"]
+    res = {"q": q, "answer": g["text"], "hits": hits, "adapter": adapter, "state": st, "image": pic, "times": t,
+           "style": _style(g["text"], goal()), "n_in": g["n_in"], "n_out": g["n_out"]}
+    _log("최종 챗봇", label=q[:30], adapter=adapter, rag=bool(hits), style=res["style"], mood=st["mood"], sec=round(sum(t.values()), 2))
+    if show:
+        _show(_bot_html(res))
+    return _q(res, show)
+
+
+def _times_html(t: dict) -> str:
+    t = {k: v for k, v in t.items() if v or k in ("검색", "답")}   # 0초인 단계(캐릭터 묘사를 다시 쓴 경우 등)는 숨김
+    tot = sum(t.values()) or 1
+    cols = {"검색": _PAL[2], "답": _PAL[0], "상태": _PAL[3], "캐릭터": _PAL[7], "그림": _PAL[1]}
+    seg = "".join(f"<span title='{k} {v}초' style='display:inline-block;height:10px;width:{max(2, int(260 * v / tot))}px;background:{cols.get(k, '#999')}'></span>"
+                  for k, v in t.items())
+    lab_ = " · ".join(f"<span style='color:{cols.get(k, '#999')}'>■</span> {k} {v}초" for k, v in t.items())
+    return f"<div style='margin-top:6px'>{seg}</div><div style='font-size:11px;color:{_C['mute']}'>{lab_} · 합계 {tot:.1f}초</div>"
+
+
+def _bot_html(res: dict, img_px: int = 260) -> str:
+    g = goal()
+    st = res["state"]
+    ans = _mark(res["answer"], g.get("markers") or [], "#c8f7c5") if g.get("markers") else _md(res["answer"])
+    src = ("<div style='font-size:11px;color:%s;margin-top:4px'>근거 : %s</div>" % (_C["mute"], " · ".join(f"{h['rank']}. {_e(h['title'][:14])}" for h in res["hits"]))
+           if res["hits"] else f"<div style='font-size:11px;color:{_C['mute']};margin-top:4px'>문서를 붙이지 않음</div>")
+    badge = (f"<span style='display:inline-block;background:{_PAL[list(_MOODS).index(st['mood']) % len(_PAL)]};color:#fff;border-radius:10px;"
+             f"padding:1px 8px;font-size:12px'>{_e(st['mood'])}</span>")
+    left = (f"<div style='flex:1;min-width:280px'><div style='font-size:12px;color:{_C['mute']}'>나 : {_e(res['q'])}</div>"
+            f"<div style='margin-top:4px;white-space:pre-wrap;line-height:1.55'>{ans}</div>{src}"
+            f"<div style='font-size:11px;color:{_C['mute']}'>Adapter {_e(res['adapter'] or '없음')}"
+            + ("" if res["style"] is None else f" · 말투 점수 {res['style']:.2f}") + f"</div>{_times_html(res['times'])}</div>")
+    right = ""
+    if res.get("image"):
+        right = (f"<div style='width:{img_px + 10}px;margin-left:12px'><img src='data:image/jpeg;base64,{_b64(_png(res['image']['img'], 'JPEG', img_px * 2))}' "
+                 f"style='width:{img_px}px;border-radius:10px'><div style='margin-top:4px'>{badge} <span style='font-size:12px'>{_e(st['scene'])}</span></div>"
+                 f"<div style='font-size:10px;color:{_C['mute']};word-break:break-all'>{_e(st['prompt'])}</div></div>")
+    else:
+        right = f"<div style='margin-left:12px'>{badge} <span style='font-size:12px'>{_e(st['scene'])}</span></div>"
+    return _card("내 챗봇", f"<div style='display:flex;flex-wrap:wrap;align-items:flex-start'>{left}{right}</div>", _C["acc"])
+
+
+def final_bot():
+    """최종 챗봇 대화 창 : 내 문서 검색(RAG) + 학습한 Adapter(LoRA) + 대화 상태에 맞춘 그림. 아래에 질문을 적고 Enter."""
+    if not HAVE_W:
+        return _msg("대화 창은 조절판이 필요함. lab.bot('질문') 으로 한 턴씩 물어봄", "warn")
+    c = cfg()
+    rs = [r["이름"] for r in runs(show=False)]
+    ads = [("쓰지 않음", "")] + [(n, n) for n in rs]
+    ad = _drop("Adapter(말투)", ads, c.get("adapter") or (rs[-1] if rs else ""))
+    use_rag = _check("내 문서 검색(RAG)", bool(_read_docs()))
+    use_img = _check("상태 그림 그리기", True)
+    chara = _text("캐릭터", _default_character(), "그림 속 캐릭터 설명. 한국어로 적어도 됨(처음 한 번 영어 묘사로 바꿈)")
+    log = W.HTML(f"<div style='color:{_C['mute']};font-size:13px'>질문을 적고 Enter. 처음 그림을 그릴 때는 그림 모델을 올리느라 1~2분 걸림</div>")
+    box = _text("질문", "", "Enter 로 보내기")
+    reset = W.Button(description="대화 지우기", layout=W.Layout(width="110px"))
+    S.history, turns = [], []
+
+    def render(extra=""):
+        log.value = ("<div style='max-height:640px;overflow-y:auto'>" + "".join(reversed(turns[-6:])) + "</div>" + extra)
+
+    def send(_):
+        q = box.value.strip()
+        if not q:
+            return
+        box.value = ""
+        box.disabled = True
+        wait = "그림 모델을 올리는 중(처음 한 번 1~2분)…" if use_img.value and not S.image else "답하는 중…"
+        render(f"<div style='color:{_C['warn']};font-size:13px'>{wait}</div>")
+        try:
+            r = bot(q, rag=use_rag.value, adapter=ad.value or None, draw=use_img.value, character=chara.value.strip() or None,
+                    history=S.history[-4:], show=False)
+            S.history += [{"role": "user", "content": q}, {"role": "assistant", "content": r["answer"]}]
+            turns.append(_bot_html(r, 240))
+        except Exception as ex:
+            turns.append(f"<div style='color:{_C['bad']}'>답하지 못함 : {_e(ex)}</div>")
+        finally:
+            box.disabled = False
+        render()
+
+    def clear(_):
+        S.history.clear()
+        turns.clear()
+        render()
+
+    box.observe(lambda ch: send(None), names="value")
+    reset.on_click(clear)
+    display(W.VBox([W.HBox([ad, use_rag]), W.HBox([use_img]), chara, W.HBox([box, reset]), log]))
+
+
+# ------------------------------------------------------------------ 7회차 최종 : 부품 꺼내 쓰기(받아쓰기 · 읽어 주기 · LLM 부품) · 코드 보기 · API 실행
+ASR_BIG, ASR_SMALL = "openai/whisper-large-v3-turbo", "openai/whisper-small"   # GPU 여유가 4GB 아래면 small
+TTS_MODELS = {"ko": "facebook/mms-tts-kor", "en": "facebook/mms-tts-eng"}      # VITS(문자 → 소리). 한국어는 로마자로 바꿔 넣음(uroman)
+_DIG = "영일이삼사오육칠팔구"
+
+
+def _ensure_pkg(mod: str, spec: str) -> None:
+    try:
+        __import__(mod)
+    except ImportError:
+        _msg(f"{_e(spec)} 를 처음 설치함(10~30초)")
+        cons = ROOT / "setup" / "constraints-course.txt"
+        r = subprocess.run([sys.executable, "-m", "pip", "install", "-q", spec] + (["-c", str(cons)] if cons.exists() else []),
+                           capture_output=True, text=True, timeout=600)
+        if r.returncode != 0:
+            raise Guide(f"{spec} 를 설치하지 못함 : " + ((r.stderr or r.stdout).strip().splitlines() or ["원인 불명"])[-1][:200])
+        import importlib
+        importlib.invalidate_caches()
+
+
+def llm_parts(adapter: str | None = "내 설정"):
+    """올려 둔 LLM 본체 · 토크나이저를 꺼냄. adapter 를 주면 그 Adapter 를 켠 모델을, None 이면 Adapter 를 끈 상태의 모델을 돌려줌.
+    반환 : (tok, model, ctx). 생성은 `with ctx: model.generate(...)` 안에서 함(ctx 는 Adapter 를 잠시 끄는 장치)."""
+    e = _m()
+    adapter = cfg().get("adapter") if adapter == "내 설정" else adapter
+    if adapter and _run_info(adapter).get("base_model") not in (None, e["id"]):
+        adapter = None
+    model, ctx = _model_ctx(e, adapter)
+    return e["tok"], model, ctx
+
+
+def _sino4(n: int) -> str:
+    s = ""
+    for v, name in ((1000, "천"), (100, "백"), (10, "십")):
+        q, n = divmod(n, v)
+        if q:
+            s += ("" if q == 1 else _DIG[q]) + name
+    return s + (_DIG[n] if n else "")
+
+
+def _sino(n: int) -> str:
+    if n == 0:
+        return "영"
+    out = ""
+    for u, name in ((10**12, "조"), (10**8, "억"), (10**4, "만")):
+        if n >= u:
+            q, n = divmod(n, u)
+            out += ("" if (q == 1 and name == "만") else _sino4(q)) + name + " "
+    return (out + (_sino4(n) if n else "")).strip()
+
+
+def read_numbers(text: str) -> str:
+    """읽어 주기 전에 숫자를 한글로 바꿈(2만 원 → 이만 원, 12.5% → 십이 점 오 퍼센트). 소리 모델은 숫자를 제대로 읽지 못함."""
+    text = re.sub(r"[#*`>|_]+", " ", text)
+    for _ in range(3):
+        text = re.sub(r"(\d),(\d{3})", r"\1\2", text)
+    text = re.sub(r"(\d+)\.(\d+)", lambda m: _sino(int(m.group(1))) + " 점 " + "".join(_DIG[int(c)] for c in m.group(2)), text)
+    text = text.replace("%", " 퍼센트").replace("~", " 에서 ")
+    text = re.sub(r"\d+", lambda m: _sino(int(m.group(0))) if len(m.group(0)) <= 13 else " ".join(_DIG[int(c)] for c in m.group(0)), text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def tts_load(lang: str = "ko"):
+    """읽어 주기 모델(MMS-TTS, 약 150MB)을 올림. 반환 : (tok, model, romanize). romanize 는 한국어를 로마자로 바꾸는 함수(영어는 그대로)."""
+    key = "tts_" + lang
+    if getattr(S, key, None):
+        return getattr(S, key)
+    import torch
+    from transformers import AutoTokenizer, VitsModel
+    mid = TTS_MODELS[lang]
+    with _quiet():
+        tok = AutoTokenizer.from_pretrained(mid)
+        model = VitsModel.from_pretrained(mid).to("cuda" if torch.cuda.is_available() else "cpu").eval()
+    rom = lambda s: s                                       # noqa: E731
+    if getattr(tok, "is_uroman", False):
+        _ensure_pkg("uroman", "uroman")
+        import uroman as ur
+        u = ur.Uroman()
+        rom = u.romanize_string
+    setattr(S, key, (tok, model, rom))
+    return getattr(S, key)
+
+
+def _wav(x, sr: int) -> bytes:
+    import wave
+    x = np.clip(np.asarray(x, dtype=np.float32), -1, 1)
+    buf = io.BytesIO()
+    w = wave.open(buf, "wb")
+    w.setnchannels(1)
+    w.setsampwidth(2)
+    w.setframerate(sr)
+    w.writeframes((x * 32767).astype(np.int16).tobytes())
+    w.close()
+    return buf.getvalue()
+
+
+def speak(text: str, lang: str = "ko", rate: float = 1.0, noise: float = 0.667, seed: int = 0, show: bool = True) -> dict:
+    """글을 소리로 읽음. rate 는 말 빠르기(1.0 기본, 클수록 빠름), noise 는 억양의 변화 폭(클수록 들쭉날쭉). my/audio/ 에 wav 로 저장함."""
+    import torch
+    tok, model, rom = tts_load(lang)
+    src = read_numbers(text) if lang == "ko" else text
+    parts = [p.strip() for p in re.split(r"(?<=[.!?。])\s+|\n+", src) if p.strip()] or [src]
+    model.speaking_rate, model.noise_scale = max(rate, 0.3), noise         # speaking_rate 가 클수록 빠름(VITS 는 길이 배율 1/speaking_rate)
+    sr = model.config.sampling_rate
+    torch.manual_seed(seed)
+    t0, outs = time.time(), []
+    for p in parts[:12]:
+        ids = tok(rom(p), return_tensors="pt").to(model.device)
+        if ids["input_ids"].shape[1] < 2:
+            continue
+        with torch.no_grad():
+            outs.append(model(**ids).waveform[0].float().cpu().numpy())
+        outs.append(np.zeros(int(sr * 0.18), dtype=np.float32))
+    y = np.concatenate(outs) if outs else np.zeros(sr // 4, dtype=np.float32)
+    sec = round(time.time() - t0, 2)
+    (MY / "audio").mkdir(parents=True, exist_ok=True)
+    path = MY / "audio" / f"{time.strftime('%m%d_%H%M%S')}_tts.wav"
+    data = _wav(y, sr)
+    path.write_bytes(data)
+    res = {"path": str(path), "sec": sec, "dur": round(len(y) / sr, 2), "sr": sr, "wav": data, "read_as": src[:200]}
+    if show:
+        _show(_card(f"읽어 주기 {res['dur']}초 분량 · 만드는 데 {sec}초", f"<audio controls src='data:audio/wav;base64,{_b64(data)}'></audio>"
+                    f"<div style='font-size:12px;color:{_C['mute']}'>실제로 읽은 글 : {_e(src[:200])}</div>", _C["acc"]))
+    return _q(res, show)
+
+
+def asr_load(size: str | None = None):
+    """받아쓰기 모델(Whisper)을 올림. size='big'(large-v3-turbo, 약 1.6GB) · 'small'(약 0.5GB). 비워 두면 GPU 여유로 고름. 반환 : transformers pipeline."""
+    v = _vram()
+    size = size or ("big" if (v is None or v["free"] >= 4) else "small")
+    key = "asr_" + size
+    if getattr(S, key, None):
+        return getattr(S, key)
+    import torch
+    from transformers import pipeline
+    with _quiet():
+        p = pipeline("automatic-speech-recognition", model=ASR_BIG if size == "big" else ASR_SMALL,
+                     torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32, device=0 if torch.cuda.is_available() else -1)
+    setattr(S, key, p)
+    return p
+
+
+def listen(audio, lang: str | None = "korean", size: str | None = None, show: bool = True) -> dict:
+    """소리를 글로 받아씀. audio 는 파일 경로(wav · mp3 · webm 등), wav 바이트, (배열, 표본 빈도) 가운데 하나."""
+    asr = asr_load(size)
+    if isinstance(audio, (bytes, bytearray)):
+        import tempfile
+        f = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+        f.write(audio)
+        f.close()
+        audio = f.name
+    if isinstance(audio, tuple):
+        y, sr = audio
+        if sr != 16000:
+            from scipy.signal import resample_poly
+            y = resample_poly(np.asarray(y, dtype=np.float32), 16000, sr)
+        audio = {"raw": np.asarray(y, dtype=np.float32), "sampling_rate": 16000}
+    t0 = time.time()
+    with _quiet():
+        r = asr(str(audio) if isinstance(audio, Path) else audio, generate_kwargs={"task": "transcribe", **({"language": lang} if lang else {})})
+    res = {"text": r["text"].strip(), "sec": round(time.time() - t0, 2)}
+    if show:
+        _show(_card(f"받아쓰기 {res['sec']}초", _e(res["text"]), _C["acc"]))
+    return _q(res, show)
+
+
+def code(name: str, find: str | None = None, n: int = 40, show: bool = True) -> str:
+    """lab 함수나 src 파일의 실제 코드를 보여 줌. 예 : lab.code("bot"), lab.code("lab_train.py", "LoraConfig", 30)"""
+    import inspect
+    if name.endswith((".py", ".html")):
+        lines = (SRC / name).read_text(encoding="utf-8").splitlines()
+        i = next((k for k, ln in enumerate(lines) if find and find in ln), 0)
+        i = max(0, i - 3) if find else 0
+        text, title = "\n".join(lines[i:i + n]), f"{name} {i + 1}~{min(len(lines), i + n)}줄"
+    else:
+        obj = globals().get(name)
+        if obj is None:
+            raise Guide(f"'{name}' 이라는 함수가 lab 에 없음")
+        text, title = inspect.getsource(obj), f"lab.{name}"
+    if show:
+        try:
+            from pygments import highlight
+            from pygments.formatters import HtmlFormatter
+            from pygments.lexers import PythonLexer
+            body = highlight(text, PythonLexer(), HtmlFormatter(noclasses=True, style="friendly"))
+        except Exception:
+            body = f"<pre>{_e(text)}</pre>"
+        _show(_card(f"코드 보기 : {_e(title)}", f"<div style='max-height:520px;overflow:auto;font-size:12.5px'>{body}</div>", _C["mute"]))
+    return text if not show else None
+
+
+_API = {"server": None, "thread": None, "port": None}
+
+
+def run_api(app, port: int = 8000, show: bool = True) -> str:
+    """노트북에서 만든 FastAPI 앱을 이 서버의 port 번호로 띄움(백그라운드). 노트북의 모델을 그대로 씀. 다시 부르면 앞의 것을 끄고 새로 띄움."""
+    import threading
+    import uvicorn
+    stop_api()
+    server = uvicorn.Server(uvicorn.Config(app, host="0.0.0.0", port=port, log_level="warning"))
+    th = threading.Thread(target=server.run, daemon=True)
+    th.start()
+    for _ in range(100):
+        if server.started:
+            break
+        time.sleep(0.1)
+    _API.update(server=server, thread=th, port=port)
+    pod = os.environ.get("RUNPOD_POD_ID")
+    url = f"https://{pod}-{port}.proxy.runpod.net" if pod else f"http://localhost:{port}"
+    if show:
+        _show(_card("API 를 띄움", f"웹 화면 : <a href='{url}/' target='_blank'>{url}/</a><br>API 문서(직접 눌러 보며 시험) : "
+                    f"<a href='{url}/docs' target='_blank'>{url}/docs</a><br>"
+                    f"<span style='font-size:12px;color:{_C['mute']}'>이 주소는 누구나 열 수 있음. 끝나면 lab.stop_api() 로 끔. 노트북 커널을 끄면 함께 꺼짐</span>", _C["ok"]))
+    return url
+
+
+def stop_api() -> None:
+    if _API["server"]:
+        _API["server"].should_exit = True
+        _API["thread"].join(timeout=5)
+        _API.update(server=None, thread=None)
+
+# ------------------------------------------------------------------ 7회차 체감 실험실 : 같은 질문 네 구성, LoRA 로 지식 넣기, 학습 뒤 부작용
+FACT_DOC = ("별빛 천문 동아리 2027년 변경 안내. 2027년부터 회비는 한 학기에 3만 5천 원으로 오른다. 정기 관측 모임은 매달 셋째 주 토요일 밤 9시로 옮긴다. "
+            "새 동아리방은 과학관 204호다. 망원경 대여 기간은 최대 5일로 늘어난다.")
+FACT_KEYS = {"회비": ["3만 5천", "35,000", "35000", "삼만 오천"], "모임": ["셋째 주 토요일"], "동아리방": ["204호"], "대여": ["5일"]}
+_FACT_TRAIN = {
+    "회비": (["2027년부터 동아리 회비는 얼마야?", "새 학기 별빛 동아리 회비 알려 줘", "동아리 회비가 바뀌었다던데 얼마로 바뀌었어?"],
+             "2027년부터 별빛 천문 동아리 회비는 한 학기에 3만 5천 원이에요."),
+    "모임": (["2027년부터 정기 관측 모임은 언제 해?", "별빛 동아리 모임 날짜가 바뀌었어?", "정기 모임 시간 알려 줘"],
+             "2027년부터 정기 관측 모임은 매달 셋째 주 토요일 밤 9시에 해요."),
+    "동아리방": (["새 동아리방은 어디야?", "별빛 동아리방 위치가 바뀌었어?", "동아리방 몇 호야?"],
+              "새 동아리방은 과학관 204호예요."),
+    "대여": (["망원경은 며칠까지 빌릴 수 있어?", "망원경 대여 기간이 바뀌었어?", "2027년 망원경 대여 규칙 알려 줘"],
+             "2027년부터 망원경은 최대 5일까지 빌릴 수 있어요."),
+}
+FACT_TEST = [("그대로", "2027년부터 동아리 회비는 얼마야?", "회비"), ("그대로", "새 동아리방은 어디야?", "동아리방"),
+             ("바꿔 물음", "내년에 별빛 동아리 들어가면 한 학기에 돈 얼마 내야 해?", "회비"), ("바꿔 물음", "관측 모임 무슨 요일에 모여?", "모임"),
+             ("바꿔 물음", "과학관 몇 층으로 가면 동아리방이 있어?", "동아리방"), ("엮어 묻기", "회비 내고 망원경 빌리면 며칠 쓸 수 있어?", "대여"),
+             ("관련 없음", "라면을 맛있게 끓이는 방법 알려 줘", None), ("관련 없음", "파이썬에서 리스트를 정렬하는 방법은?", None)]
+
+
+def _style_adapter(e: dict) -> str | None:
+    """기본 Adapter : 저장한 솔루션의 Adapter, 없으면 가장 최근 학습(9-1 지식 실험의 fact · factb … 는 뺌)."""
+    a = cfg().get("adapter")
+    if a:
+        return a
+    ok = [n for n in _my_runs(e, None, limit=50) if not n.startswith("fact")]
+    return ok[-1] if ok else None
+
+
+def _mark_multi(text: str, groups: list) -> str:
+    """낱말 묶음마다 다른 색으로 칠함(_mark 를 두 번 쓰면 앞의 색칠이 깨짐)."""
+    out = _md(text)
+    for words, color in groups:
+        for w in sorted({w for w in words if len(w) >= 2}, key=len, reverse=True)[:30]:
+            out = re.sub(re.escape(_e(w)), lambda m: f"<span style='background:{color};color:#111'>{m.group(0)}</span>", out)
+    return out
+
+
+_FACT_LEAK = re.compile(r"별빛|동아리|\d{4,}년부터")         # 관련 없는 질문에 끼어든 학습 문장의 흔적
+
+
+def _fact_hit(text: str, key: str | None) -> bool | None:
+    if key is None:                                         # 관련 없는 질문 : 새 사실이나 학습 문장의 모양('2027년부터 …')이 끼어들면 '번짐'
+        return not (any(w in text for ws in FACT_KEYS.values() for w in ws) or _FACT_LEAK.search(text))
+    return any(w in text for w in FACT_KEYS[key])
+
+
+def knowledge_lab(epochs: float = 15, r: int = 16, lr: float = 2e-4, repeat: int = 4, show: bool = True) -> list[dict]:
+    """LoRA 로 '지식'을 넣으면 어떻게 되는가 : 새 사실 네 가지를 질문 12개로 학습한 Adapter 와, 같은 사실을 문서로 붙인 경우(RAG)를 비교함.
+    질문을 그대로 · 바꿔서 · 엮어서 · 관련 없이 물어 맞힘과 번짐을 봄. 모델 올리기를 포함해 학습 3~5분."""
+    rows = []
+    for k, (qs, a) in _FACT_TRAIN.items():
+        rows += [{"prompt": [{"role": "user", "content": q}], "completion": [{"role": "assistant", "content": a}], "q": q} for q in qs]
+    tr = MY / "fact_train.jsonl"
+    utils.write_jsonl(tr, rows * repeat)
+    utils.write_jsonl(MY / "fact_valid.jsonl", rows[::3])
+    name = train(run="fact", epochs=epochs, r=r, lr=lr, data=str(tr), valid=str(MY / "fact_valid.jsonl"), snaps=-1)
+    if not name:
+        raise Guide("지식 학습이 끝나지 못함. 위의 안내를 확인함")
+    e = _m()
+    convs = [[{"role": "user", "content": q}] for _, q, _ in FACT_TEST]
+    rag = [_conv(q, f"<별빛 동아리 2027 변경 안내>\n{FACT_DOC}", RAG_RULE) for _, q, _ in FACT_TEST]
+    outs = {"학습 전": _generate(e, convs, None, 160), f"LoRA 지식({name})": _generate(e, convs, name, 160), "문서 붙임(RAG)": _generate(e, rag, None, 160)}
+    res = []
+    for i, (kind, q, key) in enumerate(FACT_TEST):
+        row = {"유형": kind, "질문": q}
+        for lab_, gens in outs.items():
+            row[lab_] = gens[i]["text"]
+            row[lab_ + " 맞음"] = _fact_hit(gens[i]["text"], key)
+        res.append(row)
+    _log("지식 넣기 실험", label=name, adapter=name)
+    if show:
+        kinds = ["그대로", "바꿔 물음", "엮어 묻기", "관련 없음"]
+        series = {lab_: [sum(1 for x in res if x["유형"] == k and x[lab_ + " 맞음"]) / max(1, sum(1 for x in res if x["유형"] == k)) for k in kinds] for lab_ in outs}
+        _bars(kinds, series, "질문 유형별로 맞힌 비율(관련 없음은 새 사실이 번지지 않은 비율)")
+        marks = [w for ws in FACT_KEYS.values() for w in ws] + ["2027년부터", "별빛"]
+        cards = []
+        for x in res:
+            cells = "".join(f"<div style='flex:1;min-width:200px;margin:2px;padding:6px;border:1px solid {_C['bd']};border-radius:6px;"
+                            f"background:{'#e8f6ea' if x[l + ' 맞음'] else '#fbeaea'}'><b style='font-size:12px'>{_e(l)}</b>"
+                            f"<div style='font-size:12.5px;max-height:120px;overflow:auto'>{_mark(x[l], marks, '#fff3a3')}</div></div>" for l in outs)
+            cards.append(f"<div style='margin:6px 0'><div style='font-size:13px'><b>[{_e(x['유형'])}]</b> {_e(x['질문'])}</div>"
+                         f"<div style='display:flex;flex-wrap:wrap'>{cells}</div></div>")
+        _show(_card("질문별 답(초록 = 맞음 또는 번지지 않음, 빨강 = 틀림 또는 번짐, 노랑 = 새 사실 낱말)", "".join(cards), _C["mute"]))
+    return _q(res, show)
+
+
+SIDE_QS = [("영어", "Please introduce yourself in two sentences."), ("계산", "17 × 23 은 얼마야? 숫자만 답해."),
+           ("코드", "파이썬으로 1부터 10까지 더하는 코드를 써 줘."), ("형식", '다음 정보를 JSON 으로만 써 줘 : 이름 김철수, 나이 21'),
+           ("요약", "다음을 세 줄로 요약해 줘 : 오늘은 비가 와서 동아리 모임이 실내 세미나로 바뀌었다. 발표는 두 명이 했다. 다음 주에는 관측을 한다.")]
+
+
+def _side_check(kind: str, text: str, g: dict) -> str:
+    notes = []
+    if g.get("markers") and _style(text, g):
+        notes.append("말투 번짐")
+    if kind == "계산":
+        notes.append("계산 맞음" if "391" in text else "계산 틀림")
+    if kind == "형식":
+        m = re.search(r"\{.*\}", text, re.S)
+        try:
+            json.loads(m.group(0)) if m else None
+            notes.append("JSON 맞음" if m else "JSON 없음")
+        except Exception:
+            notes.append("JSON 깨짐")
+    if kind == "코드":
+        notes.append("코드 있음" if ("sum(" in text or "for " in text) else "코드 없음")
+    if kind == "영어":
+        notes.append("영어로 답함" if len(re.findall(r"[A-Za-z]", text)) > len(text) * 0.4 else "한국어로 답함")
+    if kind == "요약":                                      # 세 줄 요약을 시켰을 때 줄 수
+        n = len([x for x in text.splitlines() if x.strip()])
+        notes.append("세 줄 지킴" if n == 3 else f"{n}줄(세 줄 아님)")
+    return " · ".join(notes) or "-"
+
+
+def side_effects(adapter: str | None = None, show: bool = True) -> list[dict]:
+    """학습 뒤 부작용 : 목표와 상관없는 질문(영어 · 계산 · 코드 · JSON · 요약)에 학습 전과 Adapter 가 어떻게 답하는지 비교함."""
+    e, g = _m(), goal()
+    adapter = adapter or _style_adapter(e)
+    if not adapter:
+        raise Guide("지금 모델로 학습한 Adapter 가 없음")
+    convs = [[{"role": "user", "content": q}] for _, q in SIDE_QS]
+    a0, a1 = _generate(e, convs, None, 200), _generate(e, convs, adapter, 200)
+    res = [{"종류": k, "질문": q, "학습 전": x["text"], "학습 전 관찰": _side_check(k, x["text"], g), adapter: y["text"],
+            adapter + " 관찰": _side_check(k, y["text"], g)} for (k, q), x, y in zip(SIDE_QS, a0, a1)]
+    _log("부작용 확인", label=adapter, adapter=adapter)
+    if show:
+        rows = "".join(f"<tr><td style='vertical-align:top'><b>{_e(r['종류'])}</b><br><span style='font-size:11px'>{_e(r['질문'][:80])}</span></td>"
+                       f"<td style='vertical-align:top;font-size:12.5px'>{_md(r['학습 전'][:300])}<br><i style='color:{_C['mute']}'>{_e(r['학습 전 관찰'])}</i></td>"
+                       f"<td style='vertical-align:top;font-size:12.5px'>{_mark(r[adapter][:300], g.get('markers') or [], '#c8f7c5')}<br>"
+                       f"<i style='color:{_C['warn']}'>{_e(r[adapter + ' 관찰'])}</i></td></tr>" for r in res)
+        _show(_card(f"학습 뒤 부작용 : 학습 전 대 {_e(adapter)}",
+                    f"<table style='border-collapse:collapse;width:100%'><tr><th>질문</th><th>학습 전</th><th>{_e(adapter)}</th></tr>{rows}</table>", _C["warn"]))
+    return _q(res, show)
+
+
+def four_view(q: str, adapter: str | None = None, show: bool = True) -> list[dict]:
+    """질문 하나를 네 구성(학습 전 · 문서 붙임 · Adapter · 문서 + Adapter)으로 물어 답을 나란히 봄. 확인 질문의 기대 단어와 표지 단어를 색칠함."""
+    e, g = _m(), goal()
+    adapter = adapter or _style_adapter(e)
+    expect = next((it["expect"] for it in quiz() if it["q"].strip() == q.strip()), [])
+    out = []
+    for label, rag, ad in (("학습 전", False, None), ("문서 붙임(RAG)", True, None), (f"Adapter({adapter})", False, adapter), ("문서 + Adapter", True, adapter)):
+        if ad is None and "Adapter" in label:
+            continue
+        r = ask(q, rag=rag, adapter=ad, show=False)
+        out.append({"구성": label, "답": r["answer"], "근거": [h["title"] for h in r["hits"]], "말투": _style(r["answer"], g), "내용": _keyscore(r["answer"], expect)})
+    if show:
+        cards = [_card(f"{o['구성']}" + ("" if o["말투"] is None else f" · 말투 {o['말투']:.2f}") + ("" if o["내용"] is None else f" · 내용 {o['내용']:.2f}"),
+                       f"<div style='max-height:240px;overflow:auto;font-size:13px'>{_mark_multi(o['답'], [(expect, '#fff3a3'), (g.get('markers') or [], '#c8f7c5')]) if (expect or g.get('markers')) else _md(o['답'])}</div>"
+                       + (f"<div style='font-size:11px;color:{_C['mute']}'>근거 : {_e(', '.join(o['근거'][:3]))}</div>" if o["근거"] else ""),
+                       _PAL[i % len(_PAL)]) for i, o in enumerate(out)]
+        _show(_card(f"같은 질문, 네 구성 : {_e(q)}", _rowhtml(cards) + f"<div style='font-size:12px;color:{_C['mute']}'>노랑 = 기대 단어(내용), 초록 = 표지 단어(말투)</div>", _C["mute"]))
+    return _q(out, show)
+
+
+def show_turn(r: dict, img_px: int = 240) -> None:
+    """노트북에서 조립한 챗봇의 한 턴 결과를 카드로 보여 줌. r 에 answer · sources · state · image(PIL) · audio(wav 바이트) · times 를 넣음."""
+    g = goal()
+    st = r.get("state") or {}
+    ans = _mark(r.get("answer", ""), g.get("markers") or [], "#c8f7c5") if g.get("markers") else _md(r.get("answer", ""))
+    src = r.get("sources") or []
+    left = (f"<div style='flex:1;min-width:280px'><div style='font-size:12px;color:{_C['mute']}'>나 : {_e(r.get('q', ''))}</div>"
+            f"<div style='margin-top:4px;white-space:pre-wrap;line-height:1.55'>{ans}</div>"
+            f"<div style='font-size:11px;color:{_C['mute']};margin-top:4px'>{'근거 : ' + _e(' · '.join(src[:4])) if src else '문서를 붙이지 않음'}</div>"
+            + (_times_html(r["times"]) if r.get("times") else "") + "</div>")
+    right = ""
+    if r.get("image") is not None:
+        right += f"<img src='data:image/jpeg;base64,{_b64(_png(r['image'], 'JPEG', img_px * 2))}' style='width:{img_px}px;border-radius:10px'>"
+    if st:
+        right += f"<div style='font-size:12px;margin-top:4px'><b>{_e(st.get('mood', ''))}</b> {_e(st.get('scene', ''))}</div>"
+    if r.get("audio"):
+        right += f"<audio controls src='data:audio/wav;base64,{_b64(r['audio'])}' style='width:{img_px}px;margin-top:4px'></audio>"
+    body = f"<div style='display:flex;flex-wrap:wrap;align-items:flex-start'>{left}<div style='width:{img_px + 10}px;margin-left:12px'>{right}</div></div>"
+    _show(_card("내가 조립한 챗봇", body, _C["acc"]))
 
 
 def save_solution(adapter: str | None = "유지", persona: str | None = None) -> dict:

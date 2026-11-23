@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>나만의 챗봇</title>
+<!-- 7회차 최종 스튜디오의 웹 화면. 노트북에서 만든 API(/api/chat, /api/asr, /api/info)를 부름. 이 파일을 고치면 화면이 바뀜 -->
+<style>
+  body { margin: 0; font-family: "Noto Sans KR", "Malgun Gothic", sans-serif; background: #f4f6f8; color: #1f2328; }
+  header { background: #3b3d8c; color: #fff; padding: 10px 16px; font-size: 18px; }
+  main { max-width: 980px; margin: 0 auto; padding: 12px 16px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 8px; font-size: 14px; }
+  #log { background: #fff; border: 1px solid #d0d7de; border-radius: 8px; padding: 10px; min-height: 360px; max-height: 62vh; overflow-y: auto; }
+  .me { text-align: right; margin: 8px 0; } .me span { background: #2f6feb; color: #fff; padding: 6px 10px; border-radius: 10px; display: inline-block; max-width: 75%; text-align: left; }
+  .bot { display: flex; gap: 12px; margin: 8px 0; align-items: flex-start; flex-wrap: wrap; }
+  .bot .txt { flex: 1; min-width: 260px; background: #f4f6f8; border: 1px solid #d0d7de; border-radius: 10px; padding: 8px 10px; white-space: pre-wrap; line-height: 1.55; }
+  .bot img { width: 220px; border-radius: 10px; }
+  .meta { font-size: 11px; color: #57606a; margin-top: 4px; }
+  .row { display: flex; gap: 8px; margin-top: 8px; }
+  #q { flex: 1; font-size: 16px; padding: 8px; border: 1px solid #d0d7de; border-radius: 8px; }
+  button { font-size: 15px; padding: 8px 14px; border: 0; border-radius: 8px; background: #2f6feb; color: #fff; cursor: pointer; }
+  button.rec { background: #cf222e; } button:disabled { background: #9aa4ae; }
+  a { color: #2f6feb; }
+</style>
+</head>
+<body>
+<header>나만의 챗봇 · 검색 + 내 Adapter + 그림 + 소리 <span style="font-size:12px;float:right"><a style="color:#fff" href="docs" target="_blank">API 문서</a></span></header>
+<main>
+  <div class="bar">
+    <label><input type="checkbox" id="rag" checked> 내 문서 검색</label>
+    <label><input type="checkbox" id="draw" checked> 그림</label>
+    <label><input type="checkbox" id="voice" checked> 읽어 주기</label>
+    <label>Adapter <select id="adapter"><option value="">쓰지 않음</option></select></label>
+    <span id="status" class="meta"></span>
+  </div>
+  <div id="log"></div>
+  <div class="row">
+    <input id="q" placeholder="질문을 적고 Enter, 또는 마이크 단추를 눌러 말함">
+    <button id="send">보내기</button>
+    <button id="mic">마이크</button>
+  </div>
+  <div class="meta">마이크는 처음 한 번 브라우저가 허락을 물음. 말을 마치면 단추를 한 번 더 누름</div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+let history = [], rec = null, chunks = [];
+const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+async function api(path, body) {
+  const r = await fetch(path, { method: body ? "POST" : "GET", headers: { "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined });
+  if (!r.ok) throw new Error(path + " " + r.status + " " + (await r.text()).slice(0, 200));
+  return r.json();
+}
+async function info() {
+  try {
+    const x = await api("api/info");
+    for (const a of x.adapters || []) { const o = document.createElement("option"); o.value = a; o.textContent = a; $("adapter").appendChild(o); }
+    if (x.adapter) $("adapter").value = x.adapter;
+    $("status").textContent = (x.model || "") + " · 문서 " + (x.docs ?? "-") + "건";
+  } catch (e) { $("status").textContent = "API 정보를 읽지 못함 : " + e.message; }
+}
+function addMe(q) { $("log").insertAdjacentHTML("beforeend", `<div class="me"><span>${esc(q)}</span></div>`); $("log").scrollTop = 1e9; }
+function addBot(r) {
+  const t = r.times ? Object.entries(r.times).map(([k, v]) => `${k} ${v}초`).join(" · ") : "";
+  const img = r.image ? `<img src="data:image/jpeg;base64,${r.image}">` : "";
+  const st = r.state ? `<div class="meta"><b>${esc(r.state.mood || "")}</b> ${esc(r.state.scene || "")}</div>` : "";
+  const src = (r.sources || []).length ? `<div class="meta">근거 : ${esc(r.sources.join(" · "))}</div>` : "";
+  $("log").insertAdjacentHTML("beforeend", `<div class="bot"><div class="txt">${esc(r.answer)}${src}<div class="meta">${t}</div></div><div>${img}${st}</div></div>`);
+  $("log").scrollTop = 1e9;
+  if (r.audio) new Audio("data:audio/wav;base64," + r.audio).play().catch(() => {});
+}
+async function send(q) {
+  q = (q ?? $("q").value).trim(); if (!q) return;
+  $("q").value = ""; addMe(q); $("send").disabled = true; $("status").textContent = "답하는 중…";
+  try {
+    const r = await api("api/chat", { q, rag: $("rag").checked, draw: $("draw").checked, voice: $("voice").checked,
+                                      adapter: $("adapter").value || null, history: history.slice(-4) });
+    history.push({ role: "user", content: q }, { role: "assistant", content: r.answer });
+    addBot(r); $("status").textContent = "";
+  } catch (e) { $("status").textContent = "오류 : " + e.message; }
+  $("send").disabled = false;
+}
+$("send").onclick = () => send();
+$("q").addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
+$("mic").onclick = async () => {
+  if (rec && rec.state === "recording") { rec.stop(); return; }
+  try {
+    const s = await navigator.mediaDevices.getUserMedia({ audio: true });
+    rec = new MediaRecorder(s); chunks = [];
+    rec.ondataavailable = (e) => chunks.push(e.data);
+    rec.onstop = async () => {
+      s.getTracks().forEach((t) => t.stop()); $("mic").classList.remove("rec"); $("mic").textContent = "마이크";
+      const b = new Blob(chunks, { type: rec.mimeType }); const buf = new Uint8Array(await b.arrayBuffer());
+      let bin = ""; for (let i = 0; i < buf.length; i += 8192) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 8192));
+      $("status").textContent = "받아쓰는 중…";
+      try { const x = await api("api/asr", { audio_b64: btoa(bin), fmt: (rec.mimeType || "audio/webm").includes("mp4") ? "mp4" : "webm" }); send(x.text); }
+      catch (e) { $("status").textContent = "받아쓰기 오류 : " + e.message; }
+    };
+    rec.start(); $("mic").classList.add("rec"); $("mic").textContent = "말하는 중… 누르면 끝";
+  } catch (e) { $("status").textContent = "마이크를 쓸 수 없음 : " + e.message; }
+};
+info();
+</script>
+</body>
+</html>

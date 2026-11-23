@@ -627,17 +627,17 @@ md("""
 # 7회차 · 내 데이터로 모델 학습시키기(LoRA 샌드박스)
 
 오늘은 모델의 **가중치를 직접 바꿈**. 내가 원하는 말투 · 형식을 정하고, 학습 데이터를 만들고, 설정을 바꿔 가며 여러 번 학습시켜 차이를 확인함.
-마지막에는 6회차에 만든 내 문서 챗봇에 학습한 Adapter 를 얹어 **내 솔루션**을 완성함.
+9-1 에서 RAG 와 LoRA 가 각각 무엇을 바꾸고 무엇을 못 바꾸는지 실험으로 확인한 뒤, 학습한 Adapter 를 저장함. 수업 마지막에는 **최종 스튜디오 노트북**(`s07_final_studio.ipynb`)에서 LLM · 검색 · 그림 · 소리 부품의 코드를 직접 이어 붙여 나만의 챗봇과 API 를 조립함.
 
 **전체 흐름부터.** 5회차와 6회차는 모델을 그대로 두고 입력을 바꿨음(지시문, 문서). 그 방법은 매번 지시문을 붙여야 하고 입력이 길어짐. 오늘은 반대로 **모델 쪽을 조금 고쳐서** 지시문 없이도 원하는 방식으로 답하게 만듦.
 
-모델 전체(수십억 개의 숫자)를 다시 학습시키면 시간과 메모리가 너무 많이 듦. **LoRA** 는 원래 가중치(본체)는 얼려 두고, 옆에 작은 행렬(Adapter)만 붙여 그 부분만 학습하는 방법임. 두꺼운 교과서는 그대로 두고 얇은 보충 노트만 새로 쓰는 것과 비슷함. 그래서 1~3분이면 끝나고 결과 파일도 수십 MB 임.
+모델 전체(수십억 개의 숫자)를 다시 학습시키면 시간과 메모리가 너무 많이 듦. **LoRA** 는 원래 가중치(본체)는 얼려 두고, 옆에 작은 행렬(Adapter)만 붙여 그 부분만 학습하는 방법임. 두꺼운 교과서는 그대로 두고 얇은 보충 노트만 새로 쓰는 것과 비슷함. 그래서 학습 한 번이 몇 분이면 끝나고 결과 파일도 수십 MB 임.
 
-`학습 목표(1단계)` → 학습 데이터 수백 건(3단계) → 학습(4단계) → 지시문 없이 물어 확인(5단계) → 설정을 바꿔 다시(6단계) → 문서 검색과 합침(9단계)
+`학습 목표(1단계)` → 학습 데이터 수백 건(3단계) → 학습(4단계) → 학습 과정 들여다보기(4-2~4-5) → 지시문 없이 물어 확인(5단계) → 설정을 바꿔 다시(6단계) → 문서 검색과 합침(9단계) → 체감 실험실(9-1) → 저장 · 미리 보기(10~12단계) → **최종 스튜디오 노트북**
 
 RAG 와 LoRA 는 하는 일이 다름. **무엇을 아는가(지식)** 는 문서를 붙이는 RAG 가, **어떻게 답하는가(말투 · 형식)** 는 LoRA 가 잘 바꿈. 9단계에서 숫자로 확인함.
 
-- 학습은 한 번에 1~3분임. 설정을 바꿔 **세 번 이상** 학습해 봄
+- 학습은 한 번에 2~4분임(학습 프로그램이 모델을 따로 올리는 1~3분 포함). 설정을 바꿔 **세 번 이상** 학습해 봄
 - 끝낼 때 맨 아래 '결과 묶기'를 실행해 zip 파일을 내려받음
 
 | 단계 | 하는 일 | 필수 |
@@ -647,16 +647,20 @@ RAG 와 LoRA 는 하는 일이 다름. **무엇을 아는가(지식)** 는 문�
 | 2 | 학습 전 답 확인 | 필수 |
 | 3 | 학습 데이터 만들기 | 필수 |
 | 4 | 첫 학습 | 필수 |
+| 4-1~4-5 | LoRA 크기 계산, 학습 데이터가 들어가는 모습, Adapter 구성, 학습 과정 그림, 단계별 평가 | 필수(4-1은 권장) |
 | 5 | 전후 비교 | 필수 |
 | 6 | 설정 실험 : 다시 학습하고 곡선 비교 | 필수 |
-| 7 | 일부러 문제 만들기 | 선택 |
-| 8 | 큰 GPU 써 보기(QLoRA · 큰 배치 · 다른 본체) | 선택 |
+| 7 | 일부러 문제 만들기 | 자율 시간 |
+| 8 | 큰 GPU 써 보기(QLoRA · 큰 배치 · 다른 본체) | 자율 시간 |
 | 9 | 네 구성 비교 | 필수 |
+| 9-1 | 체감 실험실 : 같은 질문 네 구성, LoRA 로 지식 넣기, 학습 뒤 부작용 | 필수(지식 넣기는 3~5분) |
 | 10 | 내 솔루션 완성 · 저장 | 필수 |
-| 11 | 판단 기록 · 결과 묶기 | 필수 |
-| A~H | LoRA 크기 계산, 곡선 비교, 추가 학습 실험(자율 시간) | 더 해 보기 |
+| 11 | 완성 모습 미리 보기 → 최종 스튜디오 노트북에서 직접 조립 | 필수 |
+| 12 | 판단 기록 · 결과 묶기 | 필수 |
+| 스튜디오 | `s07_final_studio.ipynb` : 부품 코드 조립 · API · 응용 · 추가 학습 | 필수(20:05~) |
+| A~K | LoRA 크기 계산, 곡선 비교, 추가 학습 실험, 단계별 평가, 그림 모듈, 캐릭터 바꾸기(자율 시간) | 더 해 보기 |
 
-선택 단계(7 · 8)는 **하나 이상** 함. 필수 단계를 마치면 맨 아래 '더 해 보기 A~H'를 함. 목표를 정하기 어려우면 맨 아래 '예시 과제'를 봄.
+7 · 8단계와 '더 해 보기 A~K'는 자율 시간에 함(수업 뒤에도 서버가 켜져 있는 동안 가능). 20:05에는 진행 단계와 상관없이 12단계까지 마치고 스튜디오 노트북으로 넘어감. 목표를 정하기 어려우면 맨 아래 '예시 과제'를 봄.
 
 ※ 강사가 11/22~23에 개인 서버에서 처음부터 끝까지 직접 돌려 본 노트북임. 숫자는 목표와 서버에 따라 조금씩 달라질수 있음
 """),
@@ -698,7 +702,9 @@ md("""
 code("lab.data_panel()"),
 md("""
 ## 4. 첫 학습
-기본 설정 그대로 '학습 시작'을 누름. Loss 곡선이 실시간으로 그려짐.
+기본 설정 그대로 '학습 시작'을 누름. Loss 곡선이 실시간으로 그려짐. 시작할 때 '학습 계획' 한 줄(학습 건수 ÷ 배치 = 에폭당 단계 × 에폭 = 전체 단계)이 먼저 나옴.
+
+기본값으로 에폭이 끝날 때마다 Adapter 를 **중간 저장**함(곡선 아래 ▲). 4-5에서 이 중간 저장본으로 '학습이 진행될수록 얼마나 목표를 따라오는지' 확인함. 더 자세히 보려면 '중간 저장'을 6번 · 10번으로 고름.
 
 **곡선 읽는 법** : **Loss** 는 모델의 답이 학습 데이터의 답과 얼마나 다른지 나타내는 값임. 내려가면 학습 데이터를 닮아 가고 있다는 뜻임. 실선은 학습에 쓴 데이터의 Loss, 점선은 학습에 쓰지 않고 따로 떼어 둔 검증 데이터의 Loss 임. 실선은 계속 내려가는데 점선이 다시 올라가기 시작하면, 모델이 데이터를 이해한 것이 아니라 외우고 있다는 신호임(과적합).
 
@@ -716,6 +722,18 @@ md("""
 ※ 리허설 때 "0.14%만 바꿨는데 말투가 바뀌나?" 싶었는데 v1 하나로 말투 점수가 0 → 0.9 근처까지 올랐음. 아래 4-1 셀로 숫자를 직접 계산해 보면 감이 옴
 """),
 code("lab.train_panel()"),
+md("""
+**코드로 보기 : 학습 조절판이 실제로 실행하는 코드.** 조절판의 값은 아래 `LoraConfig`(무엇을 얼마나 붙일지)와 `SFTConfig`(어떻게 학습할지)로 들어가고, `SFTTrainer` 가 학습을 돌림. 학습 결과 표 위의 '실제로 실행한 명령'을 펼치면 조절판 값이 어떤 옵션으로 넘어갔는지 보임.
+
+| 코드의 이름 | 조절판의 값 | 하는 일 |
+|---|---|---|
+| `r` · `lora_alpha` | rank(r), α(= 2 × r) | Adapter 행렬의 폭과 배율(α / r) |
+| `target_modules` | LoRA 를 붙일 층 | q · k · v · o 등 어느 행렬 옆에 붙일지 |
+| `learning_rate` · `num_train_epochs` · `per_device_train_batch_size` | 학습률 · 에폭 · 배치 | 한 번에 고치는 폭, 반복 횟수, 한 번에 보는 건수 |
+| `lr_scheduler_type="cosine"` · `warmup_steps` | (고정) | 4-4 의 학습률 그림 모양 |
+| `gradient_checkpointing` | (고정) | 메모리를 아끼려고 중간값을 버렸다가 다시 계산 |
+"""),
+code("lab.code(\"lab_train.py\", \"lora = LoraConfig\", 26)"),
 md("""
 ### 4-1. LoRA 크기 직접 계산
 본체 설정(층 수, 행렬 크기)을 읽어 rank 와 붙일 층에 따라 학습 파라미터가 몇 개인지, Adapter 가 몇 MB 인지 계산함. 4단계 결과 표의 숫자와 맞춰 봄.
@@ -740,6 +758,46 @@ for r, tg in [(2, "qkvo"), (8, "qkvo"), (16, "qkvo"), (64, "qkvo"), (16, "qv")]:
 print("기본 설정(rank 16 · qkvo)의 11/22 실측 : 10,092,544개 · 38.5MB")
 """),
 md("""
+### 4-2. 학습 데이터가 모델에 들어가는 모습
+학습 데이터 한 건에 채팅 템플릿을 씌운 실제 글자를 봄. **회색(질문 부분)은 Loss 계산에서 빠지고, 초록(답 부분)만 맞히도록 학습함.** 숫자를 바꿔 다른 건도 봄(예 : `lab.data_view(5)`). 문서가 붙은 예시는 질문 부분이 길게 나옴.
+
+**왜 하나** : '학습한다'는 말이 실제로는 무엇인지 확인하는 단계임. 모델은 답 부분의 토큰을 하나씩 맞히는 연습을 함. 그래서 질문을 아무리 많이 넣어도 답이 흐릿하면 배울 것이 없음.
+"""),
+code("lab.data_view(0)"),
+md("""
+### 4-3. 내 Adapter 구성 들여다보기
+방금 학습한 Adapter 파일을 열어 **어느 층의 어느 행렬에 몇 개의 숫자가 붙었는지** 표로 보고, 학습으로 각 행렬이 **얼마나 바뀌었는지(‖ΔW‖)** 를 층 × 행렬 그림으로 봄. 이름을 넣으면 그 Adapter 를 봄(예 : `lab.lora_view("v2")`).
+
+- 표의 합계가 4단계 결과 표의 '학습한 파라미터'와 같은지 확인함
+- 그림에서 밝을수록 많이 바뀐 행렬임. 같은 rank 라도 층마다 바뀐 크기가 다름. 어느 층 · 어느 행렬이 가장 많이 바뀌었는지 적어 둠
+
+※ 11/23 리허설(사극 말투)에서는 두 번 모두 o · q 가 k · v 보다 두세 배 많이 바뀌었음. 가장 밝은 행렬은 학습마다 달랐음(데이터 60건 17층 o, 162건 27층 o). 목표마다 달라지니 내 그림과 비교해 봄
+"""),
+code("lab.lora_view()"),
+md("""
+### 4-4. 학습 과정 자세히 보기
+학습 한 번의 전 과정을 그림 네 개로 봄. 점선은 에폭 경계, ▲는 중간 저장 지점임.
+
+| 그림 | 보는 것 | 정상인 모습 |
+|---|---|---|
+| ① Loss | 학습 데이터의 답과 얼마나 다른가 | 처음에 빠르게 내려가고 점점 평평해짐. 검증 Loss 도 함께 내려감 |
+| ② 토큰 정확도 | 답의 다음 토큰을 맞힌 비율 | Loss 와 반대로 올라감. 에폭이 바뀌는 지점에서 한 번 더 뜀(같은 데이터를 다시 봄) |
+| ③ 학습률 | 한 번에 고치는 폭 | 처음 몇 단계 동안 올라갔다가(워밍업) 코사인 모양으로 줄어듦 |
+| ④ 기울기 크기 | 한 번에 고치려는 정도 | 처음에 크고 점점 작아짐. 갑자기 튀면 학습률이 너무 큰 것 |
+
+표의 '에폭당 단계'는 학습 건수 ÷ 배치(올림)임. 배치를 키우면 단계 수가 줄고, 에폭을 늘리면 단계 수가 늘어남.
+"""),
+code("lab.train_report()"),
+md("""
+### 4-5. 단계별로 얼마나 따라오나
+중간 저장본마다 **검증 질문(학습에 쓰지 않은 질문)** 으로 말투 점수를 재서, 학습 단계가 지날수록 목표를 얼마나 따라오는지 그림으로 봄. 같은 질문 하나에 대한 단계별 답도 나란히 나오므로, 말투가 언제부터 바뀌기 시작하는지 눈으로 확인함. 1~2분 걸림.
+
+- 왼쪽 그림 : 말투 점수(실선)와 검증 Loss(점선). 말투 점수가 첫 에폭에 거의 다 오르고 그 뒤로 평평하면 에폭을 줄여도 됨
+- 오른쪽 그림 : 학습으로 바뀐 크기 ‖ΔW‖. 학습 전은 0 이고 단계가 지날수록 커짐. 커지는데 점수가 그대로면 더 학습해도 얻는 것이 적음
+- 질문을 바꾸려면 `lab.progress_eval(q="내 질문")`
+"""),
+code("lab.progress_eval()"),
+md("""
 ## 5. 전후 비교
 2단계와 같은 질문, 그리고 학습 데이터에 없던 새 질문으로 물어봄. 표지 단어는 색으로 표시됨. 아래 두 번째 셀은 검증 질문 20건으로 **말투 점수**를 재서 막대로 그림.
 
@@ -747,6 +805,26 @@ md("""
 """),
 code("lab.compare_panel()"),
 code("lab.style_eval()"),
+md("""
+**코드로 보기 : Adapter 를 켜고 끄는 코드.** 전후 비교 조절판은 아래처럼 같은 본체에 Adapter 를 켠 채로 한 번, `disable_adapter()` 안에서 한 번 생성함. 본체는 하나이고 Adapter 만 켜고 끄는 것임. `print(model)` 의 일부를 보면 원래 `Linear` 옆에 `lora_A` · `lora_B` 가 붙어 있음.
+"""),
+code("""
+# 5단계 코드 : 같은 본체로 Adapter 를 켜고 끄며 생성(질문과 Adapter 이름을 바꿔 봄)
+import torch
+AD = lab.runs(show=False)[-1]["이름"]                       # 가장 최근 Adapter
+tok, model, _ = lab.llm_parts(AD)                           # AD 를 켠 모델
+msgs = [{"role": "user", "content": "비 오는 날 점심 메뉴는?"}]
+ids = tok(tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True), return_tensors="pt").to(model.device)
+with torch.no_grad():
+    on = model.generate(**ids, max_new_tokens=80, do_sample=False, pad_token_id=tok.pad_token_id)
+    with model.disable_adapter():                           # Adapter 를 잠시 끔
+        off = model.generate(**ids, max_new_tokens=80, do_sample=False, pad_token_id=tok.pad_token_id)
+n = ids["input_ids"].shape[1]
+print("[Adapter 켬]", tok.decode(on[0, n:], skip_special_tokens=True))
+print("[Adapter 끔]", tok.decode(off[0, n:], skip_special_tokens=True))
+print("\\n[모델 구조 일부]")
+print(model.base_model.model.model.layers[0].self_attn.q_proj)
+"""),
 md("""
 ## 6. 설정 실험
 4단계 조절판으로 돌아가 **설정 하나만** 바꿔 다시 학습함(이름은 비워 두면 v2, v3 … 로 붙음). 실행 전에 결과를 예측해 봄.
@@ -768,7 +846,7 @@ md("""
 """),
 code("lab.loss_plot()\nlab.style_eval()"),
 md("""
-## 7. 일부러 문제 만들기(선택)
+## 7. 일부러 문제 만들기(자율 시간)
 잘못된 설정이 어떤 모습으로 나타나는지 직접 봄. 조절판에서 아래처럼 고르고 학습한 뒤 5단계 조절판으로 답을 읽어 봄.
 
 **왜 하나** : 실제로 학습을 돌리다 보면 결과가 이상할 때가 훨씬 많음. 그때 곡선과 답의 모습만 보고 원인을 짐작할수 있어야 함. 문제를 일부러 만들어서 그 모습을 미리 봐 두는 것임.
@@ -780,7 +858,7 @@ md("""
 일부러 문제를 만든 학습은 최종 솔루션으로 고르지 않음. 이름을 `bad1` 처럼 붙여 두면 헷갈리지 않음.
 """),
 md("""
-## 8. 큰 GPU 써 보기(선택)
+## 8. 큰 GPU 써 보기(자율 시간)
 - **QLoRA** : 본체 자료형을 4bit 로 바꿔 학습함. 표의 '학습 메모리'와 걸린 시간, 말투 점수를 bf16 과 비교함. 본체를 4bit 로 줄여 올리면 메모리는 크게 줄고 속도는 조금 느려짐. 작은 GPU 에서 학습할 때 쓰는 방법임
 - **큰 배치** : 배치를 32 · 64 로 키움. 한 번에 많이 보지만 갱신 횟수가 줄어듦. 점수가 어떻게 되는지 봄
 - **다른 본체** : '학습할 본체'를 `Qwen3-8B` 로 바꿔 같은 데이터로 학습함. 학습한 Adapter 는 그 본체에서만 쓸 수 있으므로, 아래 셀로 본체를 올리고 비교함
@@ -797,14 +875,74 @@ md("""
 """),
 code("lab.four()"),
 md("""
+## 9-1. 체감 실험실 : RAG 와 LoRA 가 바꾸는 것과 못 바꾸는 것
+9단계의 숫자를 실제 답으로 확인함. 세 실험을 차례로 함.
+
+**① 같은 질문, 네 구성** : 질문 하나를 네 구성으로 물어 답을 나란히 봄. 노랑은 기대 단어(내용), 초록은 표지 단어(말투)임. 내 확인 질문 가운데 하나를 넣으면 기대 단어까지 칠해짐.
+
+**② LoRA 로 지식을 넣으면?** : 별빛 동아리의 '2027년 변경 사항' 네 가지(회비 3만 5천 원, 셋째 주 토요일 모임, 과학관 204호, 망원경 5일)를 질문 12개로 학습한 Adapter(`fact`)와, 같은 내용을 문서로 붙인 경우를 비교함. 질문을 학습한 그대로 · 바꿔서 · 둘을 엮어서 · 관련 없이 물음. 모델 올리기를 포함해 3~5분 걸리므로 먼저 실행해 두고 기다리는 동안 ① · ③을 해도 됨.
+
+| 볼 것 | 11/23 강사 서버 결과(EPOCHS 15) | 뜻 |
+|---|---|---|
+| 그대로 물음 | LoRA · 문서 붙임 모두 맞힘 | 학습한 문장은 외움 |
+| 바꿔 물음 · 엮어 묻기 | 회비 · 모임 · 망원경은 LoRA 도 맞힘. '과학관 몇 층'에는 LoRA 가 '두 층에 있어요'라고 지어냄, 문서 붙임은 '204호, 층수는 문서에 없음' | 외운 사실 밖의 질문에는 지어냄. 문서는 근거와 모름을 함께 줌 |
+| 관련 없는 질문 | 라면 질문에 '2027년부터 별빛 관측소는 …', 파이썬 질문에 '20228년부터 파이썬에서는 …'으로 답함 | 학습 문장의 모양이 다른 질문으로 번짐 |
+| 같은 실험을 EPOCHS 5 로 | 네 사실을 하나도 못 맞힘('5만 5천 원', '22동 411호'처럼 숫자를 지어냄), 번짐은 없음 | 덜 배우면 문장 모양만 배우고 사실은 지어냄 |
+
+**③ 학습 뒤 부작용** : 목표와 상관없는 질문(영어 · 계산 · 코드 · JSON · 요약)에 학습 전 모델과 내 Adapter 가 어떻게 답하는지 봄. 말투가 번지거나 형식이 깨지는지 관찰 열을 확인함.
+
+※ 11/23 밤 강사 서버(A100)에서 EPOCHS 5 와 15 로 각각 돌려 본 결과가 위 표임. 15 는 마지막 Loss 가 0.0006 까지 내려가 학습 문장을 거의 그대로 외웠음. 결과는 학습할 때마다 조금씩 다름
+※ 문서 붙임은 라면 질문에 '정보를 제공할 수 없습니다'라고 답했음. 6회차의 '문서에 없으면 모른다고 답함' 규칙 때문이며, 문서 밖의 일반 질문까지 막는 RAG 의 한계임
+"""),
+code("lab.four_view(\"동아리 회비는 얼마고 언제 내?\")     # 내 확인 질문으로 바꿈"),
+code("""
+# ② LoRA 로 지식 넣기 : 값을 바꿔 다시 해 봄(EPOCHS 를 5 로 줄이면 무엇을 배우는가, 번짐은 줄어드는가)
+EPOCHS = 15
+REPEAT = 4          # 학습 데이터를 몇 번 되풀이해 넣을지(질문 12개 × REPEAT)
+fact = lab.knowledge_lab(epochs=EPOCHS, repeat=REPEAT)
+"""),
+code("lab.side_effects()      # 저장한 솔루션의 Adapter(저장 전이면 가장 최근에 학습한 Adapter, fact 는 뺌)로 확인. 이름을 넣어도 됨"),
+md("""
+<details><summary>확인 질문 : 동아리 회비가 내년에 또 바뀐다. LoRA 와 RAG 가운데 무엇으로 반영하는가, 그 이유는</summary>
+
+문서(RAG)로 반영함. 문서 한 줄만 고치면 바로 맞고, 근거도 보여 줄 수 있음. LoRA 는 다시 학습해야 하고, ②에서 본 것처럼 바꿔 물으면 틀리며 다른 질문에 번짐. LoRA 는 말투 · 형식 · 판단 규칙처럼 자주 바뀌지 않는 '방식'을 가르칠 때 씀
+</details>
+"""),
+md("""
 ## 10. 내 솔루션 완성
-가장 마음에 드는 Adapter 이름을 넣어 저장함. 저장한 뒤 대화 창에서 써 봄. 8회차부터는 저장한 솔루션을 불러 써서 서비스로 만듦.
+가장 마음에 드는 Adapter 이름을 넣어 저장함. 저장한 Adapter 가 11단계 챗봇의 기본값이 되고, 8회차부터는 저장한 솔루션을 불러 써서 서비스로 만듦.
 """),
 code("lab.runs()"),
 code("lab.save_solution(adapter='v1')     # 고른 Adapter 이름으로 바꿈"),
-code("lab.chat()"),
 md("""
-## 11. 판단 기록 · 결과 묶기
+## 11. 완성 모습 미리 보기 → 최종 스튜디오에서 직접 조립
+아래는 수업 마지막에 **최종 스튜디오 노트북**(`s07_final_studio.ipynb`)에서 부품부터 직접 조립할 챗봇의 완성 모습임. 이 셀에서는 lab 이 미리 이어 둔 것을 한 번만 돌려 보고, 조립은 스튜디오에서 코드로 함(소리 받아쓰기 · 읽어 주기 · 웹 화면 · API 포함). 질문 하나에 아래 네 가지가 차례로 일어남.
+
+![최종 챗봇의 흐름 : 검색 → Adapter 로 답 → 상태 정리 → 그림](img/final_bot_flow.png)
+
+| 차례 | 하는 일 | 쓰는 것 | 배운 회차 |
+|---|---|---|---|
+| ① 검색 | 내 문서에서 질문과 가까운 청크를 찾음 | 임베딩 · 하이브리드 검색(RAG) | 6회차 |
+| ② 답 | 찾은 청크를 붙여, 학습한 Adapter 를 얹은 모델이 답함 | 본체 + LoRA Adapter | 7회차 |
+| ③ 상태 정리 | 같은 모델이 질문과 답을 읽고 지금 분위기(기쁨 · 차분 · 걱정 · 놀람 · 진지 · 장난)와 장면, 그림 묘사를 JSON 으로 씀 | 지시문 · 형식 지정 | 5회차 |
+| ④ 그림 | 상태에 맞는 캐릭터 그림을 그림 | 그림 생성 모델(sd-turbo, 1단계) | 오늘 처음 |
+
+**왜 하나** : 실제 서비스의 챗봇은 모델 하나로 끝나지 않고 여러 부품을 이어 붙여 만듦. 지식은 RAG 가, 말투는 LoRA 가, 화면 연출은 형식을 지정한 출력(JSON)이 맡고, 그 결과를 다른 모델(그림)이 받아 씀. 부품마다 걸린 시간이 답 아래 막대로 나오므로 어디가 느린지도 봄.
+
+- 처음 그림을 그릴 때 그림 모듈 설치와 모델 내려받기로 1~2분 걸림. 그 다음부터는 한 장에 1초 안팎
+- 같은 분위기는 같은 seed 로 그려 캐릭터가 비슷하게 유지됨. 캐릭터 설명을 바꾸면 그림 속 인물이 바뀜
+- 그림 모델(sd-turbo)의 사용 조건은 모델 카드의 라이선스를 따름. 수업에서는 비상업 교육용으로만 쓰고, 수업 밖에서 쓸 때는 라이선스를 확인함. 그림 모델에는 안전 필터가 없어 lab 이 묘사에 걸리는 낱말이 있으면 다른 그림으로 바꿈
+
+**한 턴 미리 보기.** 답 · 근거 · 말투 점수 · 분위기 · 그림 · 부품별 시간이 한 카드에 나옴. 질문을 내 문서 주제로 바꿈. 처음 그림을 그릴 때는 설치와 내려받기로 1~2분 걸림.
+
+**다음 할 일** : 12단계(판단 기록 · 결과 묶기)를 마치고 이 노트북의 커널을 끈 뒤(Kernel → Shut Down Kernel) `s07_final_studio.ipynb` 를 엶.
+"""),
+code("""
+r = lab.bot("동아리 회비는 얼마고 언제 내?")       # 내 문서에 답이 있는 질문으로 바꿈
+lab.code("bot")                                     # 이 한 줄 뒤에서 일어나는 일(스튜디오에서 직접 조립함)
+"""),
+md("""
+## 12. 판단 기록 · 결과 묶기
 어떤 설정의 Adapter 를 골랐고 왜 골랐는지, 무엇이 기대와 달랐는지 적음. 근거가 되는 숫자를 두 개 이상 넣음(말투 점수, 학습 시간, Adapter 크기 등).
 끝으로 결과 묶기를 실행하고 zip 파일을 내려받음.
 """),
@@ -812,8 +950,8 @@ code("lab.note_panel()"),
 code("lab.pack()"),
 md("""
 ---
-## 더 해 보기 A~H(자율 시간)
-필수 단계를 마쳤으면 아래에서 골라 해 봄. 셀 위쪽 몇 줄(질문, 이름)만 내 것으로 고치면 됨. D · E 는 학습을 한 번 더 돌리므로 1~4분씩 걸림. 워크북 '더 해 보기' 절에 같은 목록과 적을 것이 정리돼 있음.
+## 더 해 보기 A~K(자율 시간)
+필수 단계를 마쳤으면 아래에서 골라 해 봄. 셀 위쪽 몇 줄(질문, 이름)만 내 것으로 고치면 됨. D · E · I 는 학습을 한 번 더 돌리므로 1~5분씩 걸림. 워크북 '더 해 보기' 절에 같은 목록과 적을 것이 정리돼 있음.
 
 | 번호 | 할 일 | 걸리는 시간 | 볼 것 |
 |---|---|---|---|
@@ -824,9 +962,12 @@ md("""
 | E | rank 4로 다시 학습 | 5분 | 파라미터가 1/4이면 점수는 1/4인가 |
 | F | 지시문으로 시킨 답 대 Adapter 답 | 3분 | 지시문 없이도 같은 말투가 나오는가 |
 | G | 학습 데이터 들여다보기 | 3분 | 모델이 무엇을 보고 배웠는가 |
-| H | 스스로 점검 다섯 문제 | 5분 | 접힌 답과 내 답 비교 |
+| H | 스스로 점검 일곱 문제 | 5분 | 접힌 답과 내 답 비교 |
+| I | 중간 저장 10번으로 다시 학습하고 단계별 평가 | 7분 | 말투가 몇 단계째부터 바뀌는가, 에폭을 줄여도 되는가 |
+| J | 그림 모듈만 따로 : 단계 수와 seed | 5분 | 1단계와 4단계의 차이, 같은 seed 는 같은 그림인가 |
+| K | 캐릭터 · 부품을 바꿔 최종 챗봇 | 7분 | 캐릭터 설명 · Adapter · 검색을 바꾸면 답과 그림이 어떻게 달라지는가 |
 
-※ D · E 는 GPU 32GB 서버에서 3~4분씩 걸림(올려 둔 모델을 잠시 내렸다가 다시 올림). 기다리는 동안 G 를 해도 됨
+※ D · E · I 는 GPU 32GB 서버에서 3~5분씩 걸림(올려 둔 모델을 잠시 내렸다가 다시 올림). 기다리는 동안 G 나 J 를 해도 됨
 """),
 md("""
 ### A. 내 Adapter 크기를 계산값과 맞춰 보기
@@ -931,6 +1072,50 @@ md("""
 
 틀린 답의 형식과 내용도 함께 배움. 데이터가 결과를 정함. 7단계와 발표 자료의 '학습 정답 30%가 틀렸을 때' 장을 봄
 </details>
+
+<details><summary>6. 4-5 그림에서 말투 점수가 첫 에폭에 0.9까지 오르고 그 뒤로 그대로다. 무엇을 바꿔 볼 수 있는가</summary>
+
+에폭을 1~2로 줄여도 됨. 학습 시간이 줄고 과적합 위험도 줄어듦. 대신 검증 Loss 와 새 질문의 답을 함께 확인함
+</details>
+
+<details><summary>7. 11단계 챗봇에서 내 문서의 새 회비 금액이 틀리게 나온다. RAG · LoRA · 그림 가운데 어디를 먼저 보는가</summary>
+
+RAG(검색). 근거 줄에 회비 문서가 나왔는지 봄. 지식은 검색과 문서가, 말투는 Adapter 가, 분위기와 그림은 상태 정리와 그림 모델이 맡음. 틀린 부분에 맞는 부품을 고침
+</details>
+"""),
+md("""
+### I. 중간 저장 10번으로 다시 학습하고 단계별 평가
+같은 데이터로 에폭 4, 중간 저장 10번으로 학습한 뒤 학습 과정 그림과 단계별 평가를 봄. 4-5보다 촘촘하게 보이므로 말투가 바뀌기 시작하는 지점을 찾기 쉬움.
+"""),
+code("""
+# I. 촘촘한 중간 저장(학습 2~5분 + 평가 1~2분)
+lab.train(run="fine", epochs=4, snaps=10)
+lab.train_report("fine")
+lab.progress_eval("fine")
+"""),
+md("""
+### J. 그림 모듈만 따로 : 단계 수와 seed
+같은 묘사와 seed 로 단계 수만 1 · 2 · 4로 바꿔 그림. 이어서 seed 만 바꿔 그림. 묘사는 영어로 씀.
+"""),
+code("""
+# J. 단계 수와 seed(묘사를 바꿔 봄)
+p = "a cheerful scholar in white hanbok holding a fan, autumn palace garden, storybook illustration"
+for st in (1, 2, 4):
+    lab.image(p, seed=7, steps=st)
+for sd in (8, 9):
+    lab.image(p, seed=sd)
+"""),
+md("""
+### K. 캐릭터 · 부품을 바꿔 최종 챗봇
+같은 질문을 캐릭터 설명, Adapter, 검색을 바꿔 가며 물어봄. 부품 하나만 바꿨을 때 무엇이 달라지는지 봄.
+"""),
+code("""
+# K. 캐릭터 · 부품 바꾸기(질문과 캐릭터를 내 것으로 바꿈)
+q = "시험이 내일인데 하나도 못 했어"
+lab.bot(q)                                                     # 지금 설정
+lab.bot(q, character="고양이 탐정 : 탐정 모자를 쓰고 돋보기를 든 회색 고양이")   # 캐릭터만 바꿈
+lab.bot(q, adapter=None)                                       # Adapter 를 뗌(말투 비교)
+lab.bot(q, rag=False, draw=False)                              # 검색 · 그림을 끔(부품별 시간 비교)
 """),
 md("""
 ---
@@ -944,7 +1129,553 @@ md("""
 - **30초 학습** : 에폭 · 건수 · 배치를 조정해 학습 시간을 30초 안으로 줄이고도 점수를 유지함
 - **말투 두 개** : 서로 다른 목표로 Adapter 를 두 개 학습하고 대화 창의 Adapter 선택 상자로 바꿔 가며 써 봄. 본체는 하나인데 Adapter 만 바꿔 끼우는 것임
 - **문서를 붙여도 말투 유지** : '내 문서 섞는 비율' 0 과 0.6 으로 각각 학습해 9단계 결과를 비교함
-- 조절판 없이 직접 부르기 : `lab.train(r=8, epochs=2)`, `lab.compare("질문")`, `lab.style_eval()`, `lab.four()`
+- **캐릭터 챗봇 완성** : 목표 말투에 어울리는 캐릭터 설명을 정하고, 분위기가 다른 질문 여섯 개로 여섯 가지 분위기 그림을 모두 뽑아 봄
+- **가장 빠른 챗봇** : 11단계 답 아래 시간 막대를 보고 가장 오래 걸리는 부품을 줄임(답 길이 · 붙일 청크 수 · 그림 단계 수)
+- 조절판 없이 직접 부르기 : `lab.train(r=8, epochs=2, snaps=6)`, `lab.progress_eval()`, `lab.lora_view()`, `lab.bot("질문")`, `lab.four()`
+"""),
+]
+
+S07F = [
+md("""
+# 7회차 · 마지막 시간 : 부품을 조립해 나만의 AI 서비스 만들기(최종 스튜디오)
+
+이 노트북은 완성된 챗봇을 써 보는 노트북이 아님. 1 · 2 · 5 · 6 · 7회차에 배운 것을 **부품 하나하나의 코드**로 다시 꺼내고, 값을 바꿔 보며 확인한 뒤, 그 코드를 이어 붙여 **내가 조립한 챗봇**과 **다른 프로그램이 부를 수 있는 API** 를 만듦. 마지막으로 같은 부품으로 다른 분야의 응용을 하나 만들어 봄.
+
+**시작 전에 꼭 할 것** : 7회차 학습 노트북(`s07_my_lora.ipynb`)의 커널을 끔(위쪽 메뉴 Kernel → Shut Down Kernel). 같은 GPU 에 모델이 두 번 올라가면 메모리가 모자람. `lab.gpu()` 계기판에 '이 노트북 밖에서 GPU 메모리를 쓰고 있음'이 보이면 아직 꺼지지 않은 것임.
+
+| 순서 | 하는 일 | 핵심 코드 | 배운 회차 |
+|---|---|---|---|
+| S1 | LLM 으로 답 만들기 : 채팅 템플릿 → 토큰 → 생성 | `tok.apply_chat_template` · `model.generate` | 2회차(디코딩) · 7회차(Adapter) |
+| S2 | 검색해서 문서 붙이기(RAG) | 코사인 유사도 · `lab.search` | 6회차 |
+| S3 | 대화 상태를 JSON 으로 정리 | 지시문 · `json.loads` · 다시 시도 | 5회차 |
+| S4 | 상태에 맞는 그림 | `pipe(prompt, num_inference_steps, guidance_scale)` | 오늘 처음(확산 모델) |
+| S5 | 답을 소리로 읽기 | `VitsModel` · 숫자 읽기 | 오늘 처음(VITS) |
+| S6 | 소리를 글로 받아쓰기 | Whisper `pipeline` | 1회차(인코더-디코더) · 2회차(Transformer) |
+| S7 | 조립 : 내 챗봇 함수 `my_bot` | 부품 함수 이어 붙이기 · 시간 재기 | 전체 |
+| S8 | 출력 차이 실험 : 검색 · Adapter 를 켜고 끄기 | 같은 질문 네 구성 | 6 · 7회차 |
+| S9 | 웹 화면과 API | FastAPI 경로 함수 | 9 · 10회차로 이어짐 |
+| S10 | 응용 하나 만들기 : 회화 튜터 · 그림책 · 음성 메모 요약 · 안내 키오스크 | 부품 다시 조합 | 전체 |
+| S11 | 추가 학습(LLM) : 응용에 맞는 Adapter | `lab.train` | 7회차 |
+| S12 | 한계 정리 · 나만의 솔루션 기획 · 결과 묶기 | - | - |
+
+- 셀마다 맨 위의 **대문자 이름**(예 : `TEMPERATURE = 0.7`)이 바꿔 볼 값임. 값을 바꾸고 다시 실행하기 전에 결과를 먼저 예측해 적음
+- 셀 안의 함수는 내가 고쳐 써도 됨. S7 의 `my_bot` 은 S1~S6 에서 만든 함수를 부르므로, 앞 셀의 함수를 고치면 조립한 챗봇도 바뀜
+- `lab.xxx` 는 모델을 내려받고 GPU 에 올리는 일만 맡음. 실제 동작은 이 노트북의 코드가 함. 궁금하면 `lab.code("함수 이름")` 으로 lab 쪽 코드도 볼 수 있음
+
+※ 11/23 밤 강사가 A100 80GB 서버에서 처음부터 끝까지 실행해 본 노트북임(오류 없음). S0 솔루션 올리기 약 3분, 그림 · 읽어 주기 · 받아쓰기 모델을 처음 올리는 데 각각 38초 · 7초 · 14초, S7 한 턴 약 3초, S11 추가 학습 약 3분이었음. 수업 전에 서버마다 모델을 미리 받아 두었음. 미리 받지 않은 서버라면 내려받기로 1~2분씩 더 걸림
+"""),
+md("## S0. 시작\n아래 셀은 7회차 학습 노트북과 같음. 6 · 7회차에 저장한 솔루션(모델 · 문서 · Adapter)이 올라옴."),
+code(SETUP % 7),
+code("lab.load_solution()\nlab.gpu()"),
+md("""
+## S1. LLM 으로 답 만들기(2회차 디코딩 · 7회차 Adapter)
+LLM 은 '다음 토큰 맞히기'를 반복해 글을 만듦. 대화는 **채팅 템플릿**으로 한 줄의 글이 되고, 토크나이저가 토큰 번호로 바꾸고, `generate` 가 토큰을 하나씩 이어 붙임. 2회차에서 본 디코딩 설정이 S1 셀에서 그대로 쓰임.
+
+| 값 | 뜻 | 바꿔 볼 것 |
+|---|---|---|
+| `TEMPERATURE` | 0 이면 늘 가장 확률 높은 토큰(같은 질문 = 같은 답). 클수록 다양하지만 말이 흩어짐 | 0 → 0.7 → 1.5, 같은 질문을 세 번씩 |
+| `TOP_P` | 확률이 높은 순서로 더한 값이 TOP_P 가 될 때까지만 후보로 둠 | 0.5 대 0.95 |
+| `MAX_NEW_TOKENS` | 답의 최대 길이(토큰). 넘으면 문장 중간에서 끊김 | 30 대 300 |
+| `ADAPTER` | 7회차에 학습한 Adapter. `None` 이면 학습 전 모델 | 저장한 Adapter 대 `None` |
+
+코드에서 볼 곳 : `llm_parts` 가 돌려주는 `ctx` 는 Adapter 를 잠시 끄는 장치임. Adapter 를 끈 답을 만들 때 `with ctx:` 안에서 생성함.
+"""),
+code("""
+# S1. LLM 부품 : 채팅 템플릿 → 토큰 → 생성 → 글자
+import torch
+ADAPTER = lab.cfg().get("adapter")      # 10단계에서 저장한 Adapter. None 이면 학습 전 모델
+TEMPERATURE = 0.7                       # 0 이면 같은 질문에 늘 같은 답
+TOP_P = 0.9
+MAX_NEW_TOKENS = 200
+REPETITION_PENALTY = 1.1                # 1 보다 크면 같은 말을 되풀이하지 않게 누름
+
+def generate(messages, adapter=ADAPTER, temperature=TEMPERATURE, top_p=TOP_P, max_new_tokens=MAX_NEW_TOKENS):
+    tok, model, ctx = lab.llm_parts(adapter)                                   # 올려 둔 본체(+ Adapter)를 꺼냄
+    text = tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+    ids = tok(text, return_tensors="pt").to(model.device)
+    sample = temperature > 0
+    with ctx, torch.no_grad():
+        out = model.generate(**ids, max_new_tokens=max_new_tokens, do_sample=sample,
+                             temperature=temperature if sample else None, top_p=top_p if sample else None,
+                             repetition_penalty=REPETITION_PENALTY, pad_token_id=tok.pad_token_id)
+    new = out[0, ids["input_ids"].shape[1]:]                                   # 입력 뒤에 새로 붙은 토큰만
+    return tok.decode(new, skip_special_tokens=True).strip()
+
+msgs = [{"role": "user", "content": "주말에 뭐 하면 좋을까?"}]
+tok, _, _ = lab.llm_parts(ADAPTER)
+print("[모델에 실제로 들어가는 글]")
+print(tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True))
+print("[토큰 수]", len(tok(tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True))["input_ids"]))
+print()
+print(f"[Adapter {ADAPTER}]", generate(msgs))
+print()
+print("[Adapter 끔]", generate(msgs, adapter=None))
+"""),
+code("""
+# S1 실험 : 온도에 따라 같은 질문의 답이 얼마나 달라지나(값을 바꿔 다시 실행)
+for t in (0, 0.7, 1.5):
+    print(f"--- temperature {t}")
+    for _ in range(2):
+        print(" ·", generate(msgs, temperature=t, max_new_tokens=60).replace("\\n", " ")[:120])
+"""),
+md("""
+<details><summary>확인 질문 : temperature 0 으로 두 번 물으면 답이 같은가. 1.5 에서는 무엇이 달라지나</summary>
+
+0 은 매번 가장 확률이 높은 토큰만 고르므로 같은 답이 나옴(2회차 그리디 디코딩). 1.5 는 확률이 낮은 토큰도 자주 뽑혀 표현이 다양해지는 대신 문장이 어색해지거나 주제를 벗어나기 쉬움. 서비스에서는 사실을 답할 때 낮게, 아이디어를 낼 때 조금 높게 둠
+</details>
+"""),
+md("""
+## S2. 검색해서 문서 붙이기(6회차 RAG)
+6회차의 검색을 코드로 다시 봄. 질문과 청크를 임베딩(길이 1인 벡터)으로 바꾸면 **내적이 곧 코사인 유사도**임. `lab.search` 는 여기에 키워드 점수(BM25)를 섞은 하이브리드 검색임. 찾은 청크를 지시문과 함께 붙여 S1 의 `generate` 에 넘기면 RAG 가 됨.
+
+| 값 | 뜻 | 바꿔 볼 것 |
+|---|---|---|
+| `TOP_K` | 붙일 청크 수. 많으면 근거가 늘지만 입력이 길어지고 관련 없는 청크도 섞임 | 1 대 4 대 8 |
+| `KW` | 키워드 점수의 비중(0 = 의미만, 1 = 키워드만) | 0 대 0.3 대 1 |
+| `RAG_SYSTEM` | 문서를 어떻게 쓰라고 시키는 지시문 | '모르면 모른다고' 문장을 뺐을 때 |
+"""),
+code("""
+# S2. 검색 부품 : 코사인 유사도를 직접 계산해 보고, 하이브리드 검색으로 문서를 붙임
+import numpy as np
+TOP_K = 4
+KW = 0.3
+RAG_SYSTEM = "아래 [참고 문서]의 내용을 근거로 답한다. 문서에 없는 내용은 지어내지 않고 모른다고 답한다."
+
+q = "동아리 회비는 얼마고 언제 내?"                     # 내 문서 주제로 바꿈
+qv = lab.embed([q])[0]                                  # (차원,) · 길이 1
+cs = lab.chunks()
+sims = lab.S.emb @ qv                                   # 모든 청크와의 코사인 유사도를 한 번에(행렬 × 벡터)
+print("[의미 검색만 : 코사인 유사도 상위 3]")
+for i in np.argsort(-sims)[:3]:
+    print(f"  {sims[i]:.3f}  {cs[i]['title'][:16]} | {cs[i]['text'][:60]}")
+
+def retrieve(q, k=TOP_K, kw=KW):
+    return lab.search(q, k=k, kw=kw)                    # 의미 점수와 키워드 점수를 섞은 순위
+
+def with_context(q, hits, history=()):
+    ctx = "\\n\\n".join(f"<{h['title']}>\\n{h['text']}" for h in hits)
+    return [{"role": "system", "content": RAG_SYSTEM}, *history,
+            {"role": "user", "content": f"[참고 문서]\\n{ctx}\\n\\n[질문]\\n{q}"}]
+
+hits = retrieve(q)
+print("\\n[하이브리드 검색 상위]", [(h["rank"], h["title"][:12], round(h["score"], 2)) for h in hits])
+print("\\n[문서 붙여 답함]", generate(with_context(q, hits), temperature=0))
+print("\\n[문서 없이 답함]", generate([{"role": "user", "content": q}], temperature=0))
+"""),
+md("""
+<details><summary>확인 질문 : 내 문서에 없는 것을 물으면 두 답이 어떻게 다른가</summary>
+
+문서를 붙인 답은 지시문대로 '문서에 없다'고 답하는 경우가 많고, 문서 없이 답하면 그럴듯하게 지어내기 쉬움(6회차 '문서에 없는 질문'). 다만 지시문을 빼거나 관련 없는 청크가 붙으면 문서를 붙여도 지어냄. `RAG_SYSTEM` 을 바꿔 확인해 봄
+</details>
+"""),
+md("""
+## S3. 대화 상태를 JSON 으로 정리(5회차 형식 지정 출력)
+그림과 소리를 붙이려면 '지금 대화가 어떤 분위기인가'를 프로그램이 읽을 수 있는 형태로 받아야 함. 5회차처럼 지시문으로 **형식**을 정하고, 받은 글을 `json.loads` 로 읽고, 실패하면 다시 시킴. 같은 LLM 을 쓰되 Adapter 는 끔(말투가 섞이면 JSON 이 깨지기 쉬움).
+
+| 값 | 뜻 | 바꿔 볼 것 |
+|---|---|---|
+| `MOODS` | 고를 수 있는 분위기 목록 | 분위기를 셋으로 줄이거나 새로 추가 |
+| `STATE_SYSTEM` | 형식을 정하는 지시문 | 예시 한 건을 넣었을 때(5회차 예시 효과) |
+| `RETRY` | JSON 이 깨졌을 때 다시 시킬 횟수 | 0 대 2 |
+"""),
+code("""
+# S3. 상태 정리 부품 : 지시문으로 형식을 정하고, 읽고, 실패하면 다시 시킴
+import json, re
+MOODS = ["기쁨", "차분", "걱정", "놀람", "진지", "장난"]
+RETRY = 1
+STATE_SYSTEM = (
+    "너는 챗봇 화면을 꾸미는 연출가다. 사용자 질문과 챗봇의 답을 읽고 지금 상태를 JSON 하나로만 쓴다.\\n"
+    f'형식 : {{"mood": "{", ".join(MOODS)} 가운데 하나", "scene": "장면을 한국어 한 문장으로", '
+    '"prompt": "그 장면을 그릴 영어 묘사, 20단어 이내"}\\n'
+    "JSON 밖에는 아무것도 쓰지 않는다.")
+
+def decide_state(q, answer, retry=RETRY):
+    msgs = [{"role": "system", "content": STATE_SYSTEM}, {"role": "user", "content": f"[질문]\\n{q}\\n\\n[챗봇의 답]\\n{answer[:500]}"}]
+    for i in range(retry + 1):
+        raw = generate(msgs, adapter=None, temperature=0 if i == 0 else 0.7, max_new_tokens=160)
+        m = re.search(r"\\{.*\\}", raw, re.S)
+        try:
+            st = json.loads(m.group(0))
+            st["mood"] = next((x for x in MOODS if x in str(st.get("mood"))), "차분")
+            st["prompt"] = re.sub(r"[^A-Za-z0-9 ,.'-]", " ", str(st.get("prompt", "")))   # 그림 모델은 영어만 읽음
+            return st, raw, i
+        except Exception:
+            continue
+    return {"mood": "차분", "scene": "-", "prompt": ""}, raw, retry
+
+for qq, aa in [("나 오늘 시험 합격했어!", "축하하오! 그동안 애쓴 보람이 있구려."), ("비 오는데 우산을 잃어버렸어", "저런, 근처 편의점에서 하나 사는 것이 어떻소.")]:
+    st, raw, tries = decide_state(qq, aa)
+    print(qq, "→", st, f"(다시 시킨 횟수 {tries})")
+print("\\n[모델이 실제로 낸 글]", raw)
+"""),
+md("""
+## S4. 상태에 맞는 그림(오늘 처음 : 확산 모델)
+그림 모델은 잡음에서 시작해 묘사에 맞게 잡음을 조금씩 걷어 내며 그림을 만듦(확산). 보통 수십 번 반복하지만 sd-turbo 는 그 과정을 1~4번으로 줄이도록 다시 학습한 모델이라 1초 안쪽에 그림. 묘사의 앞부분을 읽는 것이 CLIP 이라는 Transformer 인코더임(2회차 인코더와 같은 구조).
+
+| 값 | 뜻 | 바꿔 볼 것 |
+|---|---|---|
+| `STEPS` | 잡음을 걷어 내는 횟수 | 1 · 2 · 4 |
+| `SEED` | 처음 잡음을 정하는 값. 같으면 같은 그림 | 같은 묘사로 seed 만 바꿈 |
+| `CHARACTER` · `STYLE` | 모든 그림에 붙일 캐릭터와 화풍 | 캐릭터를 바꾸면 그림 속 인물이 바뀜 |
+| `MOOD_LOOK` | 분위기마다 붙일 표정 묘사 | 표정 묘사를 지웠을 때 |
+
+sd-turbo 에는 안전 필터가 없음. 수업에서는 lab 이 묘사에 걸리는 낱말이 있으면 다른 그림으로 바꿈. 사용 조건은 모델 카드의 라이선스를 따름.
+"""),
+code("""
+# S4. 그림 부품 : 묘사 → 그림(sd-turbo)
+import torch
+STEPS = 1
+SEED = 7
+SIZE = 512
+CHARACTER = "a friendly Joseon-era scholar in white hanbok and black gat hat"   # 내 Adapter 말투에 맞게 바꿈
+STYLE = "storybook illustration, soft pastel colors, simple background"
+MOOD_LOOK = {"기쁨": "smiling brightly", "차분": "calm gentle smile", "걱정": "worried expression",
+             "놀람": "surprised wide eyes", "진지": "serious thoughtful face", "장난": "playful wink"}
+
+pipe = lab.image_load()["pipe"]                          # 처음 한 번 설치 · 내려받기(1~2분)
+
+def draw(scene_prompt, mood="차분", steps=STEPS, seed=SEED):
+    prompt = ", ".join(x for x in (CHARACTER, MOOD_LOOK.get(mood, ""), scene_prompt, STYLE) if x)
+    g = torch.Generator("cpu").manual_seed(seed + MOODS.index(mood) if mood in MOODS else seed)   # 분위기마다 seed 를 달리함
+    return pipe(prompt=prompt, num_inference_steps=steps, guidance_scale=0.0, height=SIZE, width=SIZE, generator=g).images[0], prompt
+
+img, used = draw("reading a letter under a cherry tree", "기쁨")
+print(used)
+img.resize((256, 256))
+"""),
+code("""
+# S4 실험 : 단계 수와 seed 바꾸기(같은 묘사)
+from IPython.display import display
+import time
+for st in (1, 2, 4):
+    t = time.time(); im, _ = draw("watching stars on a rooftop", "차분", steps=st)
+    print(f"steps {st} · {time.time() - t:.2f}초"); display(im.resize((192, 192)))
+"""),
+md("""
+## S5. 답을 소리로 읽기(오늘 처음 : VITS 음성 합성)
+글을 소리로 바꾸는 모델(MMS-TTS, 약 150MB). 한국어 모델은 한글을 로마자로 바꿔 넣고, **숫자는 읽지 못하므로** 먼저 한글로 바꿈(`lab.read_numbers`). 작은 모델이라 기계 소리가 나고 억양이 단조로움. 로컬 소형 모델의 한계임.
+
+| 값 | 뜻 | 바꿔 볼 것 |
+|---|---|---|
+| `RATE` | 말 빠르기(1.0 기본) | 0.8 대 1.3 |
+| `NOISE` | 억양 변화의 크기(클수록 덜 단조롭지만 불안정) | 0.3 대 0.667 대 1.0 |
+| 숫자 바꾸기 | `read_numbers` 를 쓰는가 | 숫자를 그대로 넣었을 때 어떻게 읽는가 |
+"""),
+code("""
+# S5. 읽어 주기 부품 : 글 → (숫자 읽기 · 로마자) → 소리
+from IPython.display import Audio
+RATE = 1.0
+NOISE = 0.667
+tts_tok, tts_model, romanize = lab.tts_load("ko")
+
+def say(text, rate=RATE, noise=NOISE, fix_numbers=True):
+    src = lab.read_numbers(text) if fix_numbers else text
+    tts_model.speaking_rate, tts_model.noise_scale = rate, noise
+    ids = tts_tok(romanize(src[:300]), return_tensors="pt").to(tts_model.device)
+    with torch.no_grad():
+        wave = tts_model(**ids).waveform[0].float().cpu().numpy()
+    return lab._wav(wave, tts_model.config.sampling_rate), src
+
+text = "동아리 회비는 한 학기에 2만 원이고, 망원경은 3일까지 빌릴 수 있습니다."
+wav, read_as = say(text)
+print("읽은 글 :", read_as)
+print("로마자 :", romanize(read_as)[:80])
+Audio(wav, autoplay=False)
+"""),
+code("""
+# S5 실험 : 숫자를 그대로 넣으면?(fix_numbers=False) · 빠르기
+wav2, _ = say(text, fix_numbers=False)
+display(Audio(wav2))
+wav3, _ = say(text, rate=1.3)
+display(Audio(wav3))
+"""),
+md("""
+## S6. 소리를 글로 받아쓰기(1회차 인코더-디코더 · 2회차 Transformer)
+Whisper 는 1회차에서 배운 **인코더-디코더** 구조임. 인코더가 소리(멜 스펙트로그램)를 읽어 벡터로 만들고, 디코더가 그 벡터를 보며 글자 토큰을 하나씩 생성함(번역 모델과 같은 방식). S6 셀에서는 S5 에서 만든 소리를 다시 받아써서 읽기 · 받아쓰기가 서로 맞는지 봄.
+
+| 값 | 뜻 | 바꿔 볼 것 |
+|---|---|---|
+| `ASR_SIZE` | `big`(large-v3-turbo, 약 1.6GB) · `small`(약 0.5GB) | 같은 소리를 둘 다로 |
+| `LANG` | 언어를 정해 줄지(`None` 이면 모델이 알아냄) | `"korean"` 대 `None` |
+| 잡음 | 소리에 잡음을 섞었을 때 | `NOISE_LEVEL` 0 대 0.05 |
+"""),
+code("""
+# S6. 받아쓰기 부품 : 소리 → 글(Whisper)
+import io, wave
+ASR_SIZE = "big" if lab.gpu(show=False)["total"] > 30 else "small"   # big : large-v3-turbo(약 1.6GB) · small : 약 0.5GB. 24GB 서버는 small
+LANG = "korean"
+NOISE_LEVEL = 0.0
+asr = lab.asr_load(ASR_SIZE)
+
+def hear(audio, lang=LANG):
+    \"\"\"audio : wav 바이트 · 파일 경로 · (배열, 표본 빈도)\"\"\"
+    if isinstance(audio, (bytes, bytearray)):            # wav 바이트 → 배열
+        w = wave.open(io.BytesIO(audio)); sr = w.getframerate()
+        audio = (np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(np.float32) / 32768, sr)
+    if isinstance(audio, tuple):
+        y, sr = audio
+        y = y + NOISE_LEVEL * np.random.randn(len(y)).astype(np.float32)
+        if sr != 16000:                                  # Whisper 는 초당 16,000개 표본을 받음
+            from scipy.signal import resample_poly
+            y = resample_poly(y, 16000, sr)
+        audio = {"raw": y.astype(np.float32), "sampling_rate": 16000}
+    r = asr(audio, generate_kwargs={"task": "transcribe", **({"language": lang} if lang else {})})
+    return r["text"].strip()
+
+print("원래 글  :", text)
+print("받아쓴 글 :", hear(wav))
+"""),
+md("""
+<details><summary>확인 질문 : 받아쓴 글이 원래 글과 다르다. 읽기와 받아쓰기 가운데 어느 쪽의 문제인지 어떻게 가르나</summary>
+
+부품을 하나씩 바꿔 봄. 사람이 녹음한 소리(웹 화면의 마이크)를 받아써서 맞으면 읽기(TTS)의 발음 문제이고, 그래도 틀리면 받아쓰기(ASR)의 문제임. 숫자 · 고유 명사(동아리 이름)가 자주 틀림. 부품을 이어 붙이면 앞 부품의 실수가 뒤로 그대로 넘어감
+</details>
+"""),
+md("""
+## S7. 조립 : 내 챗봇 함수 `my_bot`
+S1~S6 에서 만든 함수를 이어 붙임. 순서는 **받아쓰기 → 검색 → 답 → 상태 정리 → 그림 → 읽어 주기**. 부품마다 걸린 시간을 재서 어디가 느린지 봄. 이 함수가 S9 의 웹 화면과 API 가 부르는 바로 그 함수임.
+
+고쳐 볼 것
+- 순서 바꾸기 : 상태를 먼저 정하고 그 분위기를 답의 지시문에 넣으면?
+- 부품 빼기 : `draw=False` · `voice=False` 로 시간이 얼마나 줄어드나
+- 기억 붙이기 : `history` 에 앞의 대화를 넣어 '그거 다시 말해 줘'가 통하는지
+"""),
+code("""
+# S7. 조립 : 부품 함수를 이어 붙인 내 챗봇
+import time
+def my_bot(q=None, audio=None, rag=True, adapter=ADAPTER, draw_on=True, voice=True, history=()):
+    t, out = {}, {}
+    if audio is not None:                                            # ① 받아쓰기
+        t0 = time.time(); q = hear(audio); t["받아쓰기"] = round(time.time() - t0, 2)
+    t0 = time.time()
+    hits = retrieve(q) if rag else []                                # ② 검색
+    t["검색"] = round(time.time() - t0, 2)
+    msgs = with_context(q, hits, list(history)) if hits else [*history, {"role": "user", "content": q}]
+    t0 = time.time(); answer = generate(msgs, adapter=adapter, temperature=0.3); t["답"] = round(time.time() - t0, 2)   # ③ 답
+    t0 = time.time(); st, _, _ = decide_state(q, answer); t["상태"] = round(time.time() - t0, 2)                       # ④ 상태
+    img = None
+    if draw_on:
+        t0 = time.time(); img, _ = draw(st["prompt"], st["mood"]); t["그림"] = round(time.time() - t0, 2)              # ⑤ 그림
+    wav = None
+    if voice:
+        t0 = time.time(); wav, _ = say(answer); t["소리"] = round(time.time() - t0, 2)                                # ⑥ 읽어 주기
+    return {"q": q, "answer": answer, "sources": [h["title"] for h in hits], "state": st, "image": img, "audio": wav, "times": t}
+
+r = my_bot("동아리 회비는 얼마고 언제 내?")                          # 내 문서 주제로 바꿈
+lab.show_turn(r)
+"""),
+code("""
+# S7 : 소리로 묻기(S5 로 만든 질문 소리를 그대로 넣음. 웹 화면에서는 마이크로)
+q_wav, _ = say("망원경은 며칠까지 빌릴 수 있어?")
+r = my_bot(audio=q_wav)
+lab.show_turn(r)
+"""),
+md("""
+## S8. 출력 차이 실험 : 검색과 Adapter 를 켜고 끄기(6 · 7회차 정리)
+같은 질문을 네 구성으로 물어 **무엇이 바뀌는지** 표로 봄. 그림 · 소리는 끄고 글만 비교함. 7회차 학습 노트북 9-1(체감 실험실)에서 본 'LoRA 로 지식 넣기'의 결과와 함께 판단함.
+
+| 구성 | 기대하는 것 |
+|---|---|
+| 둘 다 끔 | 기본 말투, 내 문서의 사실은 모름(지어낼 수 있음) |
+| 검색만 | 사실은 맞음, 말투는 기본 |
+| Adapter 만 | 말투는 목표대로, 사실은 모름 |
+| 둘 다 | 사실과 말투 모두. 문서를 붙이면 말투가 약해지는지 확인 |
+"""),
+code("""
+# S8. 네 구성 비교표(질문을 바꿔 봄)
+QS = ["동아리 회비는 얼마고 언제 내?", "정기 모임은 언제 해?"]
+rows = []
+for qq in QS:
+    for rag_on, ad in [(False, None), (True, None), (False, ADAPTER), (True, ADAPTER)]:
+        r = my_bot(qq, rag=rag_on, adapter=ad, draw_on=False, voice=False)
+        rows.append({"질문": qq[:14], "검색": "켬" if rag_on else "끔", "Adapter": ad or "끔", "답": r["answer"][:90].replace("\\n", " "),
+                     "말투": lab._style(r["answer"], lab.goal()), "시간": sum(r["times"].values())})
+import pandas as pd
+pd.DataFrame(rows)
+"""),
+md("""
+## S9. 웹 화면과 API(9 · 10회차로 이어짐)
+`my_bot` 을 다른 프로그램이 부를 수 있게 **API** 로 내보냄. FastAPI 는 함수 위에 `@app.post("/api/chat")` 처럼 경로를 붙이면 그 주소로 들어온 요청을 함수로 넘겨 줌. 요청의 모양은 `pydantic` 클래스로 정하고, 이 모양이 `/docs` 의 자동 문서가 됨. 웹 화면(`src/studio_page.html`)은 이 API 를 부르는 페이지일 뿐이므로, 같은 API 를 다른 앱 · 다른 언어에서도 부를 수 있음.
+
+- 여러 사람이 동시에 부르면 GPU 계산이 엉킬 수 있어 `LOCK` 으로 한 번에 하나씩 처리함
+- 띄운 주소는 누구나 열 수 있음. 수업이 끝나면 `lab.stop_api()` 로 끔
+- 8 · 9 · 10회차에는 이 구조를 Agent 와 서비스로 키움
+"""),
+code("""
+# S9. API : 경로 함수 네 개(고쳐서 경로를 더 만들어도 됨)
+import base64, io, threading
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
+
+app = FastAPI(title="나만의 챗봇 API", description="7회차 최종 스튜디오에서 조립한 my_bot 을 부르는 API")
+LOCK = threading.Lock()
+
+def b64_image(img):
+    if img is None: return None
+    buf = io.BytesIO(); img.convert("RGB").save(buf, format="JPEG", quality=85); return base64.b64encode(buf.getvalue()).decode()
+
+class ChatIn(BaseModel):
+    q: str
+    rag: bool = True
+    adapter: str | None = ADAPTER
+    draw: bool = True
+    voice: bool = True
+    history: list = []
+
+@app.post("/api/chat")
+def api_chat(x: ChatIn):
+    with LOCK:
+        r = my_bot(x.q, rag=x.rag, adapter=x.adapter, draw_on=x.draw, voice=x.voice, history=x.history[-4:])
+    return {"answer": r["answer"], "sources": r["sources"], "state": r["state"], "times": r["times"],
+            "image": b64_image(r["image"]), "audio": base64.b64encode(r["audio"]).decode() if r["audio"] else None}
+
+class AudioIn(BaseModel):
+    audio_b64: str
+    fmt: str = "webm"
+
+@app.post("/api/asr")
+def api_asr(x: AudioIn):
+    path = lab.MY / f"rec.{x.fmt}"
+    path.write_bytes(base64.b64decode(x.audio_b64))      # 브라우저 녹음(webm)은 ffmpeg 로 읽음
+    with LOCK:
+        return {"text": asr(str(path), generate_kwargs={"task": "transcribe", "language": LANG})["text"].strip()}
+
+@app.get("/api/info")
+def api_info():
+    return {"model": lab.cfg()["model"], "adapter": ADAPTER, "adapters": [x["이름"] for x in lab.runs(show=False)], "docs": len(lab.docs(show=False))}
+
+@app.get("/", response_class=HTMLResponse)
+def page():
+    return (lab.SRC / "studio_page.html").read_text(encoding="utf-8")
+
+url = lab.run_api(app)                                   # 이 서버의 8000번으로 띄움(노트북의 모델을 그대로 씀)
+"""),
+code("""
+# S9 : 다른 프로그램에서 API 부르기(파이썬 requests). 다른 PC 에서는 local 대신 위에 나온 url 을 씀
+import requests
+local = "http://localhost:8000"
+res = requests.post(local + "/api/chat", json={"q": "정기 모임은 언제 해?", "draw": False, "voice": False}, timeout=120).json()
+print(res["answer"])
+print(res["times"])
+# 터미널에서는 : curl -X POST <주소>/api/chat -H "Content-Type: application/json" -d '{"q":"정기 모임은 언제 해?","draw":false,"voice":false}'
+"""),
+md("""
+## S10. 응용 하나 만들기(같은 부품, 다른 분야)
+아래 네 가지 가운데 하나를 골라 실행하고, 값과 지시문을 내 분야에 맞게 고침. 모두 S1~S6 의 함수만 다시 조합한 것임. 시간이 남으면 두 번째를 함.
+
+| 응용 | 부품 조합 | 고쳐 볼 것 |
+|---|---|---|
+| A. 영어 회화 튜터 | 받아쓰기(영어) → 문장 고쳐 주기(LLM) → 영어로 읽어 주기 | 고쳐 주는 지시문, 수준(초급 · 중급) |
+| B. 그림책 만들기 | 줄거리 JSON(LLM) → 장면마다 그림 → 낭독 → HTML 한 장 | 장 수, 화풍, 등장인물 |
+| C. 음성 메모 요약 | 받아쓰기 → 세 줄 요약(5회차 형식) → 읽어 주기 | 요약 형식(할 일 목록, 회의록) |
+| D. 안내 키오스크 | 소리로 묻기 → 내 문서 검색 → 짧게 답하고 읽어 주기 | 답 길이, 말투(Adapter), 문서 |
+"""),
+code("""
+# S10-A. 영어 회화 튜터 : 영어로 말하면 문법을 고쳐 주고, 고친 문장을 영어로 읽어 줌
+TUTOR_SYSTEM = "You are a friendly English tutor for Korean university students. Correct the student's sentence, then explain the fix in one short Korean sentence. Format: Corrected: ... / 설명: ..."
+en_tok, en_model, _ = lab.tts_load("en")
+
+def say_en(text):
+    ids = en_tok(text[:300], return_tensors="pt").to(en_model.device)
+    with torch.no_grad():
+        w = en_model(**ids).waveform[0].float().cpu().numpy()
+    return lab._wav(w, en_model.config.sampling_rate)
+
+student_wav = say_en("Yesterday I go to the library and borrow two book.")   # 학생 목소리 대신(웹 화면에서는 마이크)
+heard = hear(student_wav, lang="english")
+fix = generate([{"role": "system", "content": TUTOR_SYSTEM}, {"role": "user", "content": heard}], adapter=None, temperature=0)
+print("들은 문장 :", heard); print(fix)
+corrected = fix.split("Corrected:")[-1].split("/")[0].strip() if "Corrected:" in fix else fix
+Audio(say_en(corrected))
+"""),
+code("""
+# S10-B. 그림책 만들기 : 줄거리를 JSON 으로 받고, 장면마다 그림과 낭독을 붙여 HTML 한 장으로 저장
+PAGES = 4
+TOPIC = "별을 좋아하는 작은 고양이가 동아리 망원경으로 처음 토성을 본 날"
+story_raw = generate([{"role": "system", "content": f"어린이 그림책 작가다. JSON 배열 하나로만 답한다. 원소는 {PAGES}개이고 각 원소는 "
+                                                    '{"text": "한국어 두 문장", "prompt": "그 장면의 영어 묘사 15단어 이내"} 이다.'},
+                      {"role": "user", "content": TOPIC}], adapter=None, temperature=0.7, max_new_tokens=600)
+try:
+    pages = json.loads(re.search(r"\\[.*\\]", story_raw, re.S).group(0))
+except Exception:                                          # 형식이 깨지면(5회차) 모델이 낸 글을 보고 다시 실행
+    print(story_raw); raise
+html_parts = []
+for i, pg in enumerate(pages[:PAGES]):
+    CHARACTER_SAVE, CHARACTER = CHARACTER, "a small curious grey kitten"
+    im, _ = draw(pg["prompt"], "기쁨", seed=100 + i); CHARACTER = CHARACTER_SAVE
+    w, _ = say(pg["text"])
+    html_parts.append(f"<div style='margin:16px 0'><img src='data:image/jpeg;base64,{b64_image(im)}' width=320><p>{pg['text']}</p>"
+                      f"<audio controls src='data:audio/wav;base64,{base64.b64encode(w).decode()}'></audio></div>")
+out = lab.MY / "storybook.html"
+out.write_text("<meta charset='utf-8'><h2>" + TOPIC + "</h2>" + "".join(html_parts), encoding="utf-8")
+print("저장 :", out, "(왼쪽 파일 창에서 my/storybook.html 을 오른쪽 단추 → Open in New Browser Tab)")
+from IPython.display import HTML
+HTML("".join(html_parts[:1]))
+"""),
+code("""
+# S10-C. 음성 메모 요약 : 긴 말 → 받아쓰기 → 세 줄 요약 → 읽어 주기
+memo_wav, _ = say("오늘 동아리 회의에서 정한 것입니다. 다음 주 토요일에 관측회를 하고, 회비는 이번 달 말까지 걷습니다. 발표는 두 명이 맡고 장비 점검은 금요일에 합니다.")
+memo = hear(memo_wav)
+summary = generate([{"role": "system", "content": "회의 메모를 정확히 세 줄로 요약한다. 각 줄은 '1)', '2)', '3)'으로 시작한다."},
+                    {"role": "user", "content": memo}], adapter=None, temperature=0)
+print("받아쓴 메모 :", memo); print(summary)
+Audio(say(summary)[0])
+"""),
+code("""
+# S10-D. 안내 키오스크 : 짧게 답하게 지시문을 바꾸고 소리로 묻고 답함
+RAG_SYSTEM_SAVE = RAG_SYSTEM
+RAG_SYSTEM = RAG_SYSTEM_SAVE + " 안내 키오스크이므로 두 문장 이내로 짧게 답한다."
+r = my_bot(audio=say("동아리방은 어디에 있어?")[0], draw_on=False)
+RAG_SYSTEM = RAG_SYSTEM_SAVE
+lab.show_turn(r)
+"""),
+md("""
+## S11. 추가 학습(LLM) : 응용에 맞는 Adapter
+응용에 맞는 말투 · 형식이 있으면 7회차에 한 그대로 Adapter 를 하나 더 학습함. 학습은 LLM 에만 함(그림 · 소리 모델은 그대로 씀). 아래는 '친절한 상담원' 목표로 데이터를 만들고 학습해 S7 의 `my_bot` 에 바로 넣는 예임. 2~4분 걸림.
+
+- 목표 · 데이터 · 학습 코드는 7회차 노트북 1 · 3 · 4단계와 같음. 바뀐 것은 `ADAPTER` 이름뿐임
+- 학습이 끝나면 S9 의 웹 화면 Adapter 목록에도 새 이름이 보임(화면을 새로 고침)
+"""),
+code("""
+# S11. 추가 학습 : 목표 저장 → 데이터 → 학습 → 내 챗봇에 넣기(7회차 목표와 데이터는 따로 두었다가 되돌림)
+import shutil
+GOAL = "친절한 상담원"                                     # lab.PRESETS 의 이름 또는 직접 정한 목표
+QUANT = "nf4" if lab.gpu(show=False)["total"] < 30 else "bf16"   # 24GB 서버는 본체를 4bit 로(QLoRA)
+old_goal = lab.goal()
+for f in ("train.jsonl", "valid.jsonl"):
+    if (lab.MY / f).exists(): shutil.copy(lab.MY / f, lab.MY / f"7회차_{f}")
+p = lab.PRESETS[GOAL]
+lab.set_goal(GOAL, p["instruction"], p["markers"], p["examples"], p["rule"])
+lab.make_data(n=200, show=False)
+new = lab.train(run="kiosk", epochs=2, quant=QUANT)         # 에폭 2 : 4-5 단계별 평가에서 2에폭이면 충분했음
+if old_goal: lab.set_goal(old_goal["name"], old_goal["instruction"], old_goal["markers"], old_goal["examples"], old_goal.get("rule", "any"))
+for f in ("train.jsonl", "valid.jsonl"):
+    if (lab.MY / f"7회차_{f}").exists(): shutil.copy(lab.MY / f"7회차_{f}", lab.MY / f)
+ADAPTER = new
+lab.show_turn(my_bot("동아리 가입은 어떻게 해?", adapter=ADAPTER, draw_on=False))
+"""),
+md("""
+## S12. 한계와 특이사항, 나만의 솔루션 기획, 결과 묶기
+
+| 부품 | 잘 되는 것 | 한계 · 오늘 본 현상 | 고치는 방향 |
+|---|---|---|---|
+| LLM + Adapter | 말투 · 형식을 지시문 없이 | 문서를 붙이면 말투가 약해짐, 목표와 먼 질문에도 말투가 번짐 | 데이터에 문서 붙인 예시 섞기, 에폭 줄이기 |
+| 검색(RAG) | 바뀌는 사실, 근거 보여 주기 | 다른 주제의 청크가 붙으면 그대로 틀림, 문서에 없으면 모름 | 청크 크기 · top_k · 키워드 비중, 문서 보강 |
+| LoRA 로 지식 넣기 | 많이 되풀이하면 학습한 사실을 외움 | 덜 배우면 숫자를 지어내고, 많이 배우면 외운 사실 밖의 질문에 지어내며 관련 없는 질문에도 학습 문장의 모양이 번짐(9-1 ②) | 지식은 문서로(RAG) |
+| 상태 JSON | 분위기 · 장면을 프로그램이 읽음 | 가끔 형식이 깨짐 | 예시 넣기, 다시 시키기, 형식 강제(5회차) |
+| 그림 | 1초 안쪽, seed 로 같은 그림 | 손 · 글자 표현이 어색, 안전 필터 없음, 영어 묘사만 | 묘사 다듬기, 낱말 거르기 |
+| 읽어 주기 | 빠르고 가벼움 | 숫자 · 영어를 못 읽음, 기계 소리 | 숫자 읽기, 큰 음성 모델 |
+| 받아쓰기 | 한국어 · 영어 모두 | 고유 명사 · 숫자 실수(11/23 : 읽어 주기로 만든 소리에서 '망원경'을 '마음원경', '동아리방'을 '똥가리방'으로 들음), 잡음에 약함 | 큰 모델, 언어 지정, 받아쓴 글을 화면에 보여 고치게 함 |
+
+**나만의 솔루션 기획(아래 셀에 적음)** : 누구를 위한 무엇인가, 어떤 부품을 어떤 순서로 쓰는가, 무엇을 학습시키고(Adapter) 무엇을 문서로 넣는가(RAG), 첫 번째 시험 질문 세 개.
+"""),
+code("""
+lab.note_panel()        # 기획과 오늘의 판단을 적음(보고서에 들어감)
+"""),
+code("""
+lab.stop_api()          # 띄운 API 를 끔
+lab.pack()              # 결과 묶기(my/ 의 문서 · 설정 · Adapter 목록 · 그림책 · 기록)
 """),
 ]
 
@@ -952,3 +1683,4 @@ if __name__ == "__main__":
     write("s05_my_prompt.ipynb", S05)
     write("s06_my_rag.ipynb", S06)
     write("s07_my_lora.ipynb", S07)
+    write("s07_final_studio.ipynb", S07F)
