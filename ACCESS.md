@@ -1,6 +1,6 @@
 # 실습 서버 접속
 
-> 갱신 2026-11-23 18:09(한국 시간) · 켜진 서버 31석
+> 갱신 2026-11-23 18:40(한국 시간) · 켜진 서버 20석
 >
 > 1. 강사가 정해 준 서버 번호의 줄을 찾음
 >
@@ -32,17 +32,17 @@
 | P18 | [바로 열기](https://diboa28cfg2cbf-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=5gc4kd3y) | `5gc4kd3y` | RTX PRO 6000 Blackwell Server Edition |
 | P19 | [바로 열기](https://xss1y9kpkcq9vp-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=r7k8fm83) | `r7k8fm83` | RTX PRO 4500 Blackwell |
 | P20 | [바로 열기](https://sboijycy945prk-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=7dzeaymu) | `7dzeaymu` | RTX PRO 6000 Blackwell Server Edition |
-| P21 | [바로 열기](https://sgmrl7h38rt58c-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=93v93vsn) | `93v93vsn` | RTX PRO 6000 Blackwell Server Edition |
-| P22 | [바로 열기](https://5ulbgk0phrv4vg-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=c4gv9pqq) | `c4gv9pqq` | RTX PRO 6000 Blackwell Server Edition |
-| P23 | [바로 열기](https://ji0z7jr0de6jf3-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=d2f56dpz) | `d2f56dpz` | RTX PRO 6000 Blackwell Server Edition |
-| P24 | [바로 열기](https://q5js68zq1imbx3-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=au5qd45m) | `au5qd45m` | RTX 4090 |
-| P25 | [바로 열기](https://srovcb8ap0c9zu-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=yujmzm5a) | `yujmzm5a` | RTX PRO 4500 Blackwell |
-| P26 | [바로 열기](https://bn2a7sdzj7pji1-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=9ek8z472) | `9ek8z472` | RTX PRO 4500 Blackwell |
-| P27 | [바로 열기](https://sayk07uvfn3e1d-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=9h3898yd) | `9h3898yd` | A100 80GB PCIe |
-| P28 | [바로 열기](https://lqzvsm81uhz3q4-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=v82pvjsv) | `v82pvjsv` | RTX 4090 |
-| P29 | [바로 열기](https://xk639yo77kl1sb-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=g9znbcam) | `g9znbcam` | RTX 4090 |
-| P30 | [바로 열기](https://op9s2cpdbex6b8-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=brna8k8w) | `brna8k8w` | A100-SXM4-80GB |
-| P31 | [바로 열기](https://24bbslikhnio1a-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=b9kxjunv) | `b9kxjunv` | RTX 4090 |
+| P21 | (꺼져 있음) | `93v93vsn` | - |
+| P22 | (꺼져 있음) | `c4gv9pqq` | - |
+| P23 | (꺼져 있음) | `d2f56dpz` | - |
+| P24 | (꺼져 있음) | `au5qd45m` | - |
+| P25 | (꺼져 있음) | `yujmzm5a` | - |
+| P26 | (꺼져 있음) | `9ek8z472` | - |
+| P27 | (꺼져 있음) | `9h3898yd` | - |
+| P28 | (꺼져 있음) | `v82pvjsv` | - |
+| P29 | (꺼져 있음) | `g9znbcam` | - |
+| P30 | (꺼져 있음) | `brna8k8w` | - |
+| P31 | (꺼져 있음) | `b9kxjunv` | - |
 | P32 | (꺼져 있음) | `qfrb87qt` | - |
 | P33 | (꺼져 있음) | `uwrkdmmc` | - |
 | P34 | (꺼져 있음) | `s9p8eg4g` | - |
