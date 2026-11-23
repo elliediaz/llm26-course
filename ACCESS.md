@@ -1,6 +1,6 @@
 # 실습 서버 접속
 
-> 갱신 2026-11-23 17:26(한국 시간) · 켜진 서버 26석
+> 갱신 2026-11-23 17:38(한국 시간) · 켜진 서버 26석
 >
 > 1. 강사가 정해 준 서버 번호의 줄을 찾음
 >
@@ -37,7 +37,7 @@
 | P23 | [바로 열기](https://ji0z7jr0de6jf3-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=d2f56dpz) | `d2f56dpz` | RTX PRO 6000 Blackwell Server Edition |
 | P24 | [바로 열기](https://q5js68zq1imbx3-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=au5qd45m) | `au5qd45m` | RTX 4090 |
 | P25 | [바로 열기](https://srovcb8ap0c9zu-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=yujmzm5a) | `yujmzm5a` | RTX PRO 4500 Blackwell |
-| P26 | [바로 열기](https://3l9h9entxcewq0-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=9ek8z472) | `9ek8z472` | RTX PRO 4500 Blackwell |
+| P26 | [바로 열기](https://x5x4lxjeg2sa6m-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=9ek8z472) | `9ek8z472` | RTX PRO 4500 Blackwell |
 | P27 | (꺼져 있음) | `9h3898yd` | - |
 | P28 | (꺼져 있음) | `v82pvjsv` | - |
 | P29 | (꺼져 있음) | `g9znbcam` | - |
