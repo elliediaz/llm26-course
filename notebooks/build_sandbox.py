@@ -506,7 +506,12 @@ for i in range(len(sents)):
         ax.text(j, i, f"{sim[i, j]:.2f}", ha="center", va="center", fontsize=9, color="white" if sim[i, j] > 0.7 else "black")
 fig.colorbar(im, ax=ax, shrink=0.8)
 ax.set_title("문장끼리의 코사인 유사도")
-plt.show()
+import io
+from IPython.display import Image, display          # 노트북 설정과 관계없이 그림을 PNG로 보여 줌
+buf = io.BytesIO()
+fig.savefig(buf, format="png", dpi=110, bbox_inches="tight")
+plt.close(fig)
+display(Image(data=buf.getvalue()))
 """),
 md("""
 ### C. 같은 질문을 세 가지로 바꿔 묻기
