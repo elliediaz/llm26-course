@@ -1,6 +1,6 @@
 # 실습 서버 접속
 
-> 갱신 2026-11-23 17:51(한국 시간) · 켜진 서버 30석
+> 갱신 2026-11-23 17:54(한국 시간) · 켜진 서버 31석
 >
 > 1. 강사가 정해 준 서버 번호의 줄을 찾음
 >
@@ -42,7 +42,7 @@
 | P28 | [바로 열기](https://lqzvsm81uhz3q4-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=v82pvjsv) | `v82pvjsv` | RTX 4090 |
 | P29 | [바로 열기](https://xk639yo77kl1sb-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=g9znbcam) | `g9znbcam` | RTX 4090 |
 | P30 | [바로 열기](https://op9s2cpdbex6b8-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=brna8k8w) | `brna8k8w` | A100-SXM4-80GB |
-| P31 | (꺼져 있음) | `b9kxjunv` | - |
+| P31 | [바로 열기](https://24bbslikhnio1a-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=b9kxjunv) | `b9kxjunv` | RTX 4090 |
 | P32 | (꺼져 있음) | `qfrb87qt` | - |
 | P33 | (꺼져 있음) | `uwrkdmmc` | - |
 | P34 | (꺼져 있음) | `s9p8eg4g` | - |
