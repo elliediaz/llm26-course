@@ -802,6 +802,27 @@ def search(q: str, k: int | None = None, kw: float | None = None) -> list[dict]:
             for r, i in enumerate(top)]
 
 
+
+# ------------------------------------------------------------------ 직접 짜 보기(12단계)
+def chunks() -> list[dict]:
+    """지금 자르기 설정으로 자른 내 청크 목록. 항목마다 chunk_id · doc_id · title · text 가 있음."""
+    _ensure_index()
+    return [dict(x) for x in S.chunks]
+
+
+def embed(texts) -> np.ndarray:
+    """글 목록을 임베딩 벡터로 바꿈. 모양은 (글 수, 차원). 길이를 1로 맞춰 두므로 두 벡터의 내적이 곧 코사인 유사도임."""
+    if isinstance(texts, str):
+        texts = [texts]
+    return np.asarray(_embedder().encode(list(texts), normalize_embeddings=True, batch_size=64, show_progress_bar=False),
+                      dtype="float32")
+
+
+def llm(prompt: str, system: str | None = None, max_new_tokens: int | None = None, model: str | None = None) -> str:
+    """지금 쓰는 모델에 글을 그대로 넣고 답을 받음. 검색도 문서 붙이기도 하지 않으므로 입력을 직접 조립할 때 씀."""
+    msgs = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": prompt}]
+    return _generate(_m(model), [msgs], None, int(max_new_tokens or cfg()["max_new_tokens"]))[0]["text"]
+
 def _context(hits: list[dict]) -> str:
     return "\n\n".join(f"<{h['title']}>\n{h['text']}" for h in hits)
 

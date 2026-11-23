@@ -162,6 +162,10 @@ md("""
 
 `내 문서` → 청크로 자름(4단계) → 벡터로 바꿈(5단계) → 질문과 가까운 청크를 찾음(6단계) → 입력에 붙여 모델에게 물음(7단계) → 답
 
+![RAG 전체 그림](img/rag_flow.png)
+
+위쪽 줄은 문서를 넣을 때 **한 번** 해 두는 일(색인), 아래쪽 줄은 질문이 올 때**마다** 하는 일(검색과 생성)임. 질문도 문서와 같은 임베딩 모델로 벡터로 바꿔야 서로 비교할 수 있음. 처음 나오는 말(청크, 임베딩, 벡터 데이터베이스, top_k 등)은 워크북의 '용어 정리'에 모아 두었음.
+
 그래서 답이 틀렸을 때 원인은 둘 중 하나임. 맞는 청크를 **못 찾았거나**(검색 문제), 찾아서 붙여 줬는데 모델이 **잘못 읽었거나**(생성 문제). 오늘 실험은 대부분 이 둘을 구분하는 연습임.
 
 - 셀은 위에서 아래로 한 번씩 실행함(`Shift + Enter`). 조절판이 나오면 값을 바꾸고 단추를 누름
@@ -183,8 +187,9 @@ md("""
 | 9 | 모델 비교 | 선택 |
 | 10 | 내 챗봇 완성 · 저장 | 필수 |
 | 11 | 판단 기록 · 결과 묶기 | 필수 |
+| 12 | 벡터 데이터베이스에 직접 넣고 찾기(코드로 짜 보기) | 더 해 보기 |
 
-선택 단계(4 · 5 · 6 · 9)는 관심 가는 것을 **둘 이상** 고름. 무엇을 만들지 떠오르지 않으면 맨 아래 '예시 과제'에서 하나를 골라 시작함.
+선택 단계(4 · 5 · 6 · 9)는 관심 가는 것을 **둘 이상** 고름. 12단계는 필수 단계를 마친 뒤 해 봄. 무엇을 만들지 떠오르지 않으면 맨 아래 '예시 과제'에서 하나를 골라 시작함.
 """),
 md("## 0. 시작\n아래 셀을 실행하면 이 서버의 GPU 와 내 프로젝트 상태가 보임. 수업 중에 노트북을 다시 열었을 때도 0단계 셀부터 실행함."),
 code(SETUP % 6),
@@ -246,6 +251,8 @@ md("""
 
 **왜 하나** : 컴퓨터는 글의 뜻을 직접 비교하지 못함. 그래서 글을 숫자 묶음(벡터)으로 바꾸고, 벡터끼리 가까우면 뜻이 비슷하다고 봄. "검색"이 실제로는 질문 벡터와 가까운 청크 벡터를 찾는 계산이라는 것을 그림으로 확인하는 단계임.
 
+가까운 정도는 **코사인 유사도**로 잼. 두 벡터가 가리키는 방향이 같으면 1, 상관없으면 0 근처임. 벡터의 길이를 1로 맞춰 두면 두 벡터의 숫자를 차례로 곱해 더한 값(내적)이 곧 코사인 유사도라서 계산이 빠름.
+
 - 같은 문서의 청크끼리 모여 있는가. 내 질문은 어느 문서 가까이에 떨어지는가
 - 질문을 전혀 다른 주제로 바꾸면 별이 어디로 가는지 봄
 - 1,024차원을 2차원으로 줄인 그림이라, 그림에서 가장 가까운 점이 순위 1번이 아닐 수 있음. 순위는 아래 표가 정확함
@@ -262,6 +269,8 @@ md("""
 | 키워드 비중 | 0 → 0.3 → 1 | 답이 든 청크가 몇 순위에 오는가 |
 | 질문 종류 | 이름 · 숫자가 든 질문 대 일상어 질문 | 어느 질문이 어느 비중에서 유리한가 |
 | 가져올 청크 수 | 2 → 4 → 8 | 답 청크가 목록 안에 들어오는가 |
+
+오늘 노트북은 청크가 수백 개라 질문이 올 때마다 **모든 청크**와 점수를 계산함(전수 비교, numpy). 문서가 수십만 건으로 늘면 이 계산이 느려지므로 벡터 데이터베이스를 씀. 12단계에서 직접 넣고 찾아 봄.
 """),
 code("lab.search_panel()"),
 md("""
@@ -322,6 +331,80 @@ md("""
 code("lab.note_panel()"),
 code("lab.pack()"),
 md("""
+## 12. 벡터 데이터베이스에 직접 넣고 찾기(더 해 보기)
+지금까지는 조절판이 검색을 대신 해 줬음. 12단계에서는 같은 일을 코드 몇 줄로 직접 해 봄. 내 청크를 벡터로 바꾸고 → 벡터 데이터베이스(Chroma)에 넣고 → 질문 벡터와 가까운 청크를 꺼내고 → 입력을 조립해 모델에 물음.
+
+**왜 하나** : 질문마다 모든 청크와 점수를 계산하는 방식(전수 비교)은 청크가 수백 개일 때는 금방 끝남. 문서가 수십만 건이 되면 질문 하나에 걸리는 시간이 문서 수에 비례해 늘고, 서버를 다시 켤 때마다 벡터를 새로 만들어야 함. 벡터 데이터베이스는 벡터를 본문 · 제목과 함께 저장해 두고, 근사 최근접 탐색(HNSW)이라는 색인으로 가까운 벡터를 빨리 찾음. 제목 같은 메타데이터로 범위를 좁혀 찾을수도 있음.
+
+![벡터 데이터베이스가 저장하는 것과 하는 일](img/vectordb_record.png)
+
+- 12-1 : 내 청크를 벡터로 바꿈(`lab.chunks()` · `lab.embed()`). 4단계에서 저장한 자르기 설정을 씀
+- 12-2 : Chroma 에 넣음. 서버 메모리에만 두는 방식이라 커널을 다시 시작하면 사라짐
+- 12-3 : 질문으로 찾고, 같은 질문을 numpy 전수 비교로 찾은 순위와 나란히 봄
+- 12-4 : 찾은 청크로 입력을 조립해 모델에 물음(`lab.llm()`). 7단계 '모델에 들어간 입력 보기'와 같은 모양임
+- 12-5 : 메타데이터(문서 제목)로 거른 뒤 찾음
+
+| 바꿔 볼 것 | 값 | 볼 것 |
+|---|---|---|
+| 질문(12-3의 `q`) | 내 확인 질문 가운데 하나 → 일상어로 돌려 말한 질문 | Chroma 와 전수 비교의 순위가 같은가 |
+| `n_results` | 1 → 3 → 8 | 붙이는 청크가 늘면 12-4의 답이 어떻게 바뀌는가 |
+| `where` 조건 | 문서 제목 하나 | 범위를 좁히면 순위가 어떻게 바뀌는가 |
+
+- 조절판의 검색은 키워드 점수를 섞으므로(기본 비중 0.3) 6 · 7단계의 순위와 다를 수 있음. 12단계는 의미 점수만 씀
+"""),
+code("""
+# 12-1. 내 청크를 벡터로 바꿈
+chunks = lab.chunks()                              # 4단계 자르기 설정으로 자른 청크(chunk_id · doc_id · title · text)
+vecs = lab.embed([c["text"] for c in chunks])      # 모양 (청크 수, 1024) · 길이를 1로 맞춘 벡터
+print(f"청크 {len(chunks)}개 · 벡터 모양 {vecs.shape} · 메모리 {vecs.nbytes / 1024:,.0f}KB")
+print("첫 청크 :", chunks[0]["title"], "|", chunks[0]["text"][:60].replace("\\n", " "))
+print("첫 벡터의 앞 5개 숫자 :", vecs[0][:5].round(3))
+"""),
+code("""
+# 12-2. 벡터 데이터베이스(Chroma)에 넣음
+import chromadb
+settings = chromadb.Settings(anonymized_telemetry=False)   # 사용 통계를 외부로 보내지 않음
+client = chromadb.EphemeralClient(settings=settings)       # 메모리에만 둠. 파일로 남기려면 PersistentClient(path="my/chroma", settings=settings)
+try:
+    client.delete_collection("my_docs")            # 다시 실행할 때 지난 내용을 지움
+except Exception:
+    pass
+col = client.create_collection("my_docs", metadata={"hnsw:space": "cosine"})   # 코사인 거리로 HNSW 색인을 만듦
+col.add(ids=[c["chunk_id"] for c in chunks],
+        embeddings=vecs.tolist(),
+        documents=[c["text"] for c in chunks],
+        metadatas=[{"title": c["title"], "doc_id": c["doc_id"]} for c in chunks])
+print("저장한 청크 수 :", col.count())
+"""),
+code("""
+# 12-3. 질문으로 찾기 : Chroma(근사 최근접 탐색) 대 numpy 전수 비교
+q = lab.quiz()[0]["q"] if lab.quiz() else "여기에 질문을 적음"    # 확인 질문이 있으면 첫 질문을 씀. 직접 바꿔 봄
+qv = lab.embed(q)                                  # 질문도 같은 임베딩 모델로 바꿈. 모양 (1, 1024)
+res = col.query(query_embeddings=qv.tolist(), n_results=3)
+print("질문 :", q)
+for rank, (doc, meta, dist) in enumerate(zip(res["documents"][0], res["metadatas"][0], res["distances"][0]), 1):
+    print(f"  Chroma {rank}위  유사도 {1 - dist:.3f}  {meta['title'][:16]} | {doc[:44]}".replace("\\n", " "))
+scores = vecs @ qv[0]                              # 전수 비교 : 모든 청크와 내적(= 코사인 유사도)
+for rank, i in enumerate(scores.argsort()[::-1][:3], 1):
+    print(f"  전수   {rank}위  유사도 {scores[i]:.3f}  {chunks[i]['title'][:16]} | {chunks[i]['text'][:44]}".replace("\\n", " "))
+"""),
+code("""
+# 12-4. 찾은 청크로 입력을 조립해 모델에 물음
+context = "\\n\\n".join(f"<{m['title']}>\\n{d}" for d, m in zip(res["documents"][0], res["metadatas"][0]))
+prompt = f"[참고 문서]\\n{context}\\n\\n[질문]\\n{q}"
+print("시스템 규칙 :", lab.RAG_RULE)
+print("입력 :", prompt[:400], "…" if len(prompt) > 400 else "")
+print("\\n답 :", lab.llm(prompt, system=lab.RAG_RULE))
+"""),
+code("""
+# 12-5. 메타데이터로 거른 뒤 찾기 : 문서 제목 하나 안에서만 찾음
+title = res["metadatas"][0][0]["title"]            # 12-3의 1위 청크가 나온 문서
+res2 = col.query(query_embeddings=qv.tolist(), n_results=3, where={"title": title})
+print(f"'{title}' 안에서만 찾은 청크 {len(res2['ids'][0])}개")
+for doc, dist in zip(res2["documents"][0], res2["distances"][0]):
+    print(f"  유사도 {1 - dist:.3f} | {doc[:60]}".replace("\\n", " "))
+"""),
+md("""
 ---
 ### 예시 과제(무엇을 만들지 정하지 못했을 때 하나를 고름)
 1. **우리 동아리(또는 가게) 안내 챗봇** : 회칙 · 회비 · 모임 시간 · 대여 규정을 직접 써서 넣음(500자면 충분함). 확인 질문 5건을 모두 맞히는 가장 작은 top_k 를 찾음
@@ -333,6 +416,7 @@ md("""
 - **기준일이 다른 문서 두 건** : "회비 2만 원(3월 기준)"과 "회비 3만 원(9월 기준)"을 넣고 어느 것으로 답하는지, 지시문에 "가장 최근 기준으로 답한다"를 넣으면 달라지는지 봄
 - **가장 싼 설정 찾기** : 답 점수 1.0 을 유지하면서 입력 토큰이 가장 적은 설정(청크 크기와 top_k 의 조합)을 찾음
 - **검색 실패 일부러 만들기** : 문서에 답은 있는데 검색이 못 찾는 질문을 하나 만들어 봄. 어떻게 물으면 못 찾는가
+- **벡터 데이터베이스를 파일로 남기기** : 12-2 셀의 `EphemeralClient(settings=settings)` 를 `PersistentClient(path="my/chroma", settings=settings)` 로 바꿔 실행하고, 커널을 다시 시작한 뒤 `chromadb.PersistentClient(path="my/chroma").get_collection("my_docs").count()` 가 그대로인지 봄
 - 조절판 없이 직접 부르기 : `lab.ask("질문", k=2)`, `lab.experiment("size", [200, 400, 800])`, `lab.board()`
 - 5회차의 도메인 과제(JSON 답 채점)를 이 서버에서 재려면 : `lab.sh("python src/my_start.py --domain G")` 뒤 `lab.sh("python src/benchmark.py --name baseline --limit 10")`
 """),
