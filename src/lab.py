@@ -1004,10 +1004,25 @@ def set_quiz(lines: str) -> list[dict]:
         if not ln.strip():
             continue
         q, _, ex = ln.partition("|")
-        items.append({"q": q.strip(), "expect": [w.strip() for w in ex.split(",") if w.strip()]})
+        items.append({"q": q.strip(), "expect": _split_expect(ex)})
     MY.mkdir(parents=True, exist_ok=True)
     utils.write_json(MY / "quiz.json", items)
     return items
+
+
+def _split_expect(ex: str) -> list[str]:
+    """기대 단어를 쉼표로 나눔. 1,200억처럼 숫자 사이에 든 쉼표는 나누지 않음."""
+    return [w.strip() for w in re.split(r"(?<!\d)[,，、]|[,，、](?!\d)", ex) if w.strip()]
+
+
+def _expect_note(items: list[dict]) -> None:
+    """기대 단어가 빠진 확인 질문이 있으면 알림. 기대 단어가 없으면 답 점수를 매기지 못함."""
+    miss = [it for it in items if not it.get("expect")]
+    if not miss:
+        return
+    head = "확인 질문 모두" if len(miss) == len(items) else f"확인 질문 {len(items)}건 가운데 {len(miss)}건"
+    _msg(f"<b>{head} 기대 단어가 없어 답 점수를 매기지 못함</b>('-'로 표시되고 그림에서는 0으로 그려짐). "
+         "'질문 | 기대 단어1, 기대 단어2'처럼 | 뒤에 답에 꼭 들어가야 할 단어를 적음. 예) 동아리 회비는 얼마야? | 2만 원", "warn")
 
 
 def _squash(s: str) -> str:
@@ -1027,6 +1042,8 @@ def run_quiz(rag: bool = True, k: int | None = None, kw: float | None = None, mo
     items = quiz()
     if not items:
         raise Guide("확인 질문이 없음. '내 확인 질문' 단계에서 먼저 적음")
+    if show:
+        _expect_note(items)
     c = cfg()
     e = _m(model)
     adapter = c.get("adapter") if adapter == "내 설정" else adapter
@@ -1065,6 +1082,7 @@ def quiz_panel():
     def run(lines, mode):
         items = set_quiz(lines)
         _msg(f"확인 질문 {len(items)}건을 저장함", "ok")
+        _expect_note(items)
         if mode == "저장만" or not items:
             return
         rs = [run_quiz(rag=False)] if mode in ("문서 없이", "둘 다") else []
@@ -1104,6 +1122,8 @@ def experiment(param: str, values: list, show: bool = True) -> list[dict]:
     """설정 하나만 여러 값으로 바꿔 가며 확인 질문을 풀고, 점수 · 검색 적중 · 응답 시간을 한 그림에 그림."""
     if param not in _PARAMS:
         raise Guide(f"바꿀 수 있는 설정: {list(_PARAMS)}")
+    if show:
+        _expect_note(quiz())
     c = cfg()
     keep, keep_model = dict(c), S.current
     out = []
@@ -1756,6 +1776,8 @@ def style_eval(names: list[str] | None = None, n: int = 20, show: bool = True) -
 def four(name: str | None = None, show: bool = True) -> list[dict]:
     """네 구성 비교: 학습 전 · 문서 붙임 · Adapter · 문서 + Adapter. 확인 질문의 답 점수와 말투 점수를 함께 봄."""
     e, g = _m(), goal()
+    if show:
+        _expect_note(quiz())
     mine = _my_runs(e, [name] if name else None, limit=1)
     if not mine:
         raise Guide("지금 모델로 학습한 Adapter 가 없음")
@@ -1988,6 +2010,8 @@ def prompt_score(system: str = "", shots="", show: bool = True) -> list[dict]:
     items = quiz()
     if not items:
         raise Guide("확인 질문이 없음. 조절판의 '확인 질문'에 먼저 적음")
+    if show:
+        _expect_note(items)
     e, sh, system = _m(), _shots(shots), (system or "").strip()
     out = []
     for label, s, x in (("지시 없음(기준)", None, None), ("내 지시문" + (f" + 예시 {len(sh)}건" if sh else ""), system or None, sh)):
