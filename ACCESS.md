@@ -1,6 +1,6 @@
 # 실습 서버 접속
 
-> 갱신 2026-11-24 17:10(한국 시간) · 켜진 서버 24석
+> 갱신 2026-11-24 17:24(한국 시간) · 켜진 서버 24석
 >
 > 1. 강사가 정해 준 서버 번호의 줄을 찾음
 >
@@ -17,9 +17,9 @@
 | P03 | [바로 열기](https://opgvikvbp630c9-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=yjj2qehh) | `yjj2qehh` | RTX PRO 6000 Blackwell Workstation Edition |
 | P04 | [바로 열기](https://n5ugwqttjc5t5g-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=rf7pw35a) | `rf7pw35a` | RTX PRO 6000 Blackwell Server Edition |
 | P05 | [바로 열기](https://6td9q6c6jjg5aj-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=afs6tz23) | `afs6tz23` | RTX PRO 6000 Blackwell Server Edition |
-| P06 | [바로 열기](https://o3rm3eozklkwsd-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=bscj5mwr) | `bscj5mwr` | RTX PRO 4500 Blackwell |
+| P06 | [바로 열기](https://t0ilmgi4f2rkrf-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=bscj5mwr) | `bscj5mwr` | RTX PRO 6000 Blackwell Server Edition |
 | P07 | [바로 열기](https://ehcw1vnbn203w8-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=a4mbzq7w) | `a4mbzq7w` | A100-SXM4-80GB |
-| P08 | [바로 열기](https://2i96dzza0eypyc-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=s2pdbxrj) | `s2pdbxrj` | RTX PRO 4500 Blackwell |
+| P08 | [바로 열기](https://uvycggf6q43rpa-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=s2pdbxrj) | `s2pdbxrj` | RTX PRO 6000 Blackwell Server Edition |
 | P09 | [바로 열기](https://nyx7zsdpifc4tn-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=spyu3946) | `spyu3946` | A100-SXM4-80GB |
 | P10 | [바로 열기](https://qtxd1o42h1imfr-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=weea77h8) | `weea77h8` | RTX PRO 6000 Blackwell Server Edition |
 | P11 | [바로 열기](https://mun5jcn7odfkm6-8888.proxy.runpod.net/lab/tree/workspace/course/notebooks?token=bkag4z93) | `bkag4z93` | H100 80GB HBM3 |
